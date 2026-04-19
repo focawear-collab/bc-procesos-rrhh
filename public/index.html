@@ -1,1732 +1,983 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Proceso De Reclutamiento Y Onboarding</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #0f0f0f;
-      color: #e8e8e8;
-      line-height: 1.6;
-    }
-
-    .container {
-      max-width: 780px;
-      margin: 0 auto;
-      padding: 48px 32px;
-    }
-
-    /* Header */
-    header {
-      background: linear-gradient(160deg, #1a1a0a 0%, #0f0f0f 60%);
-      padding: 40px 0;
-      margin-bottom: 40px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    header::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -10%;
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
-    .header-content {
-      position: relative;
-      z-index: 1;
-    }
-
-    .back-link {
-      display: inline-block;
-      color: #d4af37;
-      text-decoration: none;
-      font-size: 14px;
-      margin-bottom: 16px;
-      transition: opacity 0.2s;
-    }
-
-    .back-link:hover {
-      opacity: 0.8;
-    }
-
-    h1 {
-      font-size: 32px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 8px;
-    }
-
-    .subtitle {
-      font-size: 14px;
-      color: #777;
-      font-weight: 500;
-    }
-
-    /* Active Processes Bar */
-    .active-bar {
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 40px;
-    }
-
-    .active-bar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .active-count {
-      font-size: 14px;
-      color: #777;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-    }
-
-    .btn-nuevo {
-      background: #d4af37;
-      color: #0f0f0f;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 13px;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-
-    .btn-nuevo:hover {
-      opacity: 0.9;
-    }
-
-    .active-processes {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 12px;
-    }
-
-    .proceso-card {
-      background: #252525;
-      border: 1px solid #3a3a3a;
-      border-radius: 8px;
-      padding: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .proceso-card:hover {
-      border-color: #d4af37;
-      background: #2a2a2a;
-    }
-
-    .proceso-card.active {
-      border-color: #d4af37;
-      background: rgba(212, 175, 55, 0.1);
-    }
-
-    .proceso-name {
-      font-size: 12px;
-      font-weight: 600;
-      color: #fff;
-      margin-bottom: 4px;
-    }
-
-    .proceso-meta {
-      font-size: 11px;
-      color: #888;
-      margin-bottom: 8px;
-    }
-
-    .progress-bar {
-      background: #1a1a1a;
-      height: 4px;
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      background: #d4af37;
-      height: 100%;
-      width: 0%;
-      transition: width 0.3s;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 20px;
-      color: #666;
-      font-size: 13px;
-    }
-
-    /* Tabs */
-    .tabs {
-      display: flex;
-      gap: 0;
-      border-bottom: 1px solid #2a2a2a;
-      margin-bottom: 40px;
-      overflow-x: auto;
-    }
-
-    .tab-btn {
-      background: none;
-      border: none;
-      color: #777;
-      padding: 12px 20px;
-      font-weight: 600;
-      font-size: 13px;
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: all 0.2s;
-      white-space: nowrap;
-    }
-
-    .tab-btn:hover {
-      color: #d4af37;
-    }
-
-    .tab-btn.active {
-      color: #fff;
-      border-bottom-color: #d4af37;
-    }
-
-    /* Save bar */
-    .save-bar {
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      border-radius: 10px;
-      padding: 14px 20px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .save-bar.no-proceso {
-      border-color: #2a2a2a;
-      justify-content: center;
-    }
-
-    .save-bar-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .save-bar-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #d4af37;
-      flex-shrink: 0;
-    }
-
-    .save-bar-name {
-      font-size: 13px;
-      font-weight: 600;
-      color: #fff;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .save-bar-pct {
-      font-size: 12px;
-      color: #d4af37;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-
-    .save-bar-hint {
-      font-size: 13px;
-      color: #555;
-    }
-
-    .save-bar-status {
-      font-size: 12px;
-      font-weight: 600;
-      flex-shrink: 0;
-      transition: all 0.3s;
-    }
-
-    .save-bar-status.saving { color: #888; }
-    .save-bar-status.saved  { color: #4caf50; }
-    .save-bar-status.error  { color: #f44336; }
-
-    .tab-content {
-      display: none;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    /* Section Labels */
-    .section-label {
-      font-size: 12px;
-      font-weight: 700;
-      color: #555;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      margin: 32px 0 24px 0;
-      padding-left: 12px;
-      border-left: 3px solid #d4af37;
-    }
-
-    /* Profile Section */
-    .profile-content {
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 24px;
-    }
-
-    .profile-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: #fff;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .profile-text {
-      font-size: 13px;
-      line-height: 1.8;
-      color: #bbb;
-      margin-bottom: 12px;
-    }
-
-    .profile-highlight {
-      background: rgba(212, 175, 55, 0.1);
-      border-left: 3px solid #d4af37;
-      padding: 12px 16px;
-      margin: 16px 0;
-      font-size: 13px;
-      color: #d4af37;
-      border-radius: 4px;
-    }
-
-    .profile-warning {
-      background: rgba(212, 175, 55, 0.05);
-      border-left: 3px solid #e08080;
-      padding: 12px 16px;
-      margin: 16px 0;
-      font-size: 13px;
-      color: #bbb;
-      border-radius: 4px;
-    }
-
-    /* Evaluation Grid */
-    .eval-grid {
-      display: grid;
-      gap: 12px;
-      margin: 16px 0;
-    }
-
-    .eval-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: #252525;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid #3a3a3a;
-    }
-
-    .eval-item input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      cursor: pointer;
-      accent-color: #d4af37;
-    }
-
-    .eval-item label {
-      flex: 1;
-      cursor: pointer;
-      font-size: 13px;
-      color: #bbb;
-    }
-
-    /* Checklist */
-    .checklist {
-      display: grid;
-      gap: 12px;
-    }
-
-    .checklist-section {
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    .checklist-header {
-      background: #252525;
-      padding: 12px 16px;
-      font-weight: 600;
-      font-size: 13px;
-      color: #fff;
-      border-bottom: 1px solid #2a2a2a;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .phase-label {
-      color: #d4af37;
-    }
-
-    .checklist-items {
-      padding: 16px;
-    }
-
-    .checklist-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 12px;
-      padding: 12px;
-      background: #252525;
-      border-radius: 8px;
-      border: 1px solid #3a3a3a;
-    }
-
-    .checklist-item:last-child {
-      margin-bottom: 0;
-    }
-
-    .checklist-item input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      margin-top: 2px;
-      cursor: pointer;
-      flex-shrink: 0;
-      accent-color: #d4af37;
-    }
-
-    .checklist-item label {
-      flex: 1;
-      cursor: pointer;
-      font-size: 13px;
-      color: #bbb;
-      line-height: 1.5;
-    }
-
-    .checklist-item input:checked + label {
-      color: #d4af37;
-      text-decoration: line-through;
-    }
-
-    .checklist-note {
-      font-size: 12px;
-      color: #777;
-      margin-top: 8px;
-      font-style: italic;
-    }
-
-    /* Decision Box */
-    .decision-box {
-      display: flex;
-      gap: 12px;
-      margin: 16px 0;
-    }
-
-    .decision-btn {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 12px;
-      cursor: pointer;
-      text-transform: uppercase;
-      transition: all 0.2s;
-    }
-
-    .decision-yes {
-      background: #4a8a4a;
-      color: #fff;
-    }
-
-    .decision-yes:hover {
-      background: #6ab86a;
-    }
-
-    .decision-no {
-      background: #8a4a4a;
-      color: #fff;
-    }
-
-    .decision-no:hover {
-      background: #e08080;
-    }
-
-    /* Organigrama */
-    .org-section {
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 24px;
-      text-align: center;
-    }
-
-    .org-level {
-      margin-bottom: 32px;
-    }
-
-    .org-level:last-child {
-      margin-bottom: 0;
-    }
-
-    .org-title {
-      font-size: 12px;
-      font-weight: 700;
-      color: #555;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      margin-bottom: 16px;
-    }
-
-    .org-cards {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
-
-    .org-card {
-      background: rgba(212, 175, 55, 0.08);
-      border: 1px solid #d4af37;
-      border-radius: 8px;
-      padding: 12px 16px;
-      min-width: 200px;
-    }
-
-    .org-card.green {
-      background: rgba(74, 138, 74, 0.08);
-      border-color: #4a8a4a;
-    }
-
-    .org-card.purple {
-      background: rgba(138, 74, 138, 0.08);
-      border-color: #8a4a8a;
-    }
-
-    .org-name {
-      font-weight: 600;
-      color: #fff;
-      margin-bottom: 4px;
-    }
-
-    .org-role {
-      font-size: 12px;
-      color: #888;
-    }
-
-    .org-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .org-column {
-      background: #252525;
-      border-radius: 8px;
-      padding: 16px;
-    }
-
-    .org-column.green {
-      border: 1px solid #4a8a4a;
-    }
-
-    .org-column.purple {
-      border: 1px solid #8a4a8a;
-    }
-
-    .org-column-title {
-      font-weight: 600;
-      color: #d4af37;
-      margin-bottom: 12px;
-      font-size: 13px;
-    }
-
-    .org-column-items {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .org-person {
-      font-size: 12px;
-      color: #bbb;
-      padding: 8px;
-      background: #1a1a1a;
-      border-radius: 4px;
-    }
-
-    /* Tags */
-    .tags {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 12px;
-    }
-
-    .tag {
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .tag.gold {
-      background: rgba(212, 175, 55, 0.2);
-      color: #d4af37;
-    }
-
-    .tag.green {
-      background: rgba(74, 138, 74, 0.2);
-      color: #6ab86a;
-    }
-
-    .tag.blue {
-      background: rgba(74, 106, 138, 0.2);
-      color: #7ab0e0;
-    }
-
-    .tag.red {
-      background: rgba(224, 128, 128, 0.2);
-      color: #e08080;
-    }
-
-    /* Modal */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal-overlay.active {
-      display: flex;
-    }
-
-    .modal {
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      border-radius: 12px;
-      padding: 32px;
-      max-width: 400px;
-      width: 90%;
-    }
-
-    .modal h2 {
-      font-size: 20px;
-      color: #fff;
-      margin-bottom: 20px;
-    }
-
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 12px;
-      font-weight: 600;
-      color: #777;
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      padding: 10px 12px;
-      background: #252525;
-      border: 1px solid #3a3a3a;
-      border-radius: 6px;
-      color: #e8e8e8;
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
-    }
-
-    .form-group textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-      outline: none;
-      border-color: #d4af37;
-      background: #2a2a2a;
-    }
-
-    .modal-actions {
-      display: flex;
-      gap: 12px;
-      margin-top: 24px;
-    }
-
-    .modal-actions button {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      border-radius: 6px;
-      font-weight: 600;
-      font-size: 13px;
-      cursor: pointer;
-      text-transform: uppercase;
-    }
-
-    .btn-crear {
-      background: #d4af37;
-      color: #0f0f0f;
-    }
-
-    .btn-crear:hover {
-      opacity: 0.9;
-    }
-
-    .btn-cancelar {
-      background: #3a3a3a;
-      color: #bbb;
-    }
-
-    .btn-cancelar:hover {
-      background: #4a4a4a;
-    }
-
-    /* Toast */
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #1a1a1a;
-      border: 1px solid #3a3a3a;
-      border-radius: 8px;
-      padding: 12px 16px;
-      font-size: 13px;
-      color: #bbb;
-      z-index: 200;
-      animation: slideIn 0.3s ease-out;
-      max-width: 300px;
-    }
-
-    @keyframes slideIn {
-      from {
-        transform: translateX(400px);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-
-    .toast.error {
-      border-color: #8a4a4a;
-      color: #e08080;
-    }
-
-    /* Footer */
-    footer {
-      text-align: center;
-      padding: 24px;
-      color: #555;
-      font-size: 12px;
-      margin-top: 48px;
-      border-top: 1px solid #2a2a2a;
-    }
-
-    /* Responsive */
-    @media (max-width: 640px) {
-      .container {
-        padding: 24px 16px;
-      }
-
-      h1 {
-        font-size: 24px;
-      }
-
-      .tabs {
-        margin-bottom: 24px;
-      }
-
-      .org-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Procesos RRHH · Black Chicken</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0a0a0a;
+    --bg-2:#121212;
+    --card:#171717;
+    --card-2:#1e1e1e;
+    --card-3:#252525;
+    --border:#262626;
+    --border-2:#333;
+    --gold:#d4af37;
+    --gold-soft:#f0c940;
+    --gold-dim:rgba(212,175,55,0.12);
+    --text:#e8e8e8;
+    --text-2:#888;
+    --text-3:#555;
+    --white:#fff;
+    --bc1:#6ab86a;
+    --bc1-dim:rgba(106,184,106,0.12);
+    --bc2:#b875c9;
+    --bc2-dim:rgba(184,117,201,0.12);
+    --red:#e08080;
+    --red-dim:rgba(224,128,128,0.12);
+    --blue:#7ab0e0;
+    --blue-dim:rgba(122,176,224,0.12);
+  }
+  html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+  body{overflow-x:hidden}
+  .serif{font-family:'Fraunces',serif;font-weight:500}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  input,select,textarea{font-family:inherit}
+  .compact .kcol-items{gap:6px!important}
+  .compact .kcard{padding:10px!important}
+  .compact .kcard-name{font-size:12px!important}
+</style>
 </head>
 <body>
-  <header>
-    <div class="container">
-      <div class="header-content">
-        <a href="hub-index.html" class="back-link">← Volver al Hub</a>
-        <img src="blackchicken_logo.png" alt="Black Chicken" style="height:48px;margin-bottom:16px;display:block;">
-        <h1>Proceso De Reclutamiento Y Onboarding</h1>
-        <p class="subtitle">Checklist operativo por área · Uso exclusivo RRHH · Black Chicken</p>
-      </div>
-    </div>
-  </header>
+<div id="root"></div>
 
-  <div class="container">
-    <!-- Active Processes Bar -->
-    <div class="active-bar">
-      <div class="active-bar-header">
-        <span class="active-count">Procesos Activos</span>
-        <button class="btn-nuevo" onclick="openModal()">+ Nuevo Proceso</button>
-      </div>
-      <div id="activeProcesses" class="active-processes">
-        <div class="empty-state">Cargando procesos...</div>
-      </div>
-    </div>
+<script type="text/babel" data-presets="react">
+const TWEAKS_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "layout": "kanban",
+  "density": "comfortable",
+  "accent": "gold",
+  "showOrganigrama": true
+}/*EDITMODE-END*/;
 
-    <!-- Tabs -->
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('organigrama')">Organigrama</button>
-      <button class="tab-btn" onclick="switchTab('garzones')">Garzones</button>
-      <button class="tab-btn" onclick="switchTab('jefatura')">Jefatura</button>
-      <button class="tab-btn" onclick="switchTab('cocineros')">Cocineros</button>
-    </div>
+const ACCENTS = {
+  gold:   { main:'#d4af37', soft:'#f0c940', dim:'rgba(212,175,55,0.12)' },
+  ember:  { main:'#e85d2e', soft:'#ff7a4d', dim:'rgba(232,93,46,0.14)' },
+  brass:  { main:'#c9a449', soft:'#e0b85c', dim:'rgba(201,164,73,0.14)' },
+  ice:    { main:'#7ab0e0', soft:'#9fc8ec', dim:'rgba(122,176,224,0.14)' },
+};
 
-    <!-- Save bar -->
-    <div id="save-bar" class="save-bar no-proceso">
-      <span class="save-bar-hint">↑ Selecciona un proceso del panel superior para registrar avance en Notion</span>
-    </div>
+/* ============ DATA ============ */
+const PHASES = [
+  { id:'F1', name:'Captación',    sub:'Filtro inicial' },
+  { id:'F2', name:'Entrevista',   sub:'Online o presencial' },
+  { id:'F3', name:'Día prueba',   sub:'Evaluación en local' },
+  { id:'F4', name:'Contratación', sub:'Seguimiento inicial' },
+  { id:'F5', name:'Onboarding',   sub:'Progresión de roles' },
+];
 
-    <!-- TAB: ORGANIGRAMA -->
-    <div id="organigrama" class="tab-content active">
-      <div class="org-section">
-        <div class="org-level">
-          <div class="org-title">Nivel 0 — Gerencia General</div>
-          <div class="org-cards">
-            <div class="org-card">
-              <div class="org-name">Llige Yang</div>
-              <div class="org-role">Gerente Ventas, Marketing & Liderazgo</div>
-            </div>
-            <div class="org-card">
-              <div class="org-name">Daniel Fosk</div>
-              <div class="org-role">Gerente de Operaciones</div>
-            </div>
-          </div>
-        </div>
+const TRACKS = {
+  garzones: { label:'Garzones', icon:'🍽️', color:'#d4af37' },
+  jefatura: { label:'Jefatura', icon:'👑', color:'#b875c9' },
+  cocineros:{ label:'Cocineros', icon:'🔥', color:'#e08080' },
+};
 
-        <div class="org-level">
-          <div class="org-title">Nivel 1 — Administración</div>
-          <div class="org-cards">
-            <div class="org-card">
-              <div class="org-name">Nelsimar Rodriguez</div>
-              <div class="org-role">Administradora Ambos Locales</div>
-            </div>
-          </div>
-        </div>
+const CHECKLISTS = {
+  garzones: {
+    F1: ['Recibir postulación del candidato/a', 'Aplicar filtro por área de sala', 'Presentar seleccionados a Llige', 'OK y coordinar entrevista online'],
+    F2: ['Coordinar fecha y hora', 'Realizar entrevista online', 'Evaluar perfil y decisión de avance'],
+    F3: ['Coordinar con jefatura de sala', 'Verificar llegada al local', 'Hablar al final del día', 'Retomar contacto y feedback'],
+    F4: ['Cierre día 3 — ¿Continúa?', 'Cierre semana 1 — ¿Continúa?', 'Cierre semana 2 — término evaluación', 'Si aprueba → emitir primer contrato'],
+    F5: ['Etapa 1 — Runner: soporte y logística', 'Etapa 2 — Servicio en mesas', 'Etapa 3 — Envoltura delivery', 'Etapa 4 — Puerta / beepers', 'Preguntar etapa actual', 'Verificar onboarding correcto', 'Registrar avances y retrasos'],
+  },
+  jefatura: {
+    F1: ['Recibir postulación jefatura', 'Filtro por competencias de liderazgo', 'Presentar a Llige', 'OK y coordinar entrevista presencial'],
+    F2: ['Confirmar acompañante (Nelsi / Llige / Daniel)', 'Coordinar disponibilidad acompañante', 'Invitar 3-4 candidatos', 'Confirmar asistencia', 'Realizar entrevista grupal dinámica', 'Evaluar desempeño y cultura fit', 'Decisión en conjunto con acompañante'],
+    F3: ['Coordinar con el área', 'Verificar llegada al local', 'Hablar al término del día 1', 'Pedir feedback a jefatura'],
+    F4: ['Cierre día 3', 'Cierre semana 1', 'Cierre semana 2', 'Emitir primer contrato'],
+    F5: ['Consultar acciones con nuevos', 'Verificar etapa de capacitación', 'Confirmar lineamientos correctos', 'Registrar avances y feedback'],
+  },
+  cocineros: {
+    F1: ['Recibir postulación cocina', 'Aplicar filtro cocina', 'Presentar a Llige', 'Coordinar entrevista online'],
+    F2: ['Coordinar fecha y hora', 'Realizar entrevista', 'Evaluar fit BC'],
+    F3: ['Coordinar con jefatura cocina', 'Verificar llegada', 'Hablar al final del día', 'Feedback jefatura cocina'],
+    F4: ['Cierre día 3', 'Cierre semana 1', 'Cierre semana 2', 'Emitir contrato'],
+    F5: ['Contactar jefatura cocina', 'Preguntar estado onboarding', 'Evaluar etapa capacitación', 'Verificar estándares BC', 'Registrar avances'],
+  },
+};
 
-        <div class="org-level">
-          <div class="org-title">Nivel 2 — Jefaturas por Local</div>
-          <div class="org-grid">
-            <div class="org-column green">
-              <div class="org-column-title">🍗 BC1</div>
-              <div class="org-column-items">
-                <div class="org-person">Felipe Cofre — Jefe Local</div>
-                <div class="org-person">Stefanie Ocando — Sub Jefe</div>
-                <div class="org-person">Felipe Cornejo — Jefe Cocina</div>
-                <div class="org-person">Jonathan Lobos — Sous Chef</div>
-                <div class="org-person">Ender Chacin — Entrenador</div>
-              </div>
-            </div>
-            <div class="org-column purple">
-              <div class="org-column-title">🍗 BC2</div>
-              <div class="org-column-items">
-                <div class="org-person">Saner Guillen — Jefe Local</div>
-                <div class="org-person">Vanessa Ramonez — Jefe Cocina</div>
-                <div class="org-person">Maria Angel — Jefe Salón</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+const PROFILES = {
+  garzones: {
+    title: 'Garzón / Garzona',
+    experience: 'Alta gastronomía, confort food, restaurantes de autor. NO comida rápida, cafeterías u hotelería.',
+    age: '25–40 años',
+    competencies: 'Proactivo, presión, eficiente, VENDEDOR (no tomador de pedidos)',
+    requisitos: 'RUT (temporal ok), cuenta bancaria, turnos rotativos',
+    estandares: 'Cabello amarrado, sin barba, maquillaje discreto, uñas cortas, uniforme limpio',
+    highlight: 'Buscamos garzones vendedores, no tomadores de pedidos',
+    eval: [],
+  },
+  jefatura: {
+    title: 'Jefe de Local / Sub Jefe',
+    experience: 'Jefe/a en alta gastronomía, comida rápida o cadenas. NO cafeterías ni hoteles.',
+    age: '30–40 años',
+    competencies: 'Resolutivo, proactivo, resiliente, experiencia administrativa',
+    requisitos: 'RUT vigente, inventarios, KPIs, apertura/cierre',
+    estandares: 'Presentación impecable, buen porte, dicción',
+    highlight: 'OBLIGATORIO llamar al empleador anterior',
+    eval: [
+      'Resolutivo — decisiones bajo presión',
+      'Administración — inventarios, cierres, KPIs',
+      'Manejo de presión — alto volumen',
+      'Presentación personal',
+      'Documentación — RUT y antecedentes',
+      'Referencias confirmadas',
+    ],
+  },
+  cocineros: {
+    title: 'Cocinero/a · Jefe de Cocina',
+    experience: 'Alta gastronomía, confort food, alto volumen. NO cafeterías ni hotelería.',
+    age: '25–40 (cocinero) · 30–40 (jefe cocina)',
+    competencies: 'Proactivo, rápido y ordenado, presión alta, aprende fichas técnicas',
+    requisitos: 'RUT, cuenta bancaria, turnos rotativos, libreta sanitaria',
+    estandares: 'Higiene, uñas cortas, uniforme',
+    highlight: 'Jefe de cocina: manejo de merma, compras y KPIs de producción',
+    eval: [
+      'Manejo de presión',
+      'Experiencia administrativa',
+      'Experiencia válida (no cafetería/hotel)',
+      'Documentación al día',
+      'Referencias confirmadas',
+    ],
+  },
+};
 
-    <!-- TAB: GARZONES -->
-    <div id="garzones" class="tab-content">
-      <!-- Profile Section -->
-      <div class="section-label">🍽️ Perfil del Cargo</div>
-      <div class="profile-content">
-        <div class="profile-title">Garzón / Garzona</div>
-        <div class="profile-text"><strong>Experiencia:</strong> Alta gastronomía, confort food, restaurantes de autor. NO comida rápida, cafeterías, hotelería.</div>
-        <div class="profile-text"><strong>Perfil:</strong> 25–40 años · Buen aspecto · Buena dicción · No contextura grande</div>
-        <div class="profile-text"><strong>Competencias:</strong> Proactivo, presión, eficiente, VENDEDOR no tomador de pedidos</div>
-        <div class="profile-text"><strong>Requisitos:</strong> RUT (puede ser temporal), cuenta bancaria, turnos rotativos</div>
-        <div class="profile-text"><strong>Estándares:</strong> Cabello amarrado, sin barba, maquillaje discreto, uñas cortas, uniforme limpio</div>
-        <div class="profile-highlight">Buscamos garzones vendedores, no tomadores de pedidos</div>
-      </div>
+/* ============ SAMPLE PROCESOS ============ */
+const today = new Date('2026-04-19');
+const daysAgo = (n) => { const d = new Date(today); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); };
 
-      <!-- Checklist -->
-      <div class="section-label">📋 Proceso de Onboarding</div>
-      <div class="checklist" id="garzones-checklist">
-        <!-- F1 -->
-        <div class="checklist-section">
-          <div class="checklist-header">
-            <span>F1 — <span class="phase-label">Captación y filtro inicial</span></span>
-          </div>
-          <div class="checklist-items">
-            <div class="checklist-item">
-              <input type="checkbox" id="garzon-f1-0" class="checklist-input" data-item-id="garzon-f1-0" onchange="onCheckboxChange(this)">
-              <label for="garzon-f1-0">Recibir postulación del candidato a Garzón/a</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="garzon-f1-1" class="checklist-input" data-item-id="garzon-f1-1" onchange="onCheckboxChange(this)">
-              <label for="garzon-f1-1">Aplicar filtro inicial por área de sala / servicio</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="garzon-f1-2" class="checklist-input" data-item-id="garzon-f1-2" onchange="onCheckboxChange(this)">
-              <label for="garzon-f1-2">Presentar seleccionados a Llige para aprobación</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="garzon-f1-3" class="checklist-input" data-item-id="garzon-f1-3" onchange="onCheckboxChange(this)">
-              <label for="garzon-f1-3">Dar OK y coordinar entrevista online</label>
-            </div>
-          </div>
-        </div>
+const phaseOrder = ['F1','F2','F3','F4','F5'];
 
-        <!-- F2 -->
-        <div class="checklist-section">
-          <div class="checklist-header">
-            <span>F2 — <span class="phase-label">Entrevista online</span></span>
-          </div>
-          <div class="checklist-items">
-            <div class="checklist-note">Modalidad: Videollamada — No requiere presencia en local</div>
-            <div class="checklist-item">
-              <input type="checkbox" id="garzon-f2-0" class="checklist-input" data-item-id="garzon-f2-0" onchange="onCheckboxChange(this)">
-              <label for="garzon-f2-0">Coordinar fecha y hora con el candidato/a</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="garzon-f2-1" class="checklist-input" data-item-id="garzon-f2-1" onchange="onCheckboxChange(this)">
-              <label for="garzon-f2-1">Realizar entrevista online</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="garzon-f2-2" class="checklist-input" data-item-id="garzon-f2-2" onchange="onCheckboxChange(this)">
-              <label for="garzon-f2-2">Evaluar perfil y tomar decisión de avance</label>
-            </div>
-          </div>
-        </div>
+function buildProceso(id, candidato, track, cargo, local, fase, completedByPhase, notas, daysAgoN){
+  const flatCompleted = [];
+  for (const [p, count] of Object.entries(completedByPhase)) {
+    for (let i=0; i<count; i++) flatCompleted.push(`${track}-${p.toLowerCase()}-${i}`);
+  }
+  // compute avance
+  let total = 0;
+  for (const p of phaseOrder) total += (CHECKLISTS[track][p] || []).length;
+  const avance = Math.round((flatCompleted.length / total) * 100);
+  return { id, idProceso:`RC${1000+id}`, candidato, track, cargo, local, fase, completados:flatCompleted, notas, fechaInicio:daysAgo(daysAgoN), avance };
+}
 
-        <!-- F3 -->
-        <div class="checklist-section">
-          <div class="checklist-header">
-            <span>F3 — <span class="phase-label">Día de prueba</span></span>
-          </div>
-          <div class="checklist-items">
-            <div class="checklist-item">
-              <input type="checkbox" id="garzon-f3-0" class="checklist-input" data-item-id="garzon-f3-0" onchange="onCheckboxChange(this)">
-              <label for="garzon-f3-0">Coordinar con jefatura de sala quién se presenta y horario</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="garzon-f3-1" class="checklist-input" data-item-id="garzon-f3-1" onchange="onCheckboxChange(this)">
-              <label for="garzon-f3-1">Verificar que la persona llegó al local</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="garzon-f3-2" class="checklist-input" data-item-id="garzon-f3-2" onchange="onCheckboxChange(this)">
-              <label for="garzon-f3-2">Hablar con la persona al final del día</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="garzon-f3-3" class="checklist-input" data-item-id="garzon-f3-3" onchange="onCheckboxChange(this)">
-              <label for="garzon-f3-3">Retomar contacto con jefatura y pedir feedback</label>
-            </div>
-            <div class="decision-box">
-              <button class="decision-btn decision-yes" onclick="alert('✓ Continúa a siguiente fase')">✓ Continúa</button>
-              <button class="decision-btn decision-no" onclick="alert('✗ Termina proceso')">✗ No Continúa</button>
-            </div>
-          </div>
-        </div>
+const discardedSeed = (p, motivo, daysAgoN) => ({...p, descartado:true, motivoDescarte:motivo, fechaDescarte:daysAgo(daysAgoN)});
 
-        <!-- F4 -->
-        <div class="checklist-section">
-          <div class="checklist-header">
-            <span>F4 — <span class="phase-label">Seguimiento de contratación</span></span>
-          </div>
-          <div class="checklist-items">
-            <div class="checklist-item">
-              <input type="checkbox" id="garzon-f4-0" class="checklist-input" data-item-id="garzon-f4-0" onchange="onCheckboxChange(this)">
-              <label for="garzon-f4-0">Cierre día 3 — ¿Continúa a la semana?</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="garzon-f4-1" class="checklist-input" data-item-id="garzon-f4-1" onchange="onCheckboxChange(this)">
-              <label for="garzon-f4-1">Cierre semana 1 — ¿Continúa a semana 2?</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="garzon-f4-2" class="checklist-input" data-item-id="garzon-f4-2" onchange="onCheckboxChange(this)">
-              <label for="garzon-f4-2">Cierre semana 2 — Término proceso evaluación</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="garzon-f4-3" class="checklist-input" data-item-id="garzon-f4-3" onchange="onCheckboxChange(this)">
-              <label for="garzon-f4-3">Si se aprueba → Emitir primer contrato</label>
-            </div>
-            <div class="profile-warning">⚠ Antes del contrato indefinido: consultar con jefatura si seguirá antes de emitirlo.</div>
-          </div>
-        </div>
+const SAMPLE_PROCESOS = [
+  discardedSeed(buildProceso(101,'Roberto Aliaga','garzones','Garzón/a','BC1','F2',{F1:4,F2:2},'Entrevista online ok pero sin experiencia en alta gastronomía.', 12), 'No cumple perfil', 10),
+  discardedSeed(buildProceso(102,'María José Lagos','cocineros','Cocinero/a','BC2','F3',{F1:4,F2:3,F3:2},'', 20), 'No se presentó al día de prueba', 18),
+  buildProceso(1, 'Camila Reyes',       'garzones',  'Garzón/a',       'BC1', 'F1', { F1:2 }, 'Referencia de Tomas. Trabajó en Ambrosía.', 1),
+  buildProceso(2, 'Matías González',    'garzones',  'Garzón/a',       'BC2', 'F1', { F1:4 }, 'Postuló vía publicación IG. Disponibilidad inmediata.', 3),
+  buildProceso(3, 'Valentina Soto',     'garzones',  'Garzón/a',       'BC1', 'F2', { F1:4, F2:2 }, 'Entrevista pendiente jueves 10am.', 5),
+  buildProceso(4, 'Diego Muñoz',        'jefatura',  'Sub Jefe',       'BC2', 'F2', { F1:4, F2:5 }, 'Entrevista grupal con Nelsi + Llige viernes.', 6),
+  buildProceso(5, 'Ignacio Parra',      'cocineros', 'Cocinero/a',     'BC1', 'F3', { F1:4, F2:3, F3:3 }, 'Día de prueba en curso · Felipe C. evaluando.', 4),
+  buildProceso(6, 'Antonia Herrera',    'garzones',  'Garzón/a',       'BC2', 'F3', { F1:4, F2:3, F3:4 }, 'Feedback positivo de Saner.', 8),
+  buildProceso(7, 'Pablo Sanhueza',     'jefatura',  'Jefe de Local',  'BC1', 'F3', { F1:4, F2:7, F3:2 }, '⚠ Pendiente llamar empleador anterior.', 10),
+  buildProceso(8, 'Francisca Contreras','cocineros', 'Sous Chef',      'BC2', 'F4', { F1:4, F2:3, F3:4, F4:2 }, 'Semana 1 ok. Revisar semana 2 con Jennifer.', 14),
+  buildProceso(9, 'Benjamín Rojas',     'garzones',  'Garzón/a',       'BC1', 'F4', { F1:4, F2:3, F3:4, F4:4 }, 'Contrato emitido. Renovación evaluación próxima.', 18),
+  buildProceso(10,'Javiera Pinto',      'garzones',  'Entrenador/a',   'BC1', 'F5', { F1:4, F2:3, F3:4, F4:4, F5:3 }, 'En etapa 3 — delivery. Rossy está supervisando.', 25),
+  buildProceso(11,'Cristóbal Vargas',   'cocineros', 'Jefe de Cocina', 'BC1', 'F5', { F1:4, F2:3, F3:4, F4:4, F5:4 }, 'Muy buen desempeño. Próximo: onboarding formal.', 30),
+  buildProceso(12,'Sofía Aravena',      'garzones',  'Copero/a',       'BC2', 'F5', { F1:4, F2:3, F3:4, F4:4, F5:5 }, 'Listo para cerrar proceso.', 42),
+];
 
-        <!-- F5 -->
-        <div class="checklist-section">
-          <div class="checklist-header">
-            <span>F5 — <span class="phase-label">Progresión de roles en sala</span></span>
-          </div>
-          <div class="checklist-items">
-            <div class="checklist-note">Etapas: 1→Runner | 2→Mesas | 3→Delivery | 4→Puerta/Beepers</div>
-            <div class="checklist-item">
-              <input type="checkbox" id="garzon-f5-0" class="checklist-input" data-item-id="garzon-f5-0" onchange="onCheckboxChange(this)">
-              <label for="garzon-f5-0">Etapa 1 — Runner: soporte y logística en sala</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="garzon-f5-1" class="checklist-input" data-item-id="garzon-f5-1" onchange="onCheckboxChange(this)">
-              <label for="garzon-f5-1">Etapa 2 — Servicio al cliente en mesas</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="garzon-f5-2" class="checklist-input" data-item-id="garzon-f5-2" onchange="onCheckboxChange(this)">
-              <label for="garzon-f5-2">Etapa 3 — Envoltura de pedidos delivery</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="garzon-f5-3" class="checklist-input" data-item-id="garzon-f5-3" onchange="onCheckboxChange(this)">
-              <label for="garzon-f5-3">Etapa 4 — Puerta: entrega de beepers a clientes</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="garzon-f5-4" class="checklist-input" data-item-id="garzon-f5-4" onchange="onCheckboxChange(this)">
-              <label for="garzon-f5-4">Preguntar en qué etapa va el nuevo garzón/a</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="garzon-f5-5" class="checklist-input" data-item-id="garzon-f5-5" onchange="onCheckboxChange(this)">
-              <label for="garzon-f5-5">Verificar que jefatura esté ejecutando onboarding correcto</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="garzon-f5-6" class="checklist-input" data-item-id="garzon-f5-6" onchange="onCheckboxChange(this)">
-              <label for="garzon-f5-6">Registrar avances y eventuales retrasos</label>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+/* ============ HELPERS ============ */
+function getTotal(track){
+  let t = 0; for (const p of phaseOrder) t += (CHECKLISTS[track][p]||[]).length; return t;
+}
+function progressByPhase(proc, phase){
+  const total = (CHECKLISTS[proc.track][phase]||[]).length;
+  if (!total) return {done:0,total:0,pct:0};
+  const done = proc.completados.filter(id=>id.startsWith(`${proc.track}-${phase.toLowerCase()}-`)).length;
+  return { done, total, pct: Math.round(done/total*100) };
+}
+function initials(name){
+  return name.split(' ').slice(0,2).map(s=>s[0]).join('').toUpperCase();
+}
+function formatAge(dateStr){
+  const d = new Date(dateStr); const diff = Math.floor((today - d)/(1000*60*60*24));
+  if (diff===0) return 'hoy'; if (diff===1) return 'ayer'; if (diff<7) return `hace ${diff}d`;
+  if (diff<30) return `hace ${Math.floor(diff/7)}sem`; return `hace ${Math.floor(diff/30)}m`;
+}
 
-    <!-- TAB: JEFATURA -->
-    <div id="jefatura" class="tab-content">
-      <!-- Profile Section -->
-      <div class="section-label">👑 Perfil del Cargo</div>
-      <div class="profile-content">
-        <div class="profile-title">Jefe de Local / Sub Jefe</div>
-        <div class="profile-text"><strong>Experiencia:</strong> Jefe/a en restaurantes alta gastronomía, comida rápida o cadenas. NO cafeterías ni hoteles.</div>
-        <div class="profile-text"><strong>Perfil:</strong> 30–40 años · Buen aspecto · No contextura grande</div>
-        <div class="profile-text"><strong>Competencias:</strong> Resolutivo, proactivo, resiliente, experiencia administrativa</div>
-        <div class="profile-text"><strong>Gestión:</strong> RUT vigente, inventarios, KPIs, apertura/cierre</div>
-        <div class="profile-warning">⚠️ OBLIGATORIO: Llamar empleador anterior</div>
-
-        <div style="margin-top: 20px;">
-          <div class="profile-text" style="margin-bottom: 12px;"><strong>Pauta evaluación:</strong></div>
-          <div class="eval-grid">
-            <div class="eval-item">
-              <input type="checkbox" id="jefatura-eval-0" class="checklist-input" data-item-id="jefatura-eval-0" onchange="onCheckboxChange(this)">
-              <label for="jefatura-eval-0">Resolutivo — capacidad de tomar decisiones bajo presión</label>
-            </div>
-            <div class="eval-item">
-              <input type="checkbox" id="jefatura-eval-1" class="checklist-input" data-item-id="jefatura-eval-1" onchange="onCheckboxChange(this)">
-              <label for="jefatura-eval-1">Experiencia administrativa — inventarios, cierres, KPIs</label>
-            </div>
-            <div class="eval-item">
-              <input type="checkbox" id="jefatura-eval-2" class="checklist-input" data-item-id="jefatura-eval-2" onchange="onCheckboxChange(this)">
-              <label for="jefatura-eval-2">Manejo de presión — historial en ambientes de alto volumen</label>
-            </div>
-            <div class="eval-item">
-              <input type="checkbox" id="jefatura-eval-3" class="checklist-input" data-item-id="jefatura-eval-3" onchange="onCheckboxChange(this)">
-              <label for="jefatura-eval-3">Presentación personal — aspecto, dicción, porte</label>
-            </div>
-            <div class="eval-item">
-              <input type="checkbox" id="jefatura-eval-4" class="checklist-input" data-item-id="jefatura-eval-4" onchange="onCheckboxChange(this)">
-              <label for="jefatura-eval-4">Documentación — RUT vigente, antecedentes al día</label>
-            </div>
-            <div class="eval-item">
-              <input type="checkbox" id="jefatura-eval-5" class="checklist-input" data-item-id="jefatura-eval-5" onchange="onCheckboxChange(this)">
-              <label for="jefatura-eval-5">Referencias — confirmación con empleador anterior</label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Checklist -->
-      <div class="section-label">📋 Proceso de Onboarding</div>
-      <div class="checklist" id="jefatura-checklist">
-        <!-- F1 -->
-        <div class="checklist-section">
-          <div class="checklist-header">
-            <span>F1 — <span class="phase-label">Captación</span></span>
-          </div>
-          <div class="checklist-items">
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f1-0" class="checklist-input" data-item-id="jefatura-f1-0" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f1-0">Recibir postulación del candidato a cargo de jefatura</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f1-1" class="checklist-input" data-item-id="jefatura-f1-1" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f1-1">Aplicar filtro por área y competencias de liderazgo</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f1-2" class="checklist-input" data-item-id="jefatura-f1-2" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f1-2">Presentar seleccionados a Llige para aprobación</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f1-3" class="checklist-input" data-item-id="jefatura-f1-3" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f1-3">Dar OK y coordinar entrevista presencial</label>
-            </div>
-          </div>
-        </div>
-
-        <!-- F2 -->
-        <div class="checklist-section">
-          <div class="checklist-header">
-            <span>F2 — <span class="phase-label">Entrevista presencial dinámica</span></span>
-          </div>
-          <div class="checklist-items">
-            <div class="checklist-note">Modalidad: Presencial grupal — 3 a 4 candidatos simultáneos. Requiere acompañante.</div>
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f2-0" class="checklist-input" data-item-id="jefatura-f2-0" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f2-0">Confirmar acompañante: Nelsi / Llige / Daniel</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f2-1" class="checklist-input" data-item-id="jefatura-f2-1" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f2-1">Coordinar disponibilidad del acompañante</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f2-2" class="checklist-input" data-item-id="jefatura-f2-2" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f2-2">Invitar 3-4 candidatos</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f2-3" class="checklist-input" data-item-id="jefatura-f2-3" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f2-3">Confirmar asistencia</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f2-4" class="checklist-input" data-item-id="jefatura-f2-4" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f2-4">Realizar entrevista grupal dinámica</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f2-5" class="checklist-input" data-item-id="jefatura-f2-5" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f2-5">Evaluar desempeño, liderazgo y cultura fit</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f2-6" class="checklist-input" data-item-id="jefatura-f2-6" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f2-6">Tomar decisión en conjunto con acompañante</label>
-            </div>
-          </div>
-        </div>
-
-        <!-- F3 -->
-        <div class="checklist-section">
-          <div class="checklist-header">
-            <span>F3 — <span class="phase-label">Día de prueba</span></span>
-          </div>
-          <div class="checklist-items">
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f3-0" class="checklist-input" data-item-id="jefatura-f3-0" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f3-0">Coordinar con el área quién se presenta</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f3-1" class="checklist-input" data-item-id="jefatura-f3-1" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f3-1">Verificar que llegó al local</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f3-2" class="checklist-input" data-item-id="jefatura-f3-2" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f3-2">Hablar al término del día 1</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f3-3" class="checklist-input" data-item-id="jefatura-f3-3" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f3-3">Pedir feedback a jefatura</label>
-            </div>
-            <div class="decision-box">
-              <button class="decision-btn decision-yes" onclick="alert('✓ Continúa a siguiente fase')">✓ Continúa</button>
-              <button class="decision-btn decision-no" onclick="alert('✗ Termina proceso')">✗ No Continúa</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- F4 -->
-        <div class="checklist-section">
-          <div class="checklist-header">
-            <span>F4 — <span class="phase-label">Seguimiento contratación</span></span>
-          </div>
-          <div class="checklist-items">
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f4-0" class="checklist-input" data-item-id="jefatura-f4-0" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f4-0">Cierre día 3</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f4-1" class="checklist-input" data-item-id="jefatura-f4-1" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f4-1">Cierre semana 1</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f4-2" class="checklist-input" data-item-id="jefatura-f4-2" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f4-2">Cierre semana 2</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f4-3" class="checklist-input" data-item-id="jefatura-f4-3" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f4-3">Emitir primer contrato</label>
-            </div>
-            <div class="profile-warning">⚠ Antes del contrato indefinido: consultar con jefatura si seguirá antes de emitirlo.</div>
-          </div>
-        </div>
-
-        <!-- F5 -->
-        <div class="checklist-section">
-          <div class="checklist-header">
-            <span>F5 — <span class="phase-label">Seguimiento onboarding</span></span>
-          </div>
-          <div class="checklist-items">
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f5-0" class="checklist-input" data-item-id="jefatura-f5-0" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f5-0">Consultar a jefatura qué ha hecho con nuevos</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f5-1" class="checklist-input" data-item-id="jefatura-f5-1" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f5-1">Verificar etapa de capacitación</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f5-2" class="checklist-input" data-item-id="jefatura-f5-2" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f5-2">Confirmar lineamientos correctos</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="jefatura-f5-3" class="checklist-input" data-item-id="jefatura-f5-3" onchange="onCheckboxChange(this)">
-              <label for="jefatura-f5-3">Registrar avances y dar feedback</label>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB: COCINEROS -->
-    <div id="cocineros" class="tab-content">
-      <!-- Profile Section -->
-      <div class="section-label">🍳 Cocinero / Cocinera</div>
-      <div class="profile-content">
-        <div class="profile-title">Cocinero / Cocinera</div>
-        <div class="profile-text"><strong>Experiencia:</strong> Alta gastronomía, confort food, comida rápida alto volumen. NO cafeterías ni hotelería.</div>
-        <div class="profile-text"><strong>Perfil:</strong> 25–40 años · No contextura grande</div>
-        <div class="profile-text"><strong>Competencias:</strong> Proactivo, presión alta, rápido y ordenado, aprende fichas técnicas</div>
-        <div class="profile-text"><strong>Requisitos:</strong> RUT (temporal OK), cuenta bancaria, turnos rotativos, libreta sanitaria</div>
-        <div class="profile-highlight">Se valora experiencia en cocinas de alto volumen y buen manejo de tiempos</div>
-      </div>
-
-      <!-- Profile 2 -->
-      <div class="section-label">🔥 Jefe de Cocina</div>
-      <div class="profile-content">
-        <div class="profile-title">Jefe de Cocina</div>
-        <div class="profile-text"><strong>Experiencia:</strong> Alta gastronomía o cadenas, comida rápida alto volumen. NO cafeterías ni hoteles.</div>
-        <div class="profile-text"><strong>Perfil:</strong> 30–40 años · No contextura grande</div>
-        <div class="profile-text"><strong>Competencias:</strong> Altamente resolutivo, proactivo, presión alta, gestión equipo</div>
-        <div class="profile-text"><strong>Gestión:</strong> RUT, inventarios, merma, compras, KPIs producción</div>
-        <div class="profile-warning">⚠️ OBLIGATORIO: Llamar empleador anterior</div>
-
-        <div style="margin-top: 20px;">
-          <div class="profile-text" style="margin-bottom: 12px;"><strong>Pauta evaluación:</strong></div>
-          <div class="eval-grid">
-            <div class="eval-item">
-              <input type="checkbox" id="cocinero-eval-0" class="checklist-input" data-item-id="cocinero-eval-0" onchange="onCheckboxChange(this)">
-              <label for="cocinero-eval-0">Manejo de presión</label>
-            </div>
-            <div class="eval-item">
-              <input type="checkbox" id="cocinero-eval-1" class="checklist-input" data-item-id="cocinero-eval-1" onchange="onCheckboxChange(this)">
-              <label for="cocinero-eval-1">Experiencia administrativa</label>
-            </div>
-            <div class="eval-item">
-              <input type="checkbox" id="cocinero-eval-2" class="checklist-input" data-item-id="cocinero-eval-2" onchange="onCheckboxChange(this)">
-              <label for="cocinero-eval-2">Experiencia válida</label>
-            </div>
-            <div class="eval-item">
-              <input type="checkbox" id="cocinero-eval-3" class="checklist-input" data-item-id="cocinero-eval-3" onchange="onCheckboxChange(this)">
-              <label for="cocinero-eval-3">Documentación</label>
-            </div>
-            <div class="eval-item">
-              <input type="checkbox" id="cocinero-eval-4" class="checklist-input" data-item-id="cocinero-eval-4" onchange="onCheckboxChange(this)">
-              <label for="cocinero-eval-4">Referencias</label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Checklist -->
-      <div class="section-label">📋 Proceso de Onboarding</div>
-      <div class="checklist" id="cocineros-checklist">
-        <!-- F1 -->
-        <div class="checklist-section">
-          <div class="checklist-header">
-            <span>F1 — <span class="phase-label">Captación</span></span>
-          </div>
-          <div class="checklist-items">
-            <div class="checklist-item">
-              <input type="checkbox" id="cocinero-f1-0" class="checklist-input" data-item-id="cocinero-f1-0" onchange="onCheckboxChange(this)">
-              <label for="cocinero-f1-0">Recibir postulación del candidato a cargo</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="cocinero-f1-1" class="checklist-input" data-item-id="cocinero-f1-1" onchange="onCheckboxChange(this)">
-              <label for="cocinero-f1-1">Aplicar filtro cocina</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="cocinero-f1-2" class="checklist-input" data-item-id="cocinero-f1-2" onchange="onCheckboxChange(this)">
-              <label for="cocinero-f1-2">Presentar a Llige</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="cocinero-f1-3" class="checklist-input" data-item-id="cocinero-f1-3" onchange="onCheckboxChange(this)">
-              <label for="cocinero-f1-3">Coordinar entrevista online</label>
-            </div>
-          </div>
-        </div>
-
-        <!-- F2 -->
-        <div class="checklist-section">
-          <div class="checklist-header">
-            <span>F2 — <span class="phase-label">Entrevista online</span></span>
-          </div>
-          <div class="checklist-items">
-            <div class="checklist-note">Modalidad: Videollamada</div>
-            <div class="checklist-item">
-              <input type="checkbox" id="cocinero-f2-0" class="checklist-input" data-item-id="cocinero-f2-0" onchange="onCheckboxChange(this)">
-              <label for="cocinero-f2-0">Coordinar fecha y hora</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="cocinero-f2-1" class="checklist-input" data-item-id="cocinero-f2-1" onchange="onCheckboxChange(this)">
-              <label for="cocinero-f2-1">Realizar entrevista</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="cocinero-f2-2" class="checklist-input" data-item-id="cocinero-f2-2" onchange="onCheckboxChange(this)">
-              <label for="cocinero-f2-2">Evaluar fit BC</label>
-            </div>
-          </div>
-        </div>
-
-        <!-- F3 -->
-        <div class="checklist-section">
-          <div class="checklist-header">
-            <span>F3 — <span class="phase-label">Día de prueba</span></span>
-          </div>
-          <div class="checklist-items">
-            <div class="checklist-item">
-              <input type="checkbox" id="cocinero-f3-0" class="checklist-input" data-item-id="cocinero-f3-0" onchange="onCheckboxChange(this)">
-              <label for="cocinero-f3-0">Coordinar con jefatura cocina</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="cocinero-f3-1" class="checklist-input" data-item-id="cocinero-f3-1" onchange="onCheckboxChange(this)">
-              <label for="cocinero-f3-1">Verificar llegada</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="cocinero-f3-2" class="checklist-input" data-item-id="cocinero-f3-2" onchange="onCheckboxChange(this)">
-              <label for="cocinero-f3-2">Hablar al final del día</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="cocinero-f3-3" class="checklist-input" data-item-id="cocinero-f3-3" onchange="onCheckboxChange(this)">
-              <label for="cocinero-f3-3">Feedback jefatura cocina</label>
-            </div>
-            <div class="decision-box">
-              <button class="decision-btn decision-yes" onclick="alert('✓ Continúa a siguiente fase')">✓ Continúa</button>
-              <button class="decision-btn decision-no" onclick="alert('✗ Termina proceso')">✗ No Continúa</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- F4 -->
-        <div class="checklist-section">
-          <div class="checklist-header">
-            <span>F4 — <span class="phase-label">Seguimiento contratación</span></span>
-          </div>
-          <div class="checklist-items">
-            <div class="checklist-item">
-              <input type="checkbox" id="cocinero-f4-0" class="checklist-input" data-item-id="cocinero-f4-0" onchange="onCheckboxChange(this)">
-              <label for="cocinero-f4-0">Cierre día 3</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="cocinero-f4-1" class="checklist-input" data-item-id="cocinero-f4-1" onchange="onCheckboxChange(this)">
-              <label for="cocinero-f4-1">Cierre semana 1</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="cocinero-f4-2" class="checklist-input" data-item-id="cocinero-f4-2" onchange="onCheckboxChange(this)">
-              <label for="cocinero-f4-2">Cierre semana 2</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="cocinero-f4-3" class="checklist-input" data-item-id="cocinero-f4-3" onchange="onCheckboxChange(this)">
-              <label for="cocinero-f4-3">Emitir contrato</label>
-            </div>
-            <div class="profile-warning">⚠ Antes del contrato indefinido: consultar con jefatura si seguirá antes de emitirlo.</div>
-          </div>
-        </div>
-
-        <!-- F5 -->
-        <div class="checklist-section">
-          <div class="checklist-header">
-            <span>F5 — <span class="phase-label">Seguimiento onboarding</span></span>
-          </div>
-          <div class="checklist-items">
-            <div class="checklist-note">Aplicar mismos plazos que sala</div>
-            <div class="checklist-item">
-              <input type="checkbox" id="cocinero-f5-0" class="checklist-input" data-item-id="cocinero-f5-0" onchange="onCheckboxChange(this)">
-              <label for="cocinero-f5-0">Contactar jefatura cocina</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="cocinero-f5-1" class="checklist-input" data-item-id="cocinero-f5-1" onchange="onCheckboxChange(this)">
-              <label for="cocinero-f5-1">Preguntar estado onboarding</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="cocinero-f5-2" class="checklist-input" data-item-id="cocinero-f5-2" onchange="onCheckboxChange(this)">
-              <label for="cocinero-f5-2">Evaluar etapa capacitación</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="cocinero-f5-3" class="checklist-input" data-item-id="cocinero-f5-3" onchange="onCheckboxChange(this)">
-              <label for="cocinero-f5-3">Verificar estándares BC</label>
-            </div>
-            <div class="checklist-item">
-              <input type="checkbox" id="cocinero-f5-4" class="checklist-input" data-item-id="cocinero-f5-4" onchange="onCheckboxChange(this)">
-              <label for="cocinero-f5-4">Registrar avances</label>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal -->
-  <div id="modalOverlay" class="modal-overlay" onclick="closeModal(event)">
-    <div class="modal" onclick="event.stopPropagation()">
-      <h2>Crear Nuevo Proceso</h2>
-      <form onsubmit="submitNewProceso(event)">
-        <div class="form-group">
-          <label for="candidato">Nombre Candidato</label>
-          <input type="text" id="candidato" name="candidato" required placeholder="Ej: Juan Pérez">
-        </div>
-        <div class="form-group">
-          <label for="cargo">Cargo</label>
-          <select id="cargo" name="cargo" required>
-            <option value="">Seleccionar cargo...</option>
-            <option value="Garzón/a">Garzón/a</option>
-            <option value="Jefe de Local">Jefe de Local</option>
-            <option value="Sub Jefe">Sub Jefe</option>
-            <option value="Jefe de Cocina">Jefe de Cocina</option>
-            <option value="Sous Chef">Sous Chef</option>
-            <option value="Cocinero/a">Cocinero/a</option>
-            <option value="Copero/a">Copero/a</option>
-            <option value="Entrenador/a">Entrenador/a</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="local">Local</label>
-          <select id="local" name="local" required>
-            <option value="">Seleccionar local...</option>
-            <option value="BC1">BC1</option>
-            <option value="BC2">BC2</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="notas">Notas (opcional)</label>
-          <textarea id="notas" name="notas" placeholder="Ej: Referencia de Felipe..."></textarea>
-        </div>
-        <div class="modal-actions">
-          <button type="submit" class="modal-actions button btn-crear">Crear Proceso</button>
-          <button type="button" class="modal-actions button btn-cancelar" onclick="closeModal()">Cancelar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <footer>
-    Black Chicken · Documento interno · Uso exclusivo Recursos Humanos
-  </footer>
-
-  <script>
-    let activeProcesos = [];
-    let currentProcesoId = null;
-
-    // Initialize on page load
-    document.addEventListener('DOMContentLoaded', () => {
-      loadProcesos();
+/* ============ TWEAKS ============ */
+function useTweaks(){
+  const [t, setT] = React.useState(TWEAKS_DEFAULTS);
+  const [edit, setEdit] = React.useState(false);
+  React.useEffect(()=>{
+    const onMsg = (e)=>{
+      if(!e.data) return;
+      if(e.data.type==='__activate_edit_mode') setEdit(true);
+      if(e.data.type==='__deactivate_edit_mode') setEdit(false);
+    };
+    window.addEventListener('message', onMsg);
+    window.parent.postMessage({type:'__edit_mode_available'}, '*');
+    return ()=>window.removeEventListener('message', onMsg);
+  },[]);
+  const update = (patch)=>{
+    setT(prev=>{
+      const next = {...prev, ...patch};
+      window.parent.postMessage({type:'__edit_mode_set_keys', edits:patch}, '*');
+      return next;
     });
+  };
+  return [t, update, edit];
+}
 
-    // Load procesos from API
-    async function loadProcesos() {
-      try {
-        const res = await fetch('/api/procesos?status=active');
-        if (!res.ok) throw new Error('Failed to fetch procesos');
-        activeProcesos = await res.json();
-        renderActiveProcesses();
-      } catch (e) {
-        console.error('Error loading procesos:', e);
-        showToast('Error cargando procesos', true);
-        document.getElementById('activeProcesses').innerHTML = '<div class="empty-state">Error al cargar. Recarga la página.</div>';
-      }
-    }
+/* ============ COMPONENTS ============ */
+const Avatar = ({name, track, size=32}) => {
+  const c = TRACKS[track]?.color || '#d4af37';
+  return (
+    <div style={{
+      width:size, height:size, borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center',
+      background:`linear-gradient(135deg, ${c}33, ${c}15)`,
+      border:`1px solid ${c}66`,
+      color:c, fontSize:size*0.38, fontWeight:700, letterSpacing:'0.5px', flexShrink:0
+    }}>{initials(name)}</div>
+  );
+};
 
-    // Render active processes bar
-    function renderActiveProcesses() {
-      const container = document.getElementById('activeProcesses');
-      if (activeProcesos.length === 0) {
-        container.innerHTML = '<div class="empty-state">No hay procesos activos. Inicia uno con el botón +</div>';
-        return;
-      }
+const Tag = ({children, tone='default'}) => {
+  const tones = {
+    default:{bg:'#222', c:'#aaa'},
+    gold:{bg:'rgba(212,175,55,0.15)', c:'var(--gold)'},
+    bc1:{bg:'var(--bc1-dim)', c:'var(--bc1)'},
+    bc2:{bg:'var(--bc2-dim)', c:'var(--bc2)'},
+    red:{bg:'var(--red-dim)', c:'var(--red)'},
+    blue:{bg:'var(--blue-dim)', c:'var(--blue)'},
+  };
+  const s = tones[tone] || tones.default;
+  return <span style={{display:'inline-block', padding:'3px 8px', borderRadius:4, fontSize:10, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.8px', background:s.bg, color:s.c}}>{children}</span>;
+};
 
-      container.innerHTML = activeProcesos.map(p => `
-        <div class="proceso-card" onclick="selectProceso('${p.id}', '${p.cargo}')">
-          <div class="proceso-name">${p.candidato}</div>
-          <div class="proceso-meta">${p.cargo}</div>
-          <div class="progress-bar">
-            <div class="progress-fill" style="width: ${p.avance}%"></div>
+const localTone = (l) => l==='BC1'?'bc1':'bc2';
+
+/* Header */
+const AppHeader = ({procesos, onNew}) => {
+  const active = procesos.filter(p=>p.fase!=='F5' || p.avance<100).length;
+  const byPhase = phaseOrder.map(p => procesos.filter(pr=>pr.fase===p).length);
+  return (
+    <header style={{padding:'28px 40px 24px', borderBottom:'1px solid var(--border)', background:'linear-gradient(180deg, #121006 0%, var(--bg) 100%)', position:'relative', overflow:'hidden'}}>
+      <div style={{position:'absolute', top:-80, right:-60, width:320, height:320, borderRadius:'50%', background:'radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 65%)', pointerEvents:'none'}} />
+      <div style={{display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:24, position:'relative', zIndex:1}}>
+        <div>
+          <div style={{display:'flex', alignItems:'center', gap:10, marginBottom:4}}>
+            <div style={{width:24, height:24, borderRadius:5, background:'var(--gold)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14}}>🍗</div>
+            <span style={{fontSize:11, letterSpacing:'2px', color:'var(--gold)', fontWeight:700, textTransform:'uppercase'}}>Black Chicken · RRHH</span>
           </div>
-          <div style="font-size: 11px; color: #666; margin-top: 4px;">${p.avance}%</div>
+          <h1 className="serif" style={{fontSize:34, lineHeight:1.05, color:'#fff', fontWeight:600, letterSpacing:'-0.5px', marginBottom:6}}>
+            Procesos de Reclutamiento <span style={{fontStyle:'italic', color:'var(--gold)'}}>&amp; Onboarding</span>
+          </h1>
+          <p style={{fontSize:13, color:'var(--text-2)'}}>Pipeline operativo · Uso exclusivo RRHH · {active} procesos activos</p>
         </div>
-      `).join('');
-    }
-
-    // Select a proceso
-    function selectProceso(pageId, cargo) {
-      currentProcesoId = pageId;
-      const proceso = activeProcesos.find(p => p.id === pageId);
-
-      if (proceso && proceso.items_completados && proceso.items_completados.length > 0) {
-        // Uncheck all first
-        document.querySelectorAll('.checklist-input').forEach(cb => cb.checked = false);
-        // Check saved ones
-        proceso.items_completados.forEach(id => {
-          const cb = document.querySelector(`[data-item-id="${id}"]`);
-          if (cb) cb.checked = true;
-        });
-        updateAllProgressBars();
-      }
-
-      // Switch tab based on cargo
-      const cargoTab = {
-        'Garzón/a': 'garzones',
-        'Jefe de Local': 'jefatura',
-        'Sub Jefe': 'jefatura',
-        'Jefe de Cocina': 'cocineros',
-        'Sous Chef': 'cocineros',
-        'Cocinero/a': 'cocineros',
-        'Copero/a': 'garzones',
-        'Entrenador/a': 'garzones'
-      };
-      switchTab(cargoTab[cargo] || 'garzones');
-
-      // Highlight selected
-      document.querySelectorAll('.proceso-card').forEach(c => c.classList.remove('active'));
-      event.currentTarget.classList.add('active');
-
-      updateSaveBar();
-    }
-
-    // Switch tabs
-    function switchTab(tabName) {
-      // Hide all tabs
-      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-
-      // Show selected
-      document.getElementById(tabName).classList.add('active');
-      document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
-    }
-
-    // Update save bar UI (without triggering save)
-    function updateSaveBar(status) {
-      const bar = document.getElementById('save-bar');
-      if (!currentProcesoId) {
-        bar.className = 'save-bar no-proceso';
-        bar.innerHTML = `<span class="save-bar-hint">↑ Selecciona un proceso del panel superior para registrar avance en Notion</span>`;
-        return;
-      }
-      const proceso = activeProcesos.find(p => p.id === currentProcesoId);
-      const track = getCurrentTrack();
-      const allChecked = getCheckedItemIds(track);
-      const totalItems = getTotalItems(track);
-      const avance = totalItems > 0 ? Math.round((allChecked.length / totalItems) * 100) : 0;
-
-      const statusMap = {
-        saving: `<span class="save-bar-status saving">⏳ Guardando...</span>`,
-        saved:  `<span class="save-bar-status saved">✅ Guardado en Notion</span>`,
-        error:  `<span class="save-bar-status error">❌ Error al guardar</span>`,
-        idle:   `<span class="save-bar-status saved">● Notion sync activo</span>`
-      };
-
-      bar.className = 'save-bar';
-      bar.innerHTML = `
-        <div class="save-bar-left">
-          <div class="save-bar-dot"></div>
-          <span class="save-bar-name">${proceso ? proceso.candidato : ''}</span>
+        <div style={{display:'flex', gap:8}}>
+          <button style={{padding:'9px 14px', borderRadius:8, background:'transparent', border:'1px solid var(--border-2)', color:'var(--text)', fontSize:12, fontWeight:600}}>
+            Organigrama
+          </button>
+          <button onClick={onNew} style={{padding:'9px 16px', borderRadius:8, background:'var(--gold)', color:'#0a0a0a', fontWeight:700, fontSize:13, boxShadow:'0 4px 16px rgba(212,175,55,0.25)'}}>
+            + Nuevo proceso
+          </button>
         </div>
-        <span class="save-bar-pct">${avance}% completado</span>
-        ${statusMap[status || 'idle']}
-      `;
+      </div>
+
+      {/* Phase stat strip */}
+      <div style={{display:'grid', gridTemplateColumns:'repeat(5, 1fr)', gap:10, marginTop:22, position:'relative', zIndex:1}}>
+        {PHASES.map((ph, i) => (
+          <div key={ph.id} style={{background:'rgba(255,255,255,0.02)', border:'1px solid var(--border)', borderRadius:10, padding:'12px 14px', display:'flex', flexDirection:'column', gap:4}}>
+            <div style={{display:'flex', alignItems:'baseline', justifyContent:'space-between'}}>
+              <span style={{fontSize:10, letterSpacing:'1.5px', color:'var(--text-3)', fontWeight:700}}>{ph.id}</span>
+              <span style={{fontSize:22, fontWeight:700, color:'#fff', fontFamily:'Fraunces'}}>{byPhase[i]}</span>
+            </div>
+            <div style={{fontSize:12, fontWeight:600, color:'var(--text)'}}>{ph.name}</div>
+            <div style={{fontSize:10, color:'var(--text-3)'}}>{ph.sub}</div>
+          </div>
+        ))}
+      </div>
+    </header>
+  );
+};
+
+/* Filter bar */
+const FilterBar = ({track, setTrack, query, setQuery, local, setLocal, showDiscarded, setShowDiscarded, discardedCount}) => (
+  <div style={{display:'flex', alignItems:'center', gap:12, padding:'16px 40px', borderBottom:'1px solid var(--border)', flexWrap:'wrap'}}>
+    <div style={{display:'flex', gap:4, background:'var(--card)', padding:4, borderRadius:8, border:'1px solid var(--border)'}}>
+      {[['all','Todos','📋'], ['garzones','Garzones','🍽️'], ['jefatura','Jefatura','👑'], ['cocineros','Cocineros','🔥']].map(([k, label, ico]) => (
+        <button key={k} onClick={()=>setTrack(k)} style={{
+          padding:'6px 12px', borderRadius:6, fontSize:12, fontWeight:600,
+          background: track===k ? 'var(--card-3)' : 'transparent',
+          color: track===k ? '#fff' : 'var(--text-2)',
+          border: track===k ? '1px solid var(--border-2)' : '1px solid transparent',
+        }}>{ico} {label}</button>
+      ))}
+    </div>
+
+    <div style={{display:'flex', gap:4, background:'var(--card)', padding:4, borderRadius:8, border:'1px solid var(--border)'}}>
+      {['all','BC1','BC2'].map(l => (
+        <button key={l} onClick={()=>setLocal(l)} style={{
+          padding:'6px 12px', borderRadius:6, fontSize:12, fontWeight:600,
+          background: local===l ? 'var(--card-3)' : 'transparent',
+          color: local===l ? '#fff' : 'var(--text-2)',
+        }}>{l==='all'?'Ambos locales':l}</button>
+      ))}
+    </div>
+
+    <div style={{flex:1, position:'relative'}}>
+      <span style={{position:'absolute', left:12, top:'50%', transform:'translateY(-50%)', color:'var(--text-3)', fontSize:13}}>🔍</span>
+      <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar candidato, cargo, notas…"
+        style={{width:'100%', padding:'9px 12px 9px 36px', background:'var(--card)', border:'1px solid var(--border)', borderRadius:8, color:'#fff', fontSize:13, outline:'none'}} />
+    </div>
+
+    <button onClick={()=>setShowDiscarded(!showDiscarded)} title="Mostrar u ocultar descartados"
+      style={{padding:'7px 11px', borderRadius:8, fontSize:11, fontWeight:600, letterSpacing:'0.5px',
+        background: showDiscarded ? 'var(--red-dim)' : 'var(--card)',
+        border: `1px solid ${showDiscarded ? 'var(--red)':'var(--border)'}`,
+        color: showDiscarded ? 'var(--red)':'var(--text-2)', display:'flex', alignItems:'center', gap:6}}>
+      <span>🗂</span>
+      <span>{showDiscarded ? 'Ocultando activos' : 'Ver descartados'}</span>
+      {discardedCount>0 && <span style={{background:'var(--red)', color:'#0a0a0a', fontSize:10, fontWeight:700, padding:'1px 6px', borderRadius:10}}>{discardedCount}</span>}
+    </button>
+
+    <div style={{fontSize:11, color:'var(--text-3)', letterSpacing:'1.2px', textTransform:'uppercase', fontWeight:700}}>
+      Actualizado <span style={{color:'var(--text-2)'}}>hoy 09:42</span>
+    </div>
+  </div>
+);
+
+/* Candidate card (kanban) */
+const KanbanCard = ({proc, active, onClick, onDragStart}) => {
+  const { done, total, pct } = progressByPhase(proc, proc.fase);
+  return (
+    <div
+      draggable onDragStart={(e)=>{ e.dataTransfer.setData('text/plain', proc.id); onDragStart?.(proc); }}
+      onClick={()=>onClick(proc)}
+      className="kcard"
+      style={{
+        background: active ? 'var(--card-3)' : 'var(--card-2)',
+        border: `1px solid ${active ? 'var(--gold)' : 'var(--border)'}`,
+        borderRadius:10, padding:12, cursor:'pointer', transition:'all 0.15s',
+        display:'flex', flexDirection:'column', gap:10,
+        boxShadow: active ? '0 0 0 3px rgba(212,175,55,0.12)' : 'none'
+      }}>
+      <div style={{display:'flex', gap:10, alignItems:'center'}}>
+        <Avatar name={proc.candidato} track={proc.track} size={30} />
+        <div style={{flex:1, minWidth:0}}>
+          <div className="kcard-name" style={{fontSize:13, fontWeight:600, color:'#fff', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>{proc.candidato}</div>
+          <div style={{fontSize:10, color:'var(--text-3)'}}>{proc.idProceso} · {formatAge(proc.fechaInicio)}</div>
+        </div>
+      </div>
+      <div style={{fontSize:11, color:'var(--text-2)', display:'flex', gap:6, alignItems:'center'}}>
+        <Tag tone={localTone(proc.local)}>{proc.local}</Tag>
+        <span style={{whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>{proc.cargo}</span>
+      </div>
+      {proc.notas && (
+        <div style={{fontSize:11, color:'var(--text-2)', fontStyle:'italic', lineHeight:1.4, borderLeft:'2px solid var(--border-2)', paddingLeft:8,
+          display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical', overflow:'hidden'}}>
+          {proc.notas}
+        </div>
+      )}
+      <div>
+        <div style={{display:'flex', justifyContent:'space-between', fontSize:10, color:'var(--text-3)', letterSpacing:'1px', fontWeight:700, marginBottom:4}}>
+          <span>{proc.fase} · {done}/{total}</span>
+          <span style={{color: pct===100 ? 'var(--bc1)' : 'var(--text-2)'}}>{pct}%</span>
+        </div>
+        <div style={{height:3, background:'#0a0a0a', borderRadius:2, overflow:'hidden'}}>
+          <div style={{height:'100%', width:`${pct}%`, background: pct===100 ? 'var(--bc1)' : 'var(--gold)', transition:'width 0.3s'}} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const KanbanBoard = ({procesos, onOpen, activeId, onMove}) => {
+  const [dragOver, setDragOver] = React.useState(null);
+  return (
+    <div style={{padding:'20px 40px', display:'grid', gridTemplateColumns:'repeat(5, 1fr)', gap:12, alignItems:'start'}}>
+      {PHASES.map(ph => {
+        const col = procesos.filter(p => p.fase === ph.id);
+        const hoverOn = dragOver === ph.id;
+        return (
+          <div key={ph.id}
+            onDragOver={(e)=>{ e.preventDefault(); setDragOver(ph.id); }}
+            onDragLeave={()=>setDragOver(null)}
+            onDrop={(e)=>{
+              e.preventDefault(); setDragOver(null);
+              const id = +e.dataTransfer.getData('text/plain');
+              if (id) onMove(id, ph.id);
+            }}
+            style={{
+              background:'var(--card)', borderRadius:12,
+              border:`1px solid ${hoverOn ? 'var(--gold)' : 'var(--border)'}`,
+              transition:'border-color 0.15s', minHeight: 320,
+            }}>
+            <div style={{padding:'12px 14px', borderBottom:'1px solid var(--border)', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+              <div>
+                <div style={{fontSize:10, color:'var(--gold)', fontWeight:700, letterSpacing:'1.5px'}}>{ph.id}</div>
+                <div style={{fontSize:13, color:'#fff', fontWeight:600}}>{ph.name}</div>
+              </div>
+              <div style={{fontSize:11, color:'var(--text-3)', fontWeight:700,
+                background:'var(--card-3)', padding:'3px 8px', borderRadius:10, minWidth:24, textAlign:'center'}}>{col.length}</div>
+            </div>
+            <div className="kcol-items" style={{padding:10, display:'flex', flexDirection:'column', gap:10}}>
+              {col.length === 0 && (
+                <div style={{padding:'24px 12px', textAlign:'center', color:'var(--text-3)', fontSize:11, fontStyle:'italic', border:'1px dashed var(--border)', borderRadius:8}}>
+                  Sin candidatos
+                </div>
+              )}
+              {col.map(p => (
+                <KanbanCard key={p.id} proc={p} active={activeId===p.id} onClick={onOpen} />
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+/* List view */
+const ListView = ({procesos, onOpen, activeId}) => (
+  <div style={{padding:'20px 40px'}}>
+    <div style={{background:'var(--card)', border:'1px solid var(--border)', borderRadius:12, overflow:'hidden'}}>
+      <div style={{display:'grid', gridTemplateColumns:'2fr 1fr 0.8fr 1fr 1.2fr 0.8fr', padding:'12px 16px', fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, textTransform:'uppercase', borderBottom:'1px solid var(--border)', background:'var(--card-2)'}}>
+        <div>Candidato</div><div>Cargo</div><div>Local</div><div>Fase</div><div>Avance</div><div style={{textAlign:'right'}}>Inicio</div>
+      </div>
+      {procesos.map(p => {
+        const { pct } = progressByPhase(p, p.fase);
+        return (
+          <div key={p.id} onClick={()=>onOpen(p)}
+            style={{display:'grid', gridTemplateColumns:'2fr 1fr 0.8fr 1fr 1.2fr 0.8fr', alignItems:'center', padding:'14px 16px', borderBottom:'1px solid var(--border)', cursor:'pointer', transition:'background 0.15s', background: activeId===p.id ? 'rgba(212,175,55,0.05)':'transparent'}}>
+            <div style={{display:'flex', gap:10, alignItems:'center'}}>
+              <Avatar name={p.candidato} track={p.track} size={30} />
+              <div>
+                <div style={{fontSize:13, fontWeight:600, color:'#fff'}}>{p.candidato}</div>
+                <div style={{fontSize:10, color:'var(--text-3)'}}>{p.idProceso}</div>
+              </div>
+            </div>
+            <div style={{fontSize:12, color:'var(--text)'}}>{p.cargo}</div>
+            <div><Tag tone={localTone(p.local)}>{p.local}</Tag></div>
+            <div style={{fontSize:12, color:'var(--gold)', fontWeight:600}}>{p.fase} · {PHASES.find(ph=>ph.id===p.fase).name}</div>
+            <div style={{display:'flex', alignItems:'center', gap:10}}>
+              <div style={{flex:1, height:4, background:'#0a0a0a', borderRadius:2, overflow:'hidden'}}>
+                <div style={{height:'100%', width:`${p.avance}%`, background:'var(--gold)'}} />
+              </div>
+              <span style={{fontSize:11, color:'var(--text-2)', minWidth:32, textAlign:'right'}}>{p.avance}%</span>
+            </div>
+            <div style={{fontSize:11, color:'var(--text-3)', textAlign:'right'}}>{formatAge(p.fechaInicio)}</div>
+          </div>
+        );
+      })}
+      {procesos.length===0 && <div style={{padding:40, textAlign:'center', color:'var(--text-3)'}}>Sin procesos que mostrar</div>}
+    </div>
+  </div>
+);
+
+/* Candidate drawer */
+const CandidateDrawer = ({proc, onClose, onToggle, onAdvance, onUpdateNotas, onDiscard, onRestore, onDelete}) => {
+  if (!proc) return null;
+  const profile = PROFILES[proc.track];
+  const [notesDraft, setNotesDraft] = React.useState(proc.notas);
+  React.useEffect(()=>setNotesDraft(proc.notas), [proc.id]);
+
+  const phaseIdx = phaseOrder.indexOf(proc.fase);
+  return (
+    <>
+      <div onClick={onClose} style={{position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', zIndex:40, backdropFilter:'blur(4px)'}} />
+      <aside style={{
+        position:'fixed', top:0, right:0, bottom:0, width:'min(560px, 90vw)', zIndex:50,
+        background:'var(--bg-2)', borderLeft:'1px solid var(--border)', overflowY:'auto',
+        boxShadow:'-30px 0 60px rgba(0,0,0,0.5)',
+        animation:'slideIn 0.25s ease-out'
+      }}>
+        <style>{`@keyframes slideIn { from{transform:translateX(40px);opacity:0} to{transform:translateX(0);opacity:1} }`}</style>
+
+        {/* Top */}
+        <div style={{padding:'24px 28px 20px', borderBottom:'1px solid var(--border)', position:'sticky', top:0, background:'var(--bg-2)', zIndex:2}}>
+          <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:16, marginBottom:16}}>
+            <div style={{display:'flex', gap:14, alignItems:'center'}}>
+              <Avatar name={proc.candidato} track={proc.track} size={48} />
+              <div>
+                <h2 className="serif" style={{fontSize:22, color:'#fff', fontWeight:600, letterSpacing:'-0.3px'}}>{proc.candidato}</h2>
+                <div style={{display:'flex', gap:6, alignItems:'center', marginTop:4}}>
+                  <span style={{fontSize:11, color:'var(--text-3)', fontWeight:700, letterSpacing:'1px'}}>{proc.idProceso}</span>
+                  <span style={{color:'var(--text-3)'}}>·</span>
+                  <span style={{fontSize:12, color:'var(--text-2)'}}>{proc.cargo}</span>
+                  <Tag tone={localTone(proc.local)}>{proc.local}</Tag>
+                </div>
+              </div>
+            </div>
+            <button onClick={onClose} style={{color:'var(--text-2)', fontSize:20, padding:4}}>✕</button>
+          </div>
+
+          {/* Phase stepper */}
+          <div style={{display:'grid', gridTemplateColumns:'repeat(5, 1fr)', gap:4, marginBottom:6}}>
+            {PHASES.map((ph, i) => {
+              const { done, total } = progressByPhase({ ...proc }, ph.id);
+              const isCurrent = i === phaseIdx;
+              const isPast = i < phaseIdx || (i===phaseIdx && done===total && total>0);
+              const isFuture = i > phaseIdx;
+              return (
+                <div key={ph.id} onClick={()=>onAdvance(proc.id, ph.id)}
+                  style={{cursor:'pointer', padding:'8px 6px', borderRadius:6,
+                    background: isCurrent ? 'var(--gold-dim)' : 'transparent',
+                    border: isCurrent ? '1px solid var(--gold)' : '1px solid transparent',
+                    opacity: isFuture ? 0.45 : 1
+                  }}>
+                  <div style={{height:3, background: isPast ? 'var(--bc1)' : isCurrent ? 'var(--gold)' : 'var(--border-2)', borderRadius:2, marginBottom:6}} />
+                  <div style={{fontSize:10, color: isCurrent ? 'var(--gold)' : 'var(--text-3)', fontWeight:700, letterSpacing:'1px'}}>{ph.id}</div>
+                  <div style={{fontSize:11, color: isCurrent ? '#fff' : 'var(--text-2)', fontWeight:600}}>{ph.name}</div>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'0.5px'}}>Click una fase para moverlo · Drag en el kanban también funciona</div>
+        </div>
+
+        {/* Profile & Eval */}
+        <section style={{padding:'20px 28px', borderBottom:'1px solid var(--border)'}}>
+          <h3 style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, textTransform:'uppercase', marginBottom:10}}>Perfil del cargo</h3>
+          <div style={{background:'var(--card)', border:'1px solid var(--border)', borderRadius:10, padding:16}}>
+            <div className="serif" style={{fontSize:15, color:'#fff', fontWeight:600, marginBottom:8}}>{profile.title}</div>
+            <dl style={{display:'grid', gridTemplateColumns:'110px 1fr', gap:'6px 12px', fontSize:12}}>
+              <dt style={{color:'var(--text-3)', fontWeight:600}}>Experiencia</dt><dd style={{color:'var(--text)'}}>{profile.experience}</dd>
+              <dt style={{color:'var(--text-3)', fontWeight:600}}>Rango</dt><dd style={{color:'var(--text)'}}>{profile.age}</dd>
+              <dt style={{color:'var(--text-3)', fontWeight:600}}>Competencias</dt><dd style={{color:'var(--text)'}}>{profile.competencies}</dd>
+              <dt style={{color:'var(--text-3)', fontWeight:600}}>Requisitos</dt><dd style={{color:'var(--text)'}}>{profile.requisitos}</dd>
+            </dl>
+            <div style={{marginTop:12, padding:'10px 12px', background:'var(--gold-dim)', borderLeft:'3px solid var(--gold)', borderRadius:4, fontSize:12, color:'var(--gold)'}}>
+              ⚡ {profile.highlight}
+            </div>
+          </div>
+
+          {profile.eval.length>0 && (
+            <div style={{marginTop:14}}>
+              <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, textTransform:'uppercase', marginBottom:8}}>Pauta de evaluación</div>
+              <div style={{display:'grid', gap:6}}>
+                {profile.eval.map((it, i) => {
+                  const idKey = `${proc.track}-eval-${i}`;
+                  const checked = proc.completados.includes(idKey);
+                  return (
+                    <label key={i} style={{display:'flex', gap:10, alignItems:'center', padding:'8px 10px', background:'var(--card)', border:'1px solid var(--border)', borderRadius:6, cursor:'pointer'}}>
+                      <input type="checkbox" checked={checked} onChange={()=>onToggle(proc.id, idKey)} style={{accentColor:'var(--gold)', width:16, height:16}} />
+                      <span style={{fontSize:12, color: checked ? 'var(--gold)':'var(--text)', textDecoration: checked?'line-through':'none'}}>{it}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* Checklists */}
+        <section style={{padding:'20px 28px', borderBottom:'1px solid var(--border)'}}>
+          <h3 style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, textTransform:'uppercase', marginBottom:12}}>Checklist por fase</h3>
+          {phaseOrder.map(phaseId => {
+            const items = CHECKLISTS[proc.track][phaseId] || [];
+            const ph = PHASES.find(p=>p.id===phaseId);
+            const { done, total, pct } = progressByPhase(proc, phaseId);
+            const isCurrent = phaseId === proc.fase;
+            return (
+              <details key={phaseId} open={isCurrent} style={{marginBottom:8, background:'var(--card)', border:`1px solid ${isCurrent ? 'var(--gold)' : 'var(--border)'}`, borderRadius:10, overflow:'hidden'}}>
+                <summary style={{padding:'12px 14px', display:'flex', alignItems:'center', gap:10, cursor:'pointer', listStyle:'none'}}>
+                  <div style={{fontSize:10, color:'var(--gold)', fontWeight:700, letterSpacing:'1px'}}>{phaseId}</div>
+                  <div style={{fontSize:13, color:'#fff', fontWeight:600, flex:1}}>{ph.name}</div>
+                  <div style={{fontSize:11, color:'var(--text-2)'}}>{done}/{total}</div>
+                  <div style={{width:48, height:3, background:'#0a0a0a', borderRadius:2, overflow:'hidden'}}>
+                    <div style={{height:'100%', width:`${pct}%`, background: pct===100 ? 'var(--bc1)' : 'var(--gold)'}} />
+                  </div>
+                </summary>
+                <div style={{padding:'4px 14px 14px', display:'grid', gap:6}}>
+                  {items.map((text, i) => {
+                    const idKey = `${proc.track}-${phaseId.toLowerCase()}-${i}`;
+                    const checked = proc.completados.includes(idKey);
+                    return (
+                      <label key={i} style={{display:'flex', gap:10, alignItems:'flex-start', padding:'9px 10px', background:'var(--card-2)', border:'1px solid var(--border)', borderRadius:6, cursor:'pointer'}}>
+                        <input type="checkbox" checked={checked} onChange={()=>onToggle(proc.id, idKey)} style={{accentColor:'var(--gold)', width:16, height:16, marginTop:1, flexShrink:0}} />
+                        <span style={{fontSize:12.5, lineHeight:1.5, color: checked ? 'var(--gold)':'var(--text)', textDecoration: checked?'line-through':'none'}}>{text}</span>
+                      </label>
+                    );
+                  })}
+                  {phaseId==='F3' && (
+                    <div style={{display:'flex', gap:8, marginTop:8}}>
+                      <button onClick={()=>onAdvance(proc.id, 'F4')} style={{flex:1, padding:10, background:'rgba(106,184,106,0.15)', border:'1px solid var(--bc1)', color:'var(--bc1)', borderRadius:6, fontSize:11, fontWeight:700, letterSpacing:'1px', textTransform:'uppercase'}}>✓ Continúa a F4</button>
+                      <button style={{flex:1, padding:10, background:'rgba(224,128,128,0.12)', border:'1px solid var(--red)', color:'var(--red)', borderRadius:6, fontSize:11, fontWeight:700, letterSpacing:'1px', textTransform:'uppercase'}}>✗ Termina proceso</button>
+                    </div>
+                  )}
+                  {phaseId==='F4' && (
+                    <div style={{padding:'10px 12px', background:'rgba(224,128,128,0.08)', borderLeft:'3px solid var(--red)', borderRadius:4, fontSize:11.5, color:'var(--text)', marginTop:6}}>
+                      ⚠️ Antes del contrato indefinido: consultar con jefatura si seguirá antes de emitirlo.
+                    </div>
+                  )}
+                </div>
+              </details>
+            );
+          })}
+        </section>
+
+        {/* Discard banner */}
+        {proc.descartado && (
+          <section style={{padding:'16px 28px', background:'rgba(224,128,128,0.06)', borderBottom:'1px solid var(--border)'}}>
+            <div style={{display:'flex', alignItems:'flex-start', gap:10}}>
+              <div style={{fontSize:18}}>🚫</div>
+              <div style={{flex:1}}>
+                <div style={{fontSize:12, color:'var(--red)', fontWeight:700, letterSpacing:'1px', textTransform:'uppercase'}}>Proceso descartado</div>
+                <div style={{fontSize:12, color:'var(--text-2)', marginTop:2}}>
+                  <strong style={{color:'var(--text)'}}>Motivo:</strong> {proc.motivoDescarte || '—'}
+                </div>
+                <div style={{fontSize:11, color:'var(--text-3)', marginTop:2}}>Descartado {proc.fechaDescarte ? `el ${proc.fechaDescarte}` : ''}</div>
+              </div>
+              <button onClick={()=>onRestore(proc.id)} style={{padding:'7px 12px', background:'var(--bc1-dim)', border:'1px solid var(--bc1)', color:'var(--bc1)', borderRadius:6, fontSize:11, fontWeight:700, letterSpacing:'0.8px', textTransform:'uppercase'}}>↺ Restaurar</button>
+            </div>
+          </section>
+        )}
+
+        {/* Notes */}
+        <section style={{padding:'20px 28px 20px'}}>
+          <h3 style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, textTransform:'uppercase', marginBottom:10}}>Notas del proceso</h3>
+          <textarea
+            value={notesDraft}
+            onChange={e=>setNotesDraft(e.target.value)}
+            onBlur={()=>onUpdateNotas(proc.id, notesDraft)}
+            placeholder="Observaciones, feedback de jefaturas, pendientes…"
+            style={{width:'100%', minHeight:110, padding:14, background:'var(--card)', border:'1px solid var(--border)', borderRadius:10, color:'var(--text)', fontSize:13, resize:'vertical', lineHeight:1.55, outline:'none'}} />
+          <div style={{display:'flex', justifyContent:'space-between', marginTop:10, fontSize:11, color:'var(--text-3)'}}>
+            <span>Proceso iniciado {formatAge(proc.fechaInicio)} · {proc.fechaInicio}</span>
+            <span>Se guarda en Notion al desenfocar</span>
+          </div>
+        </section>
+
+        {/* Danger zone */}
+        <section style={{padding:'0 28px 40px'}}>
+          <div style={{background:'var(--card)', border:'1px solid var(--border)', borderRadius:10, padding:16}}>
+            <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, textTransform:'uppercase', marginBottom:10}}>Acciones del proceso</div>
+            {!proc.descartado && (
+              <button onClick={()=>onDiscard(proc.id)} style={{width:'100%', padding:'10px 12px', background:'rgba(224,128,128,0.08)', border:'1px solid rgba(224,128,128,0.35)', color:'var(--red)', borderRadius:8, fontSize:12, fontWeight:600, textAlign:'left', display:'flex', alignItems:'center', gap:10, marginBottom:8}}>
+                <span style={{fontSize:14}}>🚫</span>
+                <span style={{flex:1}}>Descartar candidato</span>
+                <span style={{fontSize:10, color:'var(--text-3)', letterSpacing:'0.5px'}}>Queda registro</span>
+              </button>
+            )}
+            <button onClick={()=>{
+              if (confirm(`¿Eliminar definitivamente a ${proc.candidato}?\n\nEsta acción no se puede deshacer y borra el registro de Notion.`)) onDelete(proc.id);
+            }} style={{width:'100%', padding:'10px 12px', background:'transparent', border:'1px solid var(--border-2)', color:'var(--text-3)', borderRadius:8, fontSize:12, fontWeight:600, textAlign:'left', display:'flex', alignItems:'center', gap:10}}>
+              <span style={{fontSize:14}}>🗑</span>
+              <span style={{flex:1}}>Eliminar definitivamente</span>
+              <span style={{fontSize:10, color:'var(--text-3)', letterSpacing:'0.5px'}}>Sin registro</span>
+            </button>
+          </div>
+        </section>
+      </aside>
+    </>
+  );
+};
+
+/* Discard Modal */
+const DiscardModal = ({proc, onClose, onConfirm}) => {
+  const [reason, setReason] = React.useState('');
+  const [custom, setCustom] = React.useState('');
+  if (!proc) return null;
+  const PRESETS = ['No cumple perfil','No se presentó al día de prueba','Desistió el candidato','Referencias negativas','Documentación incompleta','Desempeño insuficiente en prueba'];
+  const final = reason==='__custom' ? custom : reason;
+  return (
+    <div onClick={onClose} style={{position:'fixed', inset:0, background:'rgba(0,0,0,0.75)', zIndex:200, display:'flex', alignItems:'center', justifyContent:'center', backdropFilter:'blur(6px)'}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:'var(--bg-2)', border:'1px solid var(--red)', borderRadius:14, padding:26, width:'min(460px, 92vw)'}}>
+        <div style={{display:'flex', alignItems:'center', gap:10, marginBottom:6}}>
+          <span style={{fontSize:22}}>🚫</span>
+          <div className="serif" style={{fontSize:20, color:'#fff', fontWeight:600}}>Descartar a {proc.candidato}</div>
+        </div>
+        <div style={{fontSize:12, color:'var(--text-3)', marginBottom:18}}>El candidato queda archivado con motivo y fecha. Puedes restaurarlo luego.</div>
+
+        <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.2px', fontWeight:700, textTransform:'uppercase', marginBottom:8}}>Motivo</div>
+        <div style={{display:'grid', gap:6, marginBottom:12}}>
+          {PRESETS.map(p => (
+            <label key={p} style={{display:'flex', gap:10, alignItems:'center', padding:'9px 11px', background: reason===p?'var(--red-dim)':'var(--card)', border:`1px solid ${reason===p?'var(--red)':'var(--border)'}`, borderRadius:7, cursor:'pointer', fontSize:12.5, color: reason===p ? 'var(--red)' : 'var(--text)'}}>
+              <input type="radio" checked={reason===p} onChange={()=>setReason(p)} style={{accentColor:'var(--red)'}} />
+              {p}
+            </label>
+          ))}
+          <label style={{display:'flex', gap:10, alignItems:'center', padding:'9px 11px', background: reason==='__custom'?'var(--red-dim)':'var(--card)', border:`1px solid ${reason==='__custom'?'var(--red)':'var(--border)'}`, borderRadius:7, cursor:'pointer', fontSize:12.5}}>
+            <input type="radio" checked={reason==='__custom'} onChange={()=>setReason('__custom')} style={{accentColor:'var(--red)'}} />
+            Otro motivo…
+          </label>
+          {reason==='__custom' && (
+            <input autoFocus value={custom} onChange={e=>setCustom(e.target.value)} placeholder="Describe el motivo"
+              style={{...inputS, borderColor:'var(--red)'}} />
+          )}
+        </div>
+
+        <div style={{display:'flex', gap:10}}>
+          <button onClick={onClose} style={{flex:1, padding:11, background:'var(--card-3)', color:'var(--text)', borderRadius:8, fontWeight:600, fontSize:12, letterSpacing:'1px', textTransform:'uppercase'}}>Cancelar</button>
+          <button disabled={!final.trim()} onClick={()=>onConfirm(final.trim())}
+            style={{flex:2, padding:11, background: final.trim()?'var(--red)':'var(--card-3)', color:'#fff', borderRadius:8, fontWeight:700, fontSize:12, letterSpacing:'1px', textTransform:'uppercase', opacity: final.trim()?1:0.5, cursor: final.trim()?'pointer':'not-allowed'}}>
+            Descartar proceso
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* New Proceso Modal */
+const NewProcesoModal = ({open, onClose, onCreate}) => {
+  const [form, setForm] = React.useState({ candidato:'', cargo:'Garzón/a', local:'BC1', notas:'' });
+  if (!open) return null;
+  return (
+    <div onClick={onClose} style={{position:'fixed', inset:0, background:'rgba(0,0,0,0.7)', zIndex:100, display:'flex', alignItems:'center', justifyContent:'center', backdropFilter:'blur(6px)'}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:'var(--bg-2)', border:'1px solid var(--border)', borderRadius:14, padding:28, width:'min(440px, 92vw)'}}>
+        <div className="serif" style={{fontSize:22, color:'#fff', fontWeight:600, marginBottom:4}}>Nuevo proceso</div>
+        <div style={{fontSize:12, color:'var(--text-3)', marginBottom:22}}>Se inicializa en F1 Captación · fecha hoy</div>
+        <form onSubmit={(e)=>{ e.preventDefault(); if(!form.candidato.trim()) return; onCreate(form); onClose(); setForm({candidato:'', cargo:'Garzón/a', local:'BC1', notas:''}); }} style={{display:'grid', gap:14}}>
+          {[
+            {k:'candidato', label:'Nombre candidato', type:'input', placeholder:'Ej: Juan Pérez'},
+            {k:'cargo', label:'Cargo', type:'select', opts:['Garzón/a','Jefe de Local','Sub Jefe','Jefe de Cocina','Sous Chef','Cocinero/a','Copero/a','Entrenador/a']},
+            {k:'local', label:'Local', type:'select', opts:['BC1','BC2']},
+            {k:'notas', label:'Notas (opcional)', type:'textarea', placeholder:'Referencias, disponibilidad, comentarios…'},
+          ].map(f => (
+            <label key={f.k}>
+              <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.2px', fontWeight:700, textTransform:'uppercase', marginBottom:5}}>{f.label}</div>
+              {f.type==='input' && <input autoFocus={f.k==='candidato'} value={form[f.k]} onChange={e=>setForm({...form, [f.k]:e.target.value})} placeholder={f.placeholder} style={inputS} />}
+              {f.type==='select' && <select value={form[f.k]} onChange={e=>setForm({...form, [f.k]:e.target.value})} style={inputS}>{f.opts.map(o=><option key={o} value={o}>{o}</option>)}</select>}
+              {f.type==='textarea' && <textarea value={form[f.k]} onChange={e=>setForm({...form, [f.k]:e.target.value})} placeholder={f.placeholder} style={{...inputS, minHeight:72, resize:'vertical'}} />}
+            </label>
+          ))}
+          <div style={{display:'flex', gap:10, marginTop:8}}>
+            <button type="button" onClick={onClose} style={{flex:1, padding:11, background:'var(--card-3)', color:'var(--text)', borderRadius:8, fontWeight:600, fontSize:12, letterSpacing:'1px', textTransform:'uppercase'}}>Cancelar</button>
+            <button type="submit" style={{flex:2, padding:11, background:'var(--gold)', color:'#0a0a0a', borderRadius:8, fontWeight:700, fontSize:12, letterSpacing:'1px', textTransform:'uppercase'}}>Crear proceso</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+const inputS = { width:'100%', padding:'10px 12px', background:'var(--card)', border:'1px solid var(--border)', borderRadius:8, color:'var(--text)', fontSize:13, outline:'none' };
+
+/* Organigrama pane */
+const OrganigramaPanel = ({onClose}) => (
+  <div style={{padding:'24px 40px 40px'}}>
+    <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20}}>
+      <div>
+        <div style={{fontSize:10, color:'var(--gold)', letterSpacing:'2px', fontWeight:700}}>ORGANIGRAMA</div>
+        <h2 className="serif" style={{fontSize:26, color:'#fff', fontWeight:600}}>Equipo Black Chicken</h2>
+      </div>
+      <button onClick={onClose} style={{fontSize:12, color:'var(--text-2)', padding:'8px 12px', border:'1px solid var(--border-2)', borderRadius:6}}>Volver al pipeline</button>
+    </div>
+
+    {/* Gerencia */}
+    <div style={{marginBottom:24}}>
+      <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, marginBottom:10, textAlign:'center'}}>NIVEL 0 · GERENCIA GENERAL</div>
+      <div style={{display:'flex', gap:14, justifyContent:'center'}}>
+        {[{n:'Llige Yang', r:'Ventas, Marketing & Liderazgo'}, {n:'Daniel Fosk', r:'Operaciones'}].map(p=>(
+          <div key={p.n} style={{padding:'14px 20px', background:'var(--card)', border:'1px solid var(--gold)', borderRadius:10, minWidth:220, textAlign:'center'}}>
+            <Avatar name={p.n} track="garzones" size={36}/>
+            <div style={{fontSize:14, color:'#fff', fontWeight:600, marginTop:8}}>{p.n}</div>
+            <div style={{fontSize:11, color:'var(--text-2)'}}>{p.r}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Admin */}
+    <div style={{marginBottom:24}}>
+      <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, marginBottom:10, textAlign:'center'}}>NIVEL 1 · ADMINISTRACIÓN</div>
+      <div style={{display:'flex', justifyContent:'center'}}>
+        <div style={{padding:'14px 20px', background:'var(--card)', border:'1px solid var(--gold)', borderRadius:10, minWidth:220, textAlign:'center'}}>
+          <Avatar name="Nelsimar Rodriguez" track="jefatura" size={36}/>
+          <div style={{fontSize:14, color:'#fff', fontWeight:600, marginTop:8}}>Nelsimar Rodriguez</div>
+          <div style={{fontSize:11, color:'var(--text-2)'}}>Administradora · Ambos locales</div>
+        </div>
+      </div>
+    </div>
+
+    {/* BC1 / BC2 */}
+    <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, marginBottom:10, textAlign:'center'}}>NIVEL 2 · JEFATURAS POR LOCAL</div>
+    <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:14}}>
+      {[
+        { title:'BC1', color:'var(--bc1)', bg:'var(--bc1-dim)', team:[
+          ['Felipe Cofre','Jefe Local'],['Tomas Fuentes','Sub Jefe'],['Felipe Cornejo','Jefe Cocina'],
+          ['Jonathan Lobos','Sous Chef'],['Rossy Martinez','Entrenadora']
+        ] },
+        { title:'BC2', color:'var(--bc2)', bg:'var(--bc2-dim)', team:[
+          ['Saner Guillen','Jefe Local'],['Jennifer / Vanessa Ramonez','Jefe Cocina'],['Maria Angel','Jefe Salón']
+        ] },
+      ].map(loc => (
+        <div key={loc.title} style={{background:'var(--card)', border:`1px solid ${loc.color}`, borderRadius:12, padding:18}}>
+          <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:12}}>
+            <div style={{width:8, height:8, borderRadius:'50%', background:loc.color}} />
+            <div style={{fontSize:13, color:loc.color, fontWeight:700, letterSpacing:'1.5px'}}>🍗 {loc.title}</div>
+          </div>
+          <div style={{display:'grid', gap:8}}>
+            {loc.team.map(([name, role]) => (
+              <div key={name} style={{display:'flex', gap:10, alignItems:'center', padding:10, background:'var(--card-2)', borderRadius:8}}>
+                <Avatar name={name} track="garzones" size={28} />
+                <div>
+                  <div style={{fontSize:12.5, color:'#fff', fontWeight:600}}>{name}</div>
+                  <div style={{fontSize:11, color:'var(--text-3)'}}>{role}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+/* Tweaks panel */
+const TweaksPanel = ({tweaks, update, visible}) => {
+  if (!visible) return null;
+  const Row = ({label, children}) => (
+    <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px 14px', borderBottom:'1px solid var(--border)'}}>
+      <span style={{fontSize:11, color:'var(--text-2)', letterSpacing:'1px', fontWeight:600, textTransform:'uppercase'}}>{label}</span>
+      <div>{children}</div>
+    </div>
+  );
+  const Seg = ({value, options, onChange}) => (
+    <div style={{display:'flex', gap:2, background:'var(--card)', padding:2, borderRadius:6}}>
+      {options.map(o => (
+        <button key={o.v} onClick={()=>onChange(o.v)} style={{padding:'5px 9px', fontSize:11, fontWeight:600, borderRadius:4, background: value===o.v ? 'var(--card-3)' : 'transparent', color: value===o.v ? '#fff':'var(--text-2)'}}>{o.l}</button>
+      ))}
+    </div>
+  );
+  return (
+    <div style={{position:'fixed', bottom:20, right:20, width:300, background:'var(--bg-2)', border:'1px solid var(--gold)', borderRadius:12, zIndex:1000, boxShadow:'0 20px 50px rgba(0,0,0,0.6)', overflow:'hidden'}}>
+      <div style={{padding:'12px 14px', borderBottom:'1px solid var(--border)', display:'flex', alignItems:'center', gap:8}}>
+        <div style={{width:6, height:6, borderRadius:'50%', background:'var(--gold)'}} />
+        <div style={{fontSize:11, color:'var(--gold)', letterSpacing:'2px', fontWeight:700, textTransform:'uppercase'}}>Tweaks</div>
+      </div>
+      <Row label="Layout">
+        <Seg value={tweaks.layout} onChange={v=>update({layout:v})} options={[{v:'kanban',l:'Kanban'},{v:'list',l:'Lista'}]} />
+      </Row>
+      <Row label="Densidad">
+        <Seg value={tweaks.density} onChange={v=>update({density:v})} options={[{v:'comfortable',l:'Cómodo'},{v:'compact',l:'Compacto'}]} />
+      </Row>
+      <Row label="Acento">
+        <Seg value={tweaks.accent} onChange={v=>update({accent:v})} options={[{v:'gold',l:'Gold'},{v:'ember',l:'Ember'},{v:'brass',l:'Brass'},{v:'ice',l:'Ice'}]} />
+      </Row>
+      <Row label="Organigrama">
+        <Seg value={tweaks.showOrganigrama ? 'on':'off'} onChange={v=>update({showOrganigrama: v==='on'})} options={[{v:'on',l:'Mostrar'},{v:'off',l:'Ocultar'}]} />
+      </Row>
+    </div>
+  );
+};
+
+/* ============ APP ============ */
+function App(){
+  const [procesos, setProcesos] = React.useState(SAMPLE_PROCESOS);
+  const [activeProc, setActiveProc] = React.useState(null);
+  const [track, setTrack] = React.useState('all');
+  const [local, setLocal] = React.useState('all');
+  const [query, setQuery] = React.useState('');
+  const [showNew, setShowNew] = React.useState(false);
+  const [view, setView] = React.useState('pipeline'); // pipeline | organigrama
+  const [showDiscarded, setShowDiscarded] = React.useState(false);
+  const [discardTarget, setDiscardTarget] = React.useState(null);
+  const [tweaks, updateTweaks, editMode] = useTweaks();
+
+  // Apply accent
+  React.useEffect(()=>{
+    const a = ACCENTS[tweaks.accent] || ACCENTS.gold;
+    document.documentElement.style.setProperty('--gold', a.main);
+    document.documentElement.style.setProperty('--gold-soft', a.soft);
+    document.documentElement.style.setProperty('--gold-dim', a.dim);
+  }, [tweaks.accent]);
+
+  const filtered = procesos.filter(p => {
+    if (showDiscarded ? !p.descartado : p.descartado) return false;
+    if (track!=='all' && p.track!==track) return false;
+    if (local!=='all' && p.local!==local) return false;
+    if (query){
+      const q = query.toLowerCase();
+      if (!(p.candidato.toLowerCase().includes(q) || p.cargo.toLowerCase().includes(q) || (p.notas||'').toLowerCase().includes(q))) return false;
     }
+    return true;
+  });
+  const discardedCount = procesos.filter(p=>p.descartado).length;
 
-    // Auto-save to Notion (debounced)
-    async function autoSaveProceso() {
-      if (!currentProcesoId) return;
-      updateSaveBar('saving');
+  const activeProcData = activeProc ? procesos.find(p=>p.id===activeProc) : null;
 
-      const track = getCurrentTrack();
-      const allChecked = getCheckedItemIds(track);
-      const totalItems = getTotalItems(track);
-      const avance = totalItems > 0 ? Math.round((allChecked.length / totalItems) * 100) : 0;
+  const toggleItem = (procId, itemId) => {
+    setProcesos(prev => prev.map(p => {
+      if (p.id!==procId) return p;
+      const has = p.completados.includes(itemId);
+      const next = has ? p.completados.filter(x=>x!==itemId) : [...p.completados, itemId];
+      const avance = Math.round(next.filter(x=>!x.includes('-eval-')).length / getTotal(p.track) * 100);
+      return { ...p, completados: next, avance };
+    }));
+  };
+  const advancePhase = (procId, phase) => setProcesos(prev => prev.map(p => p.id===procId ? {...p, fase: phase} : p));
+  const updateNotas = (procId, notas) => setProcesos(prev => prev.map(p => p.id===procId ? {...p, notas} : p));
+  const discardProc = (procId, motivo) => {
+    const fecha = new Date().toISOString().slice(0,10);
+    setProcesos(prev => prev.map(p => p.id===procId ? {...p, descartado:true, motivoDescarte:motivo, fechaDescarte:fecha} : p));
+    setDiscardTarget(null);
+    setActiveProc(null);
+  };
+  const restoreProc = (procId) => setProcesos(prev => prev.map(p => p.id===procId ? {...p, descartado:false, motivoDescarte:undefined, fechaDescarte:undefined} : p));
+  const deleteProc = (procId) => { setProcesos(prev => prev.filter(p => p.id!==procId)); setActiveProc(null); };
+  const createProc = (form) => {
+    const id = Math.max(...procesos.map(p=>p.id)) + 1;
+    const trackMap = { 'Garzón/a':'garzones','Copero/a':'garzones','Entrenador/a':'garzones',
+      'Jefe de Local':'jefatura','Sub Jefe':'jefatura',
+      'Jefe de Cocina':'cocineros','Sous Chef':'cocineros','Cocinero/a':'cocineros' };
+    const newProc = buildProceso(id, form.candidato, trackMap[form.cargo]||'garzones', form.cargo, form.local, 'F1', {}, form.notas, 0);
+    setProcesos(prev => [newProc, ...prev]);
+    setActiveProc(id);
+  };
 
-      try {
-        const res = await fetch(`/api/proceso?id=${currentProcesoId}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            items_completados: JSON.stringify(allChecked),
-            avance: avance
-          })
-        });
-        if (!res.ok) throw new Error('Failed');
-        const proceso = activeProcesos.find(p => p.id === currentProcesoId);
-        if (proceso) {
-          proceso.items_completados = allChecked;
-          proceso.avance = avance;
-          renderActiveProcesses();
-        }
-        updateSaveBar('saved');
-        // Reset to idle after 3s
-        setTimeout(() => updateSaveBar('idle'), 3000);
-      } catch (e) {
-        console.error('Save error:', e);
-        updateSaveBar('error');
-      }
-    }
+  return (
+    <div className={tweaks.density==='compact' ? 'compact' : ''}>
+      <AppHeader procesos={procesos} onNew={()=>setShowNew(true)} />
+      <FilterBar track={track} setTrack={setTrack} query={query} setQuery={setQuery} local={local} setLocal={setLocal}
+        showDiscarded={showDiscarded} setShowDiscarded={setShowDiscarded} discardedCount={discardedCount} />
+      {showDiscarded && (
+        <div style={{padding:'10px 40px', background:'rgba(224,128,128,0.04)', borderBottom:'1px solid var(--border)', fontSize:11.5, color:'var(--red)', letterSpacing:'0.5px', display:'flex', alignItems:'center', gap:8}}>
+          <span>🚫</span><span>Mostrando procesos descartados · {discardedCount} registros</span>
+        </div>
+      )}
 
-    // Checkbox change handler — updates UI and auto-saves with debounce
-    function onCheckboxChange(checkbox) {
-      updateProgressBars();
-      updateSaveBar();
-      if (!currentProcesoId) return;
-      clearTimeout(window._saveTimeout);
-      window._saveTimeout = setTimeout(autoSaveProceso, 1500);
-    }
+      {view==='pipeline' && (tweaks.layout==='kanban'
+        ? <KanbanBoard procesos={filtered} onOpen={(p)=>setActiveProc(p.id)} activeId={activeProc} onMove={advancePhase} />
+        : <ListView procesos={filtered} onOpen={(p)=>setActiveProc(p.id)} activeId={activeProc} />
+      )}
 
-    // Get current track
-    function getCurrentTrack() {
-      if (document.getElementById('garzones').classList.contains('active')) return 'garzon';
-      if (document.getElementById('jefatura').classList.contains('active')) return 'jefatura';
-      if (document.getElementById('cocineros').classList.contains('active')) return 'cocinero';
-      return 'garzon';
-    }
+      {view==='organigrama' && <OrganigramaPanel onClose={()=>setView('pipeline')} />}
 
-    // Get checked item IDs
-    function getCheckedItemIds(track) {
-      const prefix = track === 'garzon' ? 'garzon' : track === 'jefatura' ? 'jefatura' : 'cocinero';
-      const checked = [];
-      document.querySelectorAll(`.checklist-input[data-item-id^="${prefix}"]`).forEach(cb => {
-        if (cb.checked) checked.push(cb.dataset.itemId);
-      });
-      return checked;
-    }
+      {tweaks.showOrganigrama && view==='pipeline' && (
+        <div style={{padding:'0 40px 40px'}}>
+          <button onClick={()=>setView('organigrama')}
+            style={{display:'flex', gap:14, alignItems:'center', width:'100%', padding:'16px 20px', background:'var(--card)', border:'1px solid var(--border)', borderRadius:12, textAlign:'left'}}>
+            <div style={{width:40, height:40, borderRadius:8, background:'var(--gold-dim)', border:'1px solid var(--gold)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:18}}>🏢</div>
+            <div style={{flex:1}}>
+              <div style={{fontSize:13, color:'#fff', fontWeight:600}}>Ver organigrama completo</div>
+              <div style={{fontSize:11, color:'var(--text-2)'}}>Gerencia, administración y jefaturas BC1 / BC2 · 10 personas</div>
+            </div>
+            <span style={{color:'var(--gold)', fontSize:18}}>→</span>
+          </button>
+        </div>
+      )}
 
-    // Get total items for a track
-    function getTotalItems(track) {
-      const prefix = track === 'garzon' ? 'garzon' : track === 'jefatura' ? 'jefatura' : 'cocinero';
-      return document.querySelectorAll(`.checklist-input[data-item-id^="${prefix}"]`).length;
-    }
+      <footer style={{padding:'24px 40px', borderTop:'1px solid var(--border)', textAlign:'center', color:'var(--text-3)', fontSize:11}}>
+        Black Chicken · Uso exclusivo RRHH · Sincronizado con Notion · Talentos@BlackChicken.cl
+      </footer>
 
-    // Update progress bars
-    function updateProgressBars() {
-      ['garzon', 'jefatura', 'cocinero'].forEach(track => {
-        const checked = getCheckedItemIds(track).length;
-        const total = getTotalItems(track);
-        const pct = total > 0 ? Math.round((checked / total) * 100) : 0;
-        // Note: We'd update visual progress here if we had progress bars per track
-      });
-    }
+      {activeProcData && (
+        <CandidateDrawer proc={activeProcData} onClose={()=>setActiveProc(null)}
+          onToggle={toggleItem} onAdvance={(id,ph)=>advancePhase(id,ph)} onUpdateNotas={updateNotas}
+          onDiscard={(id)=>setDiscardTarget(id)} onRestore={restoreProc} onDelete={deleteProc} />
+      )}
+      {discardTarget && (
+        <DiscardModal proc={procesos.find(p=>p.id===discardTarget)} onClose={()=>setDiscardTarget(null)}
+          onConfirm={(motivo)=>discardProc(discardTarget, motivo)} />
+      )}
+      <NewProcesoModal open={showNew} onClose={()=>setShowNew(false)} onCreate={createProc} />
+      <TweaksPanel tweaks={tweaks} update={updateTweaks} visible={editMode} />
+    </div>
+  );
+}
 
-    function updateAllProgressBars() {
-      updateProgressBars();
-    }
-
-    // Modal
-    function openModal() {
-      document.getElementById('modalOverlay').classList.add('active');
-    }
-
-    function closeModal(e) {
-      if (e && e.target !== document.getElementById('modalOverlay')) return;
-      document.getElementById('modalOverlay').classList.remove('active');
-      document.querySelector('form').reset();
-    }
-
-    // Submit new proceso
-    async function submitNewProceso(e) {
-      e.preventDefault();
-
-      const candidato = document.getElementById('candidato').value;
-      const cargo = document.getElementById('cargo').value;
-      const local = document.getElementById('local').value;
-      const notas = document.getElementById('notas').value;
-
-      try {
-        const res = await fetch('/api/procesos', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ candidato, cargo, local, notas: notas || undefined })
-        });
-
-        if (!res.ok) throw new Error('Failed to create proceso');
-
-        const newProceso = await res.json();
-        activeProcesos.push(newProceso);
-        renderActiveProcesses();
-        closeModal();
-        showToast(`Proceso creado: ${candidato}`);
-      } catch (e) {
-        console.error('Error creating proceso:', e);
-        showToast('Error al crear proceso', true);
-      }
-    }
-
-    // Toast notification
-    function showToast(msg, isError = false) {
-      const toast = document.createElement('div');
-      toast.className = 'toast' + (isError ? ' error' : '');
-      toast.textContent = msg;
-      document.body.appendChild(toast);
-
-      setTimeout(() => {
-        toast.style.animation = 'slideOut 0.3s ease-out';
-        setTimeout(() => toast.remove(), 300);
-      }, 3000);
-    }
-  </script>
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
 </body>
 </html>
