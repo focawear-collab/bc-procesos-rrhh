@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oferta Laboral — Garzón Full Time | Black Chicken</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #0f0f0f; color: #e8e8e8; min-height: 100vh; }
+
+    .hero {
+      background: linear-gradient(160deg, #1a1a0a 0%, #0f0f0f 50%, #1a0a0a 100%);
+      border-bottom: 1px solid #2a2a2a;
+      padding: 48px 40px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -60px; left: 50%;
+      transform: translateX(-50%); width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .logo-wrap { display: flex; justify-content: center; margin-bottom: 28px; }
+    .logo-wrap img { width: 100px; height: 100px; object-fit: contain; filter: drop-shadow(0 4px 16px rgba(212,175,55,0.3)); }
+    .badge-hiring {
+      display: inline-block;
+      background: linear-gradient(90deg, #d4af37, #f0c940);
+      color: #0f0f0f; font-size: 11px; font-weight: 800;
+      letter-spacing: 2px; text-transform: uppercase;
+      padding: 5px 16px; border-radius: 20px; margin-bottom: 20px;
+    }
+    .hero h1 { font-size: 42px; font-weight: 900; color: #ffffff; line-height: 1.1; margin-bottom: 10px; }
+    .hero h1 span {
+      background: linear-gradient(90deg, #d4af37, #f0c940);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-sub { font-size: 16px; color: #888; font-weight: 400; margin-bottom: 32px; }
+    .hero-tags { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .tag {
+      background: #1a1a1a; border: 1px solid #2a2a2a; color: #ccc;
+      font-size: 13px; padding: 6px 14px; border-radius: 20px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .tag.gold { border-color: #d4af37; color: #d4af37; }
+
+    .salary-banner {
+      background: linear-gradient(135deg, #1a1505 0%, #1a1a0a 100%);
+      border-top: 1px solid #d4af37; border-bottom: 1px solid #d4af37;
+      padding: 28px 40px; text-align: center;
+    }
+    .salary-label { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #888; margin-bottom: 8px; }
+    .salary-main { font-size: 44px; font-weight: 900; color: #d4af37; line-height: 1; margin-bottom: 6px; }
+    .salary-extra { font-size: 18px; color: #f0c940; font-weight: 600; }
+    .salary-total { font-size: 14px; color: #aaa; margin-top: 8px; font-weight: 500; }
+    .salary-note { font-size: 13px; color: #666; margin-top: 8px; }
+
+    .container { max-width: 860px; margin: 0 auto; padding: 48px 40px; }
+    .section { margin-bottom: 40px; }
+    .section-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #2a2a2a;
+    }
+    .section-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, #d4af37, #f0c940);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+    .section-title { font-size: 18px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+
+    .schedule-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .schedule-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 20px; }
+    .schedule-card.highlight { border-color: #d4af37; background: linear-gradient(135deg, #1a1505, #1a1a1a); }
+    .sc-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #666; margin-bottom: 8px; }
+    .sc-value { font-size: 22px; font-weight: 800; color: #fff; line-height: 1.2; }
+    .sc-value.gold { color: #d4af37; }
+    .sc-sub { font-size: 13px; color: #777; margin-top: 4px; }
+
+    .func-list { display: flex; flex-direction: column; gap: 10px; }
+    .func-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; padding: 14px 16px;
+    }
+    .func-dot { width: 8px; height: 8px; background: #d4af37; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+    .func-text { font-size: 15px; color: #ccc; line-height: 1.5; }
+
+    .req-list { display: flex; flex-direction: column; gap: 10px; }
+    .req-item {
+      display: flex; align-items: center; gap: 14px;
+      background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; padding: 14px 16px;
+    }
+    .req-check {
+      width: 24px; height: 24px; background: #1a2a1a; border: 1.5px solid #4a7a4a;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      color: #5cb85c; font-size: 12px; flex-shrink: 0;
+    }
+
+    .benefits-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .benefit-card {
+      background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px;
+      padding: 20px 16px; text-align: center; transition: border-color 0.2s;
+    }
+    .benefit-card:hover { border-color: #d4af37; }
+    .benefit-icon { font-size: 28px; margin-bottom: 10px; display: block; }
+    .benefit-name { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .benefit-desc { font-size: 12px; color: #666; line-height: 1.4; }
+    .benefit-card.deferred { opacity: 0.65; }
+    .benefit-card.deferred .benefit-name { color: #aaa; }
+    .deferred-note { font-size: 11px; color: #d4af37; margin-top: 4px; font-weight: 600; }
+
+    .cta-block {
+      background: linear-gradient(135deg, #1a1505 0%, #1a1a0a 100%);
+      border: 1px solid #d4af37; border-radius: 16px; padding: 36px; text-align: center;
+    }
+    .cta-title { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 12px; }
+    .cta-sub { font-size: 15px; color: #888; margin-bottom: 28px; line-height: 1.6; }
+    .cta-contact { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-bottom: 24px; }
+    .cta-email { font-size: 18px; font-weight: 700; color: #d4af37; }
+    .cta-name { font-size: 14px; color: #888; }
+    .cta-tip {
+      background: #0f0f0f; border: 1px solid #2a2a2a; border-radius: 10px;
+      padding: 14px 20px; font-size: 14px; color: #aaa; margin-top: 20px;
+    }
+    .cta-tip strong { color: #d4af37; }
+
+    .footer {
+      border-top: 1px solid #2a2a2a; padding: 24px 40px;
+      text-align: center; font-size: 12px; color: #444;
+    }
+
+    @media (max-width: 600px) {
+      .hero { padding: 32px 20px 28px; }
+      .hero h1 { font-size: 30px; }
+      .container { padding: 32px 20px; }
+      .schedule-grid { grid-template-columns: 1fr; }
+      .benefits-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="logo-wrap">
+      <img src="blackchicken_logo.png" alt="Black Chicken Logo">
+    </div>
+    <div class="badge-hiring">✦ Oferta de Trabajo</div>
+    <h1>Garzón <span>Full Time</span></h1>
+    <p class="hero-sub">Cerro El Plomo, Las Condes · Santiago</p>
+    <div class="hero-tags">
+      <span class="tag gold">⏱ Full Time</span>
+      <span class="tag">📍 Las Condes</span>
+      <span class="tag">📅 Turnos rotativos 5×2</span>
+      <span class="tag">🗓️ Lunes a domingo</span>
+    </div>
+  </div>
+
+  <div class="salary-banner">
+    <div class="salary-label">Renta líquida base</div>
+    <div class="salary-main">$550.000</div>
+    <div class="salary-extra">+ Propinas ~$150.000 promedio / semana</div>
+    <div class="salary-total">≈ $600.000 adicionales al mes en propinas</div>
+    <div class="salary-note">Las propinas se distribuyen semanalmente según las ventas del turno — promedio histórico ~$150.000 por semana.</div>
+  </div>
+
+  <div class="container">
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">🕐</div>
+        <h2 class="section-title">Jornada y Horario</h2>
+      </div>
+      <div class="schedule-grid">
+        <div class="schedule-card highlight">
+          <div class="sc-label">Días de trabajo</div>
+          <div class="sc-value gold">5×2</div>
+          <div class="sc-sub">Cinco días trabajados, dos libres rotativos a la semana</div>
+        </div>
+        <div class="schedule-card">
+          <div class="sc-label">Turnos</div>
+          <div class="sc-value">Rotativos</div>
+          <div class="sc-sub">Asignados semanalmente según necesidad del local</div>
+        </div>
+        <div class="schedule-card">
+          <div class="sc-label">Días disponibles</div>
+          <div class="sc-value">Lunes a domingo</div>
+          <div class="sc-sub">Incluye fines de semana de forma rotativa</div>
+        </div>
+        <div class="schedule-card">
+          <div class="sc-label">Tipo de contrato</div>
+          <div class="sc-value">Plazo fijo</div>
+          <div class="sc-sub">Con proyección a contrato indefinido según desempeño</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">📋</div>
+        <h2 class="section-title">Tus Funciones Principales</h2>
+      </div>
+      <div class="func-list">
+        <div class="func-item"><div class="func-dot"></div><p class="func-text">Atención de calidad y cordialidad con el cliente — somos una marca que se diferencia por el servicio.</p></div>
+        <div class="func-item"><div class="func-dot"></div><p class="func-text">Toma de pedidos presenciales y virtuales, y entrega de los mismos en tiempo y forma.</p></div>
+        <div class="func-item"><div class="func-dot"></div><p class="func-text">Montaje, mantención y limpieza de mesas y sala.</p></div>
+        <div class="func-item"><div class="func-dot"></div><p class="func-text">Apoyo en la producción y armado de cajas para despacho.</p></div>
+        <div class="func-item"><div class="func-dot"></div><p class="func-text">Otras funciones propias del cargo propias del ambiente de restaurante.</p></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">✅</div>
+        <h2 class="section-title">Requisitos</h2>
+      </div>
+      <div class="req-list">
+        <div class="req-item"><div class="req-check">✓</div><span>Experiencia mínima de 6 meses en cargos similares (garzón, mozo, atención al cliente en restaurant u horeca).</span></div>
+        <div class="req-item"><div class="req-check">✓</div><span>Disponibilidad para trabajar en jornada completa con turnos rotativos, incluyendo fines de semana.</span></div>
+        <div class="req-item"><div class="req-check">✓</div><span>Actitud de servicio, buena presentación personal y ganas de crecer en el rubro gastronómico.</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">🎁</div>
+        <h2 class="section-title">¿Qué te Ofrecemos?</h2>
+      </div>
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <span class="benefit-icon">🍗</span>
+          <div class="benefit-name">Almuerzo incluido</div>
+          <div class="benefit-desc">Cada turno incluye colación del local sin costo.</div>
+        </div>
+        <div class="benefit-card">
+          <span class="benefit-icon">👕</span>
+          <div class="benefit-name">Uniforme</div>
+          <div class="benefit-desc">Equipamiento completo desde el primer día.</div>
+        </div>
+        <div class="benefit-card">
+          <span class="benefit-icon">💵</span>
+          <div class="benefit-name">Propinas</div>
+          <div class="benefit-desc">Se distribuyen semanalmente — promedio ~$150.000/semana (~$600.000 al mes).</div>
+        </div>
+        <div class="benefit-card">
+          <span class="benefit-icon">🍽️</span>
+          <div class="benefit-name">Bono alimentación</div>
+          <div class="benefit-desc">$22.000 mensuales desde el primer contrato a plazo fijo.</div>
+        </div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">🏥</span>
+          <div class="benefit-name">Seguro de Salud</div>
+          <div class="benefit-desc">Vida Cámara.</div>
+          <div class="deferred-note">Con contrato indefinido</div>
+        </div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">💪</span>
+          <div class="benefit-name">Aporte Gimnasio</div>
+          <div class="benefit-desc">$30.000 mensuales.</div>
+          <div class="deferred-note">Con contrato indefinido</div>
+        </div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">🎂</span>
+          <div class="benefit-name">Día libre cumpleaños</div>
+          <div class="benefit-desc">Tu día, libre.</div>
+          <div class="deferred-note">Con contrato indefinido</div>
+        </div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">🇨🇱</span>
+          <div class="benefit-name">Aguinaldos</div>
+          <div class="benefit-desc">Fiestas Patrias y Navidad.</div>
+          <div class="deferred-note">Con contrato indefinido</div>
+        </div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">🏆</span>
+          <div class="benefit-name">Bono antigüedad 1 año</div>
+          <div class="benefit-desc">$200.000 al cumplir el primer año — pagado en dos cuotas: diciembre y marzo.</div>
+          <div class="deferred-note">Con contrato indefinido</div>
+        </div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">🥇</span>
+          <div class="benefit-name">Bono antigüedad 5 años</div>
+          <div class="benefit-desc">Un sueldo completo ($550.000) al cumplir 5 años de servicio.</div>
+          <div class="deferred-note">Con contrato indefinido</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">📈</div>
+        <h2 class="section-title">Oportunidad de Desarrollo</h2>
+      </div>
+      <p style="color:#aaa; font-size:15px; line-height:1.7;">En Black Chicken creemos en el crecimiento de nuestra gente. Si te comprometes con el proyecto, hay camino para desarrollarte dentro del equipo — tomando mayores responsabilidades o accediendo a roles de mayor nivel. Valoramos la actitud y las ganas de aprender.</p>
+    </div>
+
+    <div class="cta-block">
+      <div class="cta-title">Próximos pasos</div>
+      <p class="cta-sub">Hemos revisado tu perfil y nos interesa que formes parte del equipo.<br>Si tienes consultas sobre esta oferta, contáctate con:</p>
+      <div class="cta-contact">
+        <span class="cta-email">Talentos@BlackChicken.cl</span>
+        <span class="cta-name">Inge Yang · Encargada de RRHH BlackChicken<br>Cerro El Plomo 5931 o 5630, Las Condes · Lunes a Viernes 12:00 – 15:00 hrs.</span>
+      </div>
+      <div class="cta-tip">💵 Recuerda: propinas distribuidas semanalmente — promedio <strong>~$150.000/semana (~$600.000 al mes)</strong>.</div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    Black Chicken · Cerro El Plomo, Las Condes, Santiago · @blackchicken.cl<br>
+    Todos los beneficios aplican según condiciones indicadas. Seguro de salud, bono gimnasio, día libre cumpleaños y bonos de antigüedad a partir de contrato indefinido.
+  </div>
+
+<style>
+@media print {
+  .download-btn { display: none !important; }
+  #auth-gate { display: none !important; }
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+<button class="download-btn" onclick="window.print()" style="position:fixed;bottom:24px;right:24px;z-index:99998;background:linear-gradient(90deg,#d4af37,#f0c940);color:#0f0f0f;border:none;border-radius:30px;padding:12px 24px;font-size:13px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;box-shadow:0 4px 16px rgba(212,175,55,.3);display:flex;align-items:center;gap:6px;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(212,175,55,.4)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(212,175,55,.3)'">📥 Descargar PDF</button>
+<script>
+(function(){
+  var KEY="bc_rrhh_auth",PASS="TalentosBC";
+  if(sessionStorage.getItem(KEY)==="ok")return;
+  document.body.style.display="none";
+  var o=document.createElement("div");o.id="auth-gate";
+  o.innerHTML='<div style="position:fixed;inset:0;background:#0f0f0f;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:Inter,sans-serif"><div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:40px;max-width:380px;width:90%;text-align:center"><img src="./blackchicken_logo.png" alt="BC" style="width:64px;height:64px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(212,175,55,.3));margin-bottom:20px"><p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#d4af37;font-weight:700;margin-bottom:8px">Hub RRHH &middot; Acceso Restringido</p><p style="font-size:14px;color:#666;margin-bottom:24px">Ingresa el c&oacute;digo de acceso para continuar</p><input id="gate-input" type="password" placeholder="C&oacute;digo de acceso" style="width:100%;padding:12px 16px;background:#0f0f0f;border:1px solid #2a2a2a;border-radius:8px;color:#fff;font-size:15px;text-align:center;outline:none;font-family:Inter,sans-serif;margin-bottom:12px"><button id="gate-btn" style="width:100%;padding:12px;background:linear-gradient(90deg,#d4af37,#f0c940);border:none;border-radius:8px;color:#0f0f0f;font-size:14px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">Acceder</button><p id="gate-err" style="font-size:12px;color:#e05050;margin-top:12px;display:none">C&oacute;digo incorrecto</p></div></div>';
+  document.documentElement.appendChild(o);
+  function t(){var v=document.getElementById("gate-input").value;if(v===PASS){sessionStorage.setItem(KEY,"ok");o.remove();document.body.style.display="";}else{document.getElementById("gate-err").style.display="block";document.getElementById("gate-input").style.borderColor="#e05050";setTimeout(function(){document.getElementById("gate-err").style.display="none";document.getElementById("gate-input").style.borderColor="#2a2a2a";},2000);}}
+  document.getElementById("gate-btn").addEventListener("click",t);
+  document.getElementById("gate-input").addEventListener("keydown",function(e){if(e.key==="Enter")t();});
+  setTimeout(function(){document.getElementById("gate-input").focus();},100);
+})();
+</script>
+</body>
+</html>
