@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Procesos RRHH · Black Chicken</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0a0a0a;
+    --bg-2:#121212;
+    --card:#171717;
+    --card-2:#1e1e1e;
+    --card-3:#252525;
+    --border:#262626;
+    --border-2:#333;
+    --gold:#d4af37;
+    --gold-soft:#f0c940;
+    --gold-dim:rgba(212,175,55,0.12);
+    --text:#e8e8e8;
+    --text-2:#888;
+    --text-3:#555;
+    --white:#fff;
+    --bc1:#6ab86a;
+    --bc1-dim:rgba(106,184,106,0.12);
+    --bc2:#b875c9;
+    --bc2-dim:rgba(184,117,201,0.12);
+    --red:#e08080;
+    --red-dim:rgba(224,128,128,0.12);
+    --blue:#7ab0e0;
+    --blue-dim:rgba(122,176,224,0.12);
+  }
+  html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+  body{overflow-x:hidden}
+  .serif{font-family:'Fraunces',serif;font-weight:500}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  input,select,textarea{font-family:inherit}
+  .compact .kcol-items{gap:6px!important}
+  .compact .kcard{padding:10px!important}
+  .compact .kcard-name{font-size:12px!important}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const TWEAKS_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "layout": "kanban",
+  "density": "comfortable",
+  "accent": "gold",
+  "showOrganigrama": true
+}/*EDITMODE-END*/;
+
+const ACCENTS = {
+  gold:   { main:'#d4af37', soft:'#f0c940', dim:'rgba(212,175,55,0.12)' },
+  ember:  { main:'#e85d2e', soft:'#ff7a4d', dim:'rgba(232,93,46,0.14)' },
+  brass:  { main:'#c9a449', soft:'#e0b85c', dim:'rgba(201,164,73,0.14)' },
+  ice:    { main:'#7ab0e0', soft:'#9fc8ec', dim:'rgba(122,176,224,0.14)' },
+};
+
+/* ============ DATA ============ */
+const PHASES = [
+  { id:'F1', name:'Captación',    sub:'Filtro inicial' },
+  { id:'F2', name:'Entrevista',   sub:'Online o presencial' },
+  { id:'F3', name:'Día prueba',   sub:'Evaluación en local' },
+  { id:'F4', name:'Contratación', sub:'Seguimiento inicial' },
+  { id:'F5', name:'Onboarding',   sub:'Progresión de roles' },
+];
+
+const TRACKS = {
+  garzones: { label:'Garzones', icon:'🍽️', color:'#d4af37' },
+  jefatura: { label:'Jefatura', icon:'👑', color:'#b875c9' },
+  cocineros:{ label:'Cocineros', icon:'🔥', color:'#e08080' },
+};
+
+const CHECKLISTS = {
+  garzones: {
+    F1: ['Recibir postulación del candidato/a', 'Aplicar filtro por área de sala', 'Presentar seleccionados a Llige', 'OK y coordinar entrevista online'],
+    F2: ['Coordinar fecha y hora', 'Realizar entrevista online', 'Evaluar perfil y decisión de avance'],
+    F3: ['Coordinar con jefatura de sala', 'Verificar llegada al local', 'Hablar al final del día', 'Retomar contacto y feedback'],
+    F4: ['Cierre día 3 — ¿Continúa?', 'Cierre semana 1 — ¿Continúa?', 'Cierre semana 2 — término evaluación', 'Si aprueba → emitir primer contrato'],
+    F5: ['Etapa 1 — Runner: soporte y logística', 'Etapa 2 — Servicio en mesas', 'Etapa 3 — Envoltura delivery', 'Etapa 4 — Puerta / beepers', 'Preguntar etapa actual', 'Verificar onboarding correcto', 'Registrar avances y retrasos'],
+  },
+  jefatura: {
+    F1: ['Recibir postulación jefatura', 'Filtro por competencias de liderazgo', 'Presentar a Llige', 'OK y coordinar entrevista presencial'],
+    F2: ['Confirmar acompañante (Nelsi / Llige / Daniel)', 'Coordinar disponibilidad acompañante', 'Invitar 3-4 candidatos', 'Confirmar asistencia', 'Realizar entrevista grupal dinámica', 'Evaluar desempeño y cultura fit', 'Decisión en conjunto con acompañante'],
+    F3: ['Coordinar con el área', 'Verificar llegada al local', 'Hablar al término del día 1', 'Pedir feedback a jefatura'],
+    F4: ['Cierre día 3', 'Cierre semana 1', 'Cierre semana 2', 'Emitir primer contrato'],
+    F5: ['Consultar acciones con nuevos', 'Verificar etapa de capacitación', 'Confirmar lineamientos correctos', 'Registrar avances y feedback'],
+  },
+  cocineros: {
+    F1: ['Recibir postulación cocina', 'Aplicar filtro cocina', 'Presentar a Llige', 'Coordinar entrevista online'],
+    F2: ['Coordinar fecha y hora', 'Realizar entrevista', 'Evaluar fit BC'],
+    F3: ['Coordinar con jefatura cocina', 'Verificar llegada', 'Hablar al final del día', 'Feedback jefatura cocina'],
+    F4: ['Cierre día 3', 'Cierre semana 1', 'Cierre semana 2', 'Emitir contrato'],
+    F5: ['Contactar jefatura cocina', 'Preguntar estado onboarding', 'Evaluar etapa capacitación', 'Verificar estándares BC', 'Registrar avances'],
+  },
+};
+
+const PROFILES = {
+  garzones: {
+    title: 'Garzón / Garzona',
+    experience: 'Alta gastronomía, confort food, restaurantes de autor. NO comida rápida, cafeterías u hotelería.',
+    age: '25–40 años',
+    competencies: 'Proactivo, presión, eficiente, VENDEDOR (no tomador de pedidos)',
+    requisitos: 'RUT (temporal ok), cuenta bancaria, turnos rotativos',
+    estandares: 'Cabello amarrado, sin barba, maquillaje discreto, uñas cortas, uniforme limpio',
+    highlight: 'Buscamos garzones vendedores, no tomadores de pedidos',
+    eval: [],
+  },
+  jefatura: {
+    title: 'Jefe de Local / Sub Jefe',
+    experience: 'Jefe/a en alta gastronomía, comida rápida o cadenas. NO cafeterías ni hoteles.',
+    age: '30–40 años',
+    competencies: 'Resolutivo, proactivo, resiliente, experiencia administrativa',
+    requisitos: 'RUT vigente, inventarios, KPIs, apertura/cierre',
+    estandares: 'Presentación impecable, buen porte, dicción',
+    highlight: 'OBLIGATORIO llamar al empleador anterior',
+    eval: [
+      'Resolutivo — decisiones bajo presión',
+      'Administración — inventarios, cierres, KPIs',
+      'Manejo de presión — alto volumen',
+      'Presentación personal',
+      'Documentación — RUT y antecedentes',
+      'Referencias confirmadas',
+    ],
+  },
+  cocineros: {
+    title: 'Cocinero/a · Jefe de Cocina',
+    experience: 'Alta gastronomía, confort food, alto volumen. NO cafeterías ni hotelería.',
+    age: '25–40 (cocinero) · 30–40 (jefe cocina)',
+    competencies: 'Proactivo, rápido y ordenado, presión alta, aprende fichas técnicas',
+    requisitos: 'RUT, cuenta bancaria, turnos rotativos, libreta sanitaria',
+    estandares: 'Higiene, uñas cortas, uniforme',
+    highlight: 'Jefe de cocina: manejo de merma, compras y KPIs de producción',
+    eval: [
+      'Manejo de presión',
+      'Experiencia administrativa',
+      'Experiencia válida (no cafetería/hotel)',
+      'Documentación al día',
+      'Referencias confirmadas',
+    ],
+  },
+};
+
+/* ============ SAMPLE PROCESOS ============ */
+const today = new Date('2026-04-19');
+const daysAgo = (n) => { const d = new Date(today); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); };
+
+const phaseOrder = ['F1','F2','F3','F4','F5'];
+
+function buildProceso(id, candidato, track, cargo, local, fase, completedByPhase, notas, daysAgoN){
+  const flatCompleted = [];
+  for (const [p, count] of Object.entries(completedByPhase)) {
+    for (let i=0; i<count; i++) flatCompleted.push(`${track}-${p.toLowerCase()}-${i}`);
+  }
+  // compute avance
+  let total = 0;
+  for (const p of phaseOrder) total += (CHECKLISTS[track][p] || []).length;
+  const avance = Math.round((flatCompleted.length / total) * 100);
+  return { id, idProceso:`RC${1000+id}`, candidato, track, cargo, local, fase, completados:flatCompleted, notas, fechaInicio:daysAgo(daysAgoN), avance };
+}
+
+const discardedSeed = (p, motivo, daysAgoN) => ({...p, descartado:true, motivoDescarte:motivo, fechaDescarte:daysAgo(daysAgoN)});
+
+// Data sincronizada desde Notion · 19 de abril 2026
+const SAMPLE_PROCESOS = [
+  buildProceso(8, 'Karla Díaz',          'garzones', 'Garzón/a', 'BC1', 'F1', {},       'Contactada',  0),
+  buildProceso(7, 'Francisco Orrego',    'garzones', 'Garzón/a', 'BC1', 'F1', {},       'Contactado',  0),
+  buildProceso(5, 'Germán Palma',        'garzones', 'Garzón/a', 'BC1', 'F1', { F1:3 }, 'Contactado',  0),
+  discardedSeed(
+    buildProceso(4, 'Reemplazo de Milena','garzones','Garzón/a','BC1','F1',{},'Encontró otro trabajo que le acomoda más a los horarios que quería', 0),
+    'Desistió el candidato', 0
+  ),
+];
+
+/* ============ HELPERS ============ */
+function getTotal(track){
+  let t = 0; for (const p of phaseOrder) t += (CHECKLISTS[track][p]||[]).length; return t;
+}
+function progressByPhase(proc, phase){
+  const total = (CHECKLISTS[proc.track][phase]||[]).length;
+  if (!total) return {done:0,total:0,pct:0};
+  const done = proc.completados.filter(id=>id.startsWith(`${proc.track}-${phase.toLowerCase()}-`)).length;
+  return { done, total, pct: Math.round(done/total*100) };
+}
+function initials(name){
+  return name.split(' ').slice(0,2).map(s=>s[0]).join('').toUpperCase();
+}
+function formatAge(dateStr){
+  const d = new Date(dateStr); const diff = Math.floor((today - d)/(1000*60*60*24));
+  if (diff===0) return 'hoy'; if (diff===1) return 'ayer'; if (diff<7) return `hace ${diff}d`;
+  if (diff<30) return `hace ${Math.floor(diff/7)}sem`; return `hace ${Math.floor(diff/30)}m`;
+}
+
+/* ============ TWEAKS ============ */
+function useTweaks(){
+  const [t, setT] = React.useState(TWEAKS_DEFAULTS);
+  const [edit, setEdit] = React.useState(false);
+  React.useEffect(()=>{
+    const onMsg = (e)=>{
+      if(!e.data) return;
+      if(e.data.type==='__activate_edit_mode') setEdit(true);
+      if(e.data.type==='__deactivate_edit_mode') setEdit(false);
+    };
+    window.addEventListener('message', onMsg);
+    window.parent.postMessage({type:'__edit_mode_available'}, '*');
+    return ()=>window.removeEventListener('message', onMsg);
+  },[]);
+  const update = (patch)=>{
+    setT(prev=>{
+      const next = {...prev, ...patch};
+      window.parent.postMessage({type:'__edit_mode_set_keys', edits:patch}, '*');
+      return next;
+    });
+  };
+  return [t, update, edit];
+}
+
+/* ============ COMPONENTS ============ */
+const Avatar = ({name, track, size=32}) => {
+  const c = TRACKS[track]?.color || '#d4af37';
+  return (
+    <div style={{
+      width:size, height:size, borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center',
+      background:`linear-gradient(135deg, ${c}33, ${c}15)`,
+      border:`1px solid ${c}66`,
+      color:c, fontSize:size*0.38, fontWeight:700, letterSpacing:'0.5px', flexShrink:0
+    }}>{initials(name)}</div>
+  );
+};
+
+const Tag = ({children, tone='default'}) => {
+  const tones = {
+    default:{bg:'#222', c:'#aaa'},
+    gold:{bg:'rgba(212,175,55,0.15)', c:'var(--gold)'},
+    bc1:{bg:'var(--bc1-dim)', c:'var(--bc1)'},
+    bc2:{bg:'var(--bc2-dim)', c:'var(--bc2)'},
+    red:{bg:'var(--red-dim)', c:'var(--red)'},
+    blue:{bg:'var(--blue-dim)', c:'var(--blue)'},
+  };
+  const s = tones[tone] || tones.default;
+  return <span style={{display:'inline-block', padding:'3px 8px', borderRadius:4, fontSize:10, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.8px', background:s.bg, color:s.c}}>{children}</span>;
+};
+
+const localTone = (l) => l==='BC1'?'bc1':'bc2';
+
+/* Header */
+const AppHeader = ({procesos, onNew}) => {
+  const active = procesos.filter(p=>p.fase!=='F5' || p.avance<100).length;
+  const byPhase = phaseOrder.map(p => procesos.filter(pr=>pr.fase===p).length);
+  return (
+    <header style={{padding:'28px 40px 24px', borderBottom:'1px solid var(--border)', background:'linear-gradient(180deg, #121006 0%, var(--bg) 100%)', position:'relative', overflow:'hidden'}}>
+      <div style={{position:'absolute', top:-80, right:-60, width:320, height:320, borderRadius:'50%', background:'radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 65%)', pointerEvents:'none'}} />
+      <div style={{display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:24, position:'relative', zIndex:1}}>
+        <div>
+          <div style={{display:'flex', alignItems:'center', gap:10, marginBottom:4}}>
+            <div style={{width:24, height:24, borderRadius:5, background:'var(--gold)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14}}>🍗</div>
+            <span style={{fontSize:11, letterSpacing:'2px', color:'var(--gold)', fontWeight:700, textTransform:'uppercase'}}>Black Chicken · RRHH</span>
+          </div>
+          <h1 className="serif" style={{fontSize:34, lineHeight:1.05, color:'#fff', fontWeight:600, letterSpacing:'-0.5px', marginBottom:6}}>
+            Procesos de Reclutamiento <span style={{fontStyle:'italic', color:'var(--gold)'}}>&amp; Onboarding</span>
+          </h1>
+          <p style={{fontSize:13, color:'var(--text-2)'}}>Pipeline operativo · Uso exclusivo RRHH · {active} procesos activos</p>
+        </div>
+        <div style={{display:'flex', gap:8}}>
+          <button style={{padding:'9px 14px', borderRadius:8, background:'transparent', border:'1px solid var(--border-2)', color:'var(--text)', fontSize:12, fontWeight:600}}>
+            Organigrama
+          </button>
+          <button onClick={onNew} style={{padding:'9px 16px', borderRadius:8, background:'var(--gold)', color:'#0a0a0a', fontWeight:700, fontSize:13, boxShadow:'0 4px 16px rgba(212,175,55,0.25)'}}>
+            + Nuevo proceso
+          </button>
+        </div>
+      </div>
+
+      {/* Phase stat strip */}
+      <div style={{display:'grid', gridTemplateColumns:'repeat(5, 1fr)', gap:10, marginTop:22, position:'relative', zIndex:1}}>
+        {PHASES.map((ph, i) => (
+          <div key={ph.id} style={{background:'rgba(255,255,255,0.02)', border:'1px solid var(--border)', borderRadius:10, padding:'12px 14px', display:'flex', flexDirection:'column', gap:4}}>
+            <div style={{display:'flex', alignItems:'baseline', justifyContent:'space-between'}}>
+              <span style={{fontSize:10, letterSpacing:'1.5px', color:'var(--text-3)', fontWeight:700}}>{ph.id}</span>
+              <span style={{fontSize:22, fontWeight:700, color:'#fff', fontFamily:'Fraunces'}}>{byPhase[i]}</span>
+            </div>
+            <div style={{fontSize:12, fontWeight:600, color:'var(--text)'}}>{ph.name}</div>
+            <div style={{fontSize:10, color:'var(--text-3)'}}>{ph.sub}</div>
+          </div>
+        ))}
+      </div>
+    </header>
+  );
+};
+
+/* Filter bar */
+const FilterBar = ({track, setTrack, query, setQuery, local, setLocal, showDiscarded, setShowDiscarded, discardedCount}) => (
+  <div style={{display:'flex', alignItems:'center', gap:12, padding:'16px 40px', borderBottom:'1px solid var(--border)', flexWrap:'wrap'}}>
+    <div style={{display:'flex', gap:4, background:'var(--card)', padding:4, borderRadius:8, border:'1px solid var(--border)'}}>
+      {[['all','Todos','📋'], ['garzones','Garzones','🍽️'], ['jefatura','Jefatura','👑'], ['cocineros','Cocineros','🔥']].map(([k, label, ico]) => (
+        <button key={k} onClick={()=>setTrack(k)} style={{
+          padding:'6px 12px', borderRadius:6, fontSize:12, fontWeight:600,
+          background: track===k ? 'var(--card-3)' : 'transparent',
+          color: track===k ? '#fff' : 'var(--text-2)',
+          border: track===k ? '1px solid var(--border-2)' : '1px solid transparent',
+        }}>{ico} {label}</button>
+      ))}
+    </div>
+
+    <div style={{display:'flex', gap:4, background:'var(--card)', padding:4, borderRadius:8, border:'1px solid var(--border)'}}>
+      {['all','BC1','BC2'].map(l => (
+        <button key={l} onClick={()=>setLocal(l)} style={{
+          padding:'6px 12px', borderRadius:6, fontSize:12, fontWeight:600,
+          background: local===l ? 'var(--card-3)' : 'transparent',
+          color: local===l ? '#fff' : 'var(--text-2)',
+        }}>{l==='all'?'Ambos locales':l}</button>
+      ))}
+    </div>
+
+    <div style={{flex:1, position:'relative'}}>
+      <span style={{position:'absolute', left:12, top:'50%', transform:'translateY(-50%)', color:'var(--text-3)', fontSize:13}}>🔍</span>
+      <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar candidato, cargo, notas…"
+        style={{width:'100%', padding:'9px 12px 9px 36px', background:'var(--card)', border:'1px solid var(--border)', borderRadius:8, color:'#fff', fontSize:13, outline:'none'}} />
+    </div>
+
+    <button onClick={()=>setShowDiscarded(!showDiscarded)} title="Mostrar u ocultar descartados"
+      style={{padding:'7px 11px', borderRadius:8, fontSize:11, fontWeight:600, letterSpacing:'0.5px',
+        background: showDiscarded ? 'var(--red-dim)' : 'var(--card)',
+        border: `1px solid ${showDiscarded ? 'var(--red)':'var(--border)'}`,
+        color: showDiscarded ? 'var(--red)':'var(--text-2)', display:'flex', alignItems:'center', gap:6}}>
+      <span>🗂</span>
+      <span>{showDiscarded ? 'Ocultando activos' : 'Ver descartados'}</span>
+      {discardedCount>0 && <span style={{background:'var(--red)', color:'#0a0a0a', fontSize:10, fontWeight:700, padding:'1px 6px', borderRadius:10}}>{discardedCount}</span>}
+    </button>
+
+    <div style={{fontSize:11, color:'var(--text-3)', letterSpacing:'1.2px', textTransform:'uppercase', fontWeight:700}}>
+      Actualizado <span style={{color:'var(--text-2)'}}>hoy 09:42</span>
+    </div>
+  </div>
+);
+
+/* Candidate card (kanban) */
+const KanbanCard = ({proc, active, onClick, onDragStart}) => {
+  const { done, total, pct } = progressByPhase(proc, proc.fase);
+  return (
+    <div
+      draggable onDragStart={(e)=>{ e.dataTransfer.setData('text/plain', proc.id); onDragStart?.(proc); }}
+      onClick={()=>onClick(proc)}
+      className="kcard"
+      style={{
+        background: active ? 'var(--card-3)' : 'var(--card-2)',
+        border: `1px solid ${active ? 'var(--gold)' : 'var(--border)'}`,
+        borderRadius:10, padding:12, cursor:'pointer', transition:'all 0.15s',
+        display:'flex', flexDirection:'column', gap:10,
+        boxShadow: active ? '0 0 0 3px rgba(212,175,55,0.12)' : 'none'
+      }}>
+      <div style={{display:'flex', gap:10, alignItems:'center'}}>
+        <Avatar name={proc.candidato} track={proc.track} size={30} />
+        <div style={{flex:1, minWidth:0}}>
+          <div className="kcard-name" style={{fontSize:13, fontWeight:600, color:'#fff', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>{proc.candidato}</div>
+          <div style={{fontSize:10, color:'var(--text-3)'}}>{proc.idProceso} · {formatAge(proc.fechaInicio)}</div>
+        </div>
+      </div>
+      <div style={{fontSize:11, color:'var(--text-2)', display:'flex', gap:6, alignItems:'center'}}>
+        <Tag tone={localTone(proc.local)}>{proc.local}</Tag>
+        <span style={{whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>{proc.cargo}</span>
+      </div>
+      {proc.notas && (
+        <div style={{fontSize:11, color:'var(--text-2)', fontStyle:'italic', lineHeight:1.4, borderLeft:'2px solid var(--border-2)', paddingLeft:8,
+          display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical', overflow:'hidden'}}>
+          {proc.notas}
+        </div>
+      )}
+      <div>
+        <div style={{display:'flex', justifyContent:'space-between', fontSize:10, color:'var(--text-3)', letterSpacing:'1px', fontWeight:700, marginBottom:4}}>
+          <span>{proc.fase} · {done}/{total}</span>
+          <span style={{color: pct===100 ? 'var(--bc1)' : 'var(--text-2)'}}>{pct}%</span>
+        </div>
+        <div style={{height:3, background:'#0a0a0a', borderRadius:2, overflow:'hidden'}}>
+          <div style={{height:'100%', width:`${pct}%`, background: pct===100 ? 'var(--bc1)' : 'var(--gold)', transition:'width 0.3s'}} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const KanbanBoard = ({procesos, onOpen, activeId, onMove}) => {
+  const [dragOver, setDragOver] = React.useState(null);
+  return (
+    <div style={{padding:'20px 40px', display:'grid', gridTemplateColumns:'repeat(5, 1fr)', gap:12, alignItems:'start'}}>
+      {PHASES.map(ph => {
+        const col = procesos.filter(p => p.fase === ph.id);
+        const hoverOn = dragOver === ph.id;
+        return (
+          <div key={ph.id}
+            onDragOver={(e)=>{ e.preventDefault(); setDragOver(ph.id); }}
+            onDragLeave={()=>setDragOver(null)}
+            onDrop={(e)=>{
+              e.preventDefault(); setDragOver(null);
+              const id = +e.dataTransfer.getData('text/plain');
+              if (id) onMove(id, ph.id);
+            }}
+            style={{
+              background:'var(--card)', borderRadius:12,
+              border:`1px solid ${hoverOn ? 'var(--gold)' : 'var(--border)'}`,
+              transition:'border-color 0.15s', minHeight: 320,
+            }}>
+            <div style={{padding:'12px 14px', borderBottom:'1px solid var(--border)', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+              <div>
+                <div style={{fontSize:10, color:'var(--gold)', fontWeight:700, letterSpacing:'1.5px'}}>{ph.id}</div>
+                <div style={{fontSize:13, color:'#fff', fontWeight:600}}>{ph.name}</div>
+              </div>
+              <div style={{fontSize:11, color:'var(--text-3)', fontWeight:700,
+                background:'var(--card-3)', padding:'3px 8px', borderRadius:10, minWidth:24, textAlign:'center'}}>{col.length}</div>
+            </div>
+            <div className="kcol-items" style={{padding:10, display:'flex', flexDirection:'column', gap:10}}>
+              {col.length === 0 && (
+                <div style={{padding:'24px 12px', textAlign:'center', color:'var(--text-3)', fontSize:11, fontStyle:'italic', border:'1px dashed var(--border)', borderRadius:8}}>
+                  Sin candidatos
+                </div>
+              )}
+              {col.map(p => (
+                <KanbanCard key={p.id} proc={p} active={activeId===p.id} onClick={onOpen} />
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+/* List view */
+const ListView = ({procesos, onOpen, activeId}) => (
+  <div style={{padding:'20px 40px'}}>
+    <div style={{background:'var(--card)', border:'1px solid var(--border)', borderRadius:12, overflow:'hidden'}}>
+      <div style={{display:'grid', gridTemplateColumns:'2fr 1fr 0.8fr 1fr 1.2fr 0.8fr', padding:'12px 16px', fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, textTransform:'uppercase', borderBottom:'1px solid var(--border)', background:'var(--card-2)'}}>
+        <div>Candidato</div><div>Cargo</div><div>Local</div><div>Fase</div><div>Avance</div><div style={{textAlign:'right'}}>Inicio</div>
+      </div>
+      {procesos.map(p => {
+        const { pct } = progressByPhase(p, p.fase);
+        return (
+          <div key={p.id} onClick={()=>onOpen(p)}
+            style={{display:'grid', gridTemplateColumns:'2fr 1fr 0.8fr 1fr 1.2fr 0.8fr', alignItems:'center', padding:'14px 16px', borderBottom:'1px solid var(--border)', cursor:'pointer', transition:'background 0.15s', background: activeId===p.id ? 'rgba(212,175,55,0.05)':'transparent'}}>
+            <div style={{display:'flex', gap:10, alignItems:'center'}}>
+              <Avatar name={p.candidato} track={p.track} size={30} />
+              <div>
+                <div style={{fontSize:13, fontWeight:600, color:'#fff'}}>{p.candidato}</div>
+                <div style={{fontSize:10, color:'var(--text-3)'}}>{p.idProceso}</div>
+              </div>
+            </div>
+            <div style={{fontSize:12, color:'var(--text)'}}>{p.cargo}</div>
+            <div><Tag tone={localTone(p.local)}>{p.local}</Tag></div>
+            <div style={{fontSize:12, color:'var(--gold)', fontWeight:600}}>{p.fase} · {PHASES.find(ph=>ph.id===p.fase).name}</div>
+            <div style={{display:'flex', alignItems:'center', gap:10}}>
+              <div style={{flex:1, height:4, background:'#0a0a0a', borderRadius:2, overflow:'hidden'}}>
+                <div style={{height:'100%', width:`${p.avance}%`, background:'var(--gold)'}} />
+              </div>
+              <span style={{fontSize:11, color:'var(--text-2)', minWidth:32, textAlign:'right'}}>{p.avance}%</span>
+            </div>
+            <div style={{fontSize:11, color:'var(--text-3)', textAlign:'right'}}>{formatAge(p.fechaInicio)}</div>
+          </div>
+        );
+      })}
+      {procesos.length===0 && <div style={{padding:40, textAlign:'center', color:'var(--text-3)'}}>Sin procesos que mostrar</div>}
+    </div>
+  </div>
+);
+
+/* Candidate drawer */
+const CandidateDrawer = ({proc, onClose, onToggle, onAdvance, onUpdateNotas, onDiscard, onRestore, onDelete}) => {
+  if (!proc) return null;
+  const profile = PROFILES[proc.track];
+  const [notesDraft, setNotesDraft] = React.useState(proc.notas);
+  React.useEffect(()=>setNotesDraft(proc.notas), [proc.id]);
+
+  const phaseIdx = phaseOrder.indexOf(proc.fase);
+  return (
+    <>
+      <div onClick={onClose} style={{position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', zIndex:40, backdropFilter:'blur(4px)'}} />
+      <aside style={{
+        position:'fixed', top:0, right:0, bottom:0, width:'min(560px, 90vw)', zIndex:50,
+        background:'var(--bg-2)', borderLeft:'1px solid var(--border)', overflowY:'auto',
+        boxShadow:'-30px 0 60px rgba(0,0,0,0.5)',
+        animation:'slideIn 0.25s ease-out'
+      }}>
+        <style>{`@keyframes slideIn { from{transform:translateX(40px);opacity:0} to{transform:translateX(0);opacity:1} }`}</style>
+
+        {/* Top */}
+        <div style={{padding:'24px 28px 20px', borderBottom:'1px solid var(--border)', position:'sticky', top:0, background:'var(--bg-2)', zIndex:2}}>
+          <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:16, marginBottom:16}}>
+            <div style={{display:'flex', gap:14, alignItems:'center'}}>
+              <Avatar name={proc.candidato} track={proc.track} size={48} />
+              <div>
+                <h2 className="serif" style={{fontSize:22, color:'#fff', fontWeight:600, letterSpacing:'-0.3px'}}>{proc.candidato}</h2>
+                <div style={{display:'flex', gap:6, alignItems:'center', marginTop:4}}>
+                  <span style={{fontSize:11, color:'var(--text-3)', fontWeight:700, letterSpacing:'1px'}}>{proc.idProceso}</span>
+                  <span style={{color:'var(--text-3)'}}>·</span>
+                  <span style={{fontSize:12, color:'var(--text-2)'}}>{proc.cargo}</span>
+                  <Tag tone={localTone(proc.local)}>{proc.local}</Tag>
+                </div>
+              </div>
+            </div>
+            <button onClick={onClose} style={{color:'var(--text-2)', fontSize:20, padding:4}}>✕</button>
+          </div>
+
+          {/* Phase stepper */}
+          <div style={{display:'grid', gridTemplateColumns:'repeat(5, 1fr)', gap:4, marginBottom:6}}>
+            {PHASES.map((ph, i) => {
+              const { done, total } = progressByPhase({ ...proc }, ph.id);
+              const isCurrent = i === phaseIdx;
+              const isPast = i < phaseIdx || (i===phaseIdx && done===total && total>0);
+              const isFuture = i > phaseIdx;
+              return (
+                <div key={ph.id} onClick={()=>onAdvance(proc.id, ph.id)}
+                  style={{cursor:'pointer', padding:'8px 6px', borderRadius:6,
+                    background: isCurrent ? 'var(--gold-dim)' : 'transparent',
+                    border: isCurrent ? '1px solid var(--gold)' : '1px solid transparent',
+                    opacity: isFuture ? 0.45 : 1
+                  }}>
+                  <div style={{height:3, background: isPast ? 'var(--bc1)' : isCurrent ? 'var(--gold)' : 'var(--border-2)', borderRadius:2, marginBottom:6}} />
+                  <div style={{fontSize:10, color: isCurrent ? 'var(--gold)' : 'var(--text-3)', fontWeight:700, letterSpacing:'1px'}}>{ph.id}</div>
+                  <div style={{fontSize:11, color: isCurrent ? '#fff' : 'var(--text-2)', fontWeight:600}}>{ph.name}</div>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'0.5px'}}>Click una fase para moverlo · Drag en el kanban también funciona</div>
+        </div>
+
+        {/* Profile & Eval */}
+        <section style={{padding:'20px 28px', borderBottom:'1px solid var(--border)'}}>
+          <h3 style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, textTransform:'uppercase', marginBottom:10}}>Perfil del cargo</h3>
+          <div style={{background:'var(--card)', border:'1px solid var(--border)', borderRadius:10, padding:16}}>
+            <div className="serif" style={{fontSize:15, color:'#fff', fontWeight:600, marginBottom:8}}>{profile.title}</div>
+            <dl style={{display:'grid', gridTemplateColumns:'110px 1fr', gap:'6px 12px', fontSize:12}}>
+              <dt style={{color:'var(--text-3)', fontWeight:600}}>Experiencia</dt><dd style={{color:'var(--text)'}}>{profile.experience}</dd>
+              <dt style={{color:'var(--text-3)', fontWeight:600}}>Rango</dt><dd style={{color:'var(--text)'}}>{profile.age}</dd>
+              <dt style={{color:'var(--text-3)', fontWeight:600}}>Competencias</dt><dd style={{color:'var(--text)'}}>{profile.competencies}</dd>
+              <dt style={{color:'var(--text-3)', fontWeight:600}}>Requisitos</dt><dd style={{color:'var(--text)'}}>{profile.requisitos}</dd>
+            </dl>
+            <div style={{marginTop:12, padding:'10px 12px', background:'var(--gold-dim)', borderLeft:'3px solid var(--gold)', borderRadius:4, fontSize:12, color:'var(--gold)'}}>
+              ⚡ {profile.highlight}
+            </div>
+          </div>
+
+          {profile.eval.length>0 && (
+            <div style={{marginTop:14}}>
+              <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, textTransform:'uppercase', marginBottom:8}}>Pauta de evaluación</div>
+              <div style={{display:'grid', gap:6}}>
+                {profile.eval.map((it, i) => {
+                  const idKey = `${proc.track}-eval-${i}`;
+                  const checked = proc.completados.includes(idKey);
+                  return (
+                    <label key={i} style={{display:'flex', gap:10, alignItems:'center', padding:'8px 10px', background:'var(--card)', border:'1px solid var(--border)', borderRadius:6, cursor:'pointer'}}>
+                      <input type="checkbox" checked={checked} onChange={()=>onToggle(proc.id, idKey)} style={{accentColor:'var(--gold)', width:16, height:16}} />
+                      <span style={{fontSize:12, color: checked ? 'var(--gold)':'var(--text)', textDecoration: checked?'line-through':'none'}}>{it}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* Checklists */}
+        <section style={{padding:'20px 28px', borderBottom:'1px solid var(--border)'}}>
+          <h3 style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, textTransform:'uppercase', marginBottom:12}}>Checklist por fase</h3>
+          {phaseOrder.map(phaseId => {
+            const items = CHECKLISTS[proc.track][phaseId] || [];
+            const ph = PHASES.find(p=>p.id===phaseId);
+            const { done, total, pct } = progressByPhase(proc, phaseId);
+            const isCurrent = phaseId === proc.fase;
+            return (
+              <details key={phaseId} open={isCurrent} style={{marginBottom:8, background:'var(--card)', border:`1px solid ${isCurrent ? 'var(--gold)' : 'var(--border)'}`, borderRadius:10, overflow:'hidden'}}>
+                <summary style={{padding:'12px 14px', display:'flex', alignItems:'center', gap:10, cursor:'pointer', listStyle:'none'}}>
+                  <div style={{fontSize:10, color:'var(--gold)', fontWeight:700, letterSpacing:'1px'}}>{phaseId}</div>
+                  <div style={{fontSize:13, color:'#fff', fontWeight:600, flex:1}}>{ph.name}</div>
+                  <div style={{fontSize:11, color:'var(--text-2)'}}>{done}/{total}</div>
+                  <div style={{width:48, height:3, background:'#0a0a0a', borderRadius:2, overflow:'hidden'}}>
+                    <div style={{height:'100%', width:`${pct}%`, background: pct===100 ? 'var(--bc1)' : 'var(--gold)'}} />
+                  </div>
+                </summary>
+                <div style={{padding:'4px 14px 14px', display:'grid', gap:6}}>
+                  {items.map((text, i) => {
+                    const idKey = `${proc.track}-${phaseId.toLowerCase()}-${i}`;
+                    const checked = proc.completados.includes(idKey);
+                    return (
+                      <label key={i} style={{display:'flex', gap:10, alignItems:'flex-start', padding:'9px 10px', background:'var(--card-2)', border:'1px solid var(--border)', borderRadius:6, cursor:'pointer'}}>
+                        <input type="checkbox" checked={checked} onChange={()=>onToggle(proc.id, idKey)} style={{accentColor:'var(--gold)', width:16, height:16, marginTop:1, flexShrink:0}} />
+                        <span style={{fontSize:12.5, lineHeight:1.5, color: checked ? 'var(--gold)':'var(--text)', textDecoration: checked?'line-through':'none'}}>{text}</span>
+                      </label>
+                    );
+                  })}
+                  {phaseId==='F3' && (
+                    <div style={{display:'flex', gap:8, marginTop:8}}>
+                      <button onClick={()=>onAdvance(proc.id, 'F4')} style={{flex:1, padding:10, background:'rgba(106,184,106,0.15)', border:'1px solid var(--bc1)', color:'var(--bc1)', borderRadius:6, fontSize:11, fontWeight:700, letterSpacing:'1px', textTransform:'uppercase'}}>✓ Continúa a F4</button>
+                      <button style={{flex:1, padding:10, background:'rgba(224,128,128,0.12)', border:'1px solid var(--red)', color:'var(--red)', borderRadius:6, fontSize:11, fontWeight:700, letterSpacing:'1px', textTransform:'uppercase'}}>✗ Termina proceso</button>
+                    </div>
+                  )}
+                  {phaseId==='F4' && (
+                    <div style={{padding:'10px 12px', background:'rgba(224,128,128,0.08)', borderLeft:'3px solid var(--red)', borderRadius:4, fontSize:11.5, color:'var(--text)', marginTop:6}}>
+                      ⚠️ Antes del contrato indefinido: consultar con jefatura si seguirá antes de emitirlo.
+                    </div>
+                  )}
+                </div>
+              </details>
+            );
+          })}
+        </section>
+
+        {/* Discard banner */}
+        {proc.descartado && (
+          <section style={{padding:'16px 28px', background:'rgba(224,128,128,0.06)', borderBottom:'1px solid var(--border)'}}>
+            <div style={{display:'flex', alignItems:'flex-start', gap:10}}>
+              <div style={{fontSize:18}}>🚫</div>
+              <div style={{flex:1}}>
+                <div style={{fontSize:12, color:'var(--red)', fontWeight:700, letterSpacing:'1px', textTransform:'uppercase'}}>Proceso descartado</div>
+                <div style={{fontSize:12, color:'var(--text-2)', marginTop:2}}>
+                  <strong style={{color:'var(--text)'}}>Motivo:</strong> {proc.motivoDescarte || '—'}
+                </div>
+                <div style={{fontSize:11, color:'var(--text-3)', marginTop:2}}>Descartado {proc.fechaDescarte ? `el ${proc.fechaDescarte}` : ''}</div>
+              </div>
+              <button onClick={()=>onRestore(proc.id)} style={{padding:'7px 12px', background:'var(--bc1-dim)', border:'1px solid var(--bc1)', color:'var(--bc1)', borderRadius:6, fontSize:11, fontWeight:700, letterSpacing:'0.8px', textTransform:'uppercase'}}>↺ Restaurar</button>
+            </div>
+          </section>
+        )}
+
+        {/* Notes */}
+        <section style={{padding:'20px 28px 20px'}}>
+          <h3 style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, textTransform:'uppercase', marginBottom:10}}>Notas del proceso</h3>
+          <textarea
+            value={notesDraft}
+            onChange={e=>setNotesDraft(e.target.value)}
+            onBlur={()=>onUpdateNotas(proc.id, notesDraft)}
+            placeholder="Observaciones, feedback de jefaturas, pendientes…"
+            style={{width:'100%', minHeight:110, padding:14, background:'var(--card)', border:'1px solid var(--border)', borderRadius:10, color:'var(--text)', fontSize:13, resize:'vertical', lineHeight:1.55, outline:'none'}} />
+          <div style={{display:'flex', justifyContent:'space-between', marginTop:10, fontSize:11, color:'var(--text-3)'}}>
+            <span>Proceso iniciado {formatAge(proc.fechaInicio)} · {proc.fechaInicio}</span>
+            <span>Se guarda en Notion al desenfocar</span>
+          </div>
+        </section>
+
+        {/* Danger zone */}
+        <section style={{padding:'0 28px 40px'}}>
+          <div style={{background:'var(--card)', border:'1px solid var(--border)', borderRadius:10, padding:16}}>
+            <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, textTransform:'uppercase', marginBottom:10}}>Acciones del proceso</div>
+            {!proc.descartado && (
+              <button onClick={()=>onDiscard(proc.id)} style={{width:'100%', padding:'10px 12px', background:'rgba(224,128,128,0.08)', border:'1px solid rgba(224,128,128,0.35)', color:'var(--red)', borderRadius:8, fontSize:12, fontWeight:600, textAlign:'left', display:'flex', alignItems:'center', gap:10, marginBottom:8}}>
+                <span style={{fontSize:14}}>🚫</span>
+                <span style={{flex:1}}>Descartar candidato</span>
+                <span style={{fontSize:10, color:'var(--text-3)', letterSpacing:'0.5px'}}>Queda registro</span>
+              </button>
+            )}
+            <button onClick={()=>{
+              if (confirm(`¿Eliminar definitivamente a ${proc.candidato}?\n\nEsta acción no se puede deshacer y borra el registro de Notion.`)) onDelete(proc.id);
+            }} style={{width:'100%', padding:'10px 12px', background:'transparent', border:'1px solid var(--border-2)', color:'var(--text-3)', borderRadius:8, fontSize:12, fontWeight:600, textAlign:'left', display:'flex', alignItems:'center', gap:10}}>
+              <span style={{fontSize:14}}>🗑</span>
+              <span style={{flex:1}}>Eliminar definitivamente</span>
+              <span style={{fontSize:10, color:'var(--text-3)', letterSpacing:'0.5px'}}>Sin registro</span>
+            </button>
+          </div>
+        </section>
+      </aside>
+    </>
+  );
+};
+
+/* Discard Modal */
+const DiscardModal = ({proc, onClose, onConfirm}) => {
+  const [reason, setReason] = React.useState('');
+  const [custom, setCustom] = React.useState('');
+  if (!proc) return null;
+  const PRESETS = ['No cumple perfil','No se presentó al día de prueba','Desistió el candidato','Referencias negativas','Documentación incompleta','Desempeño insuficiente en prueba'];
+  const final = reason==='__custom' ? custom : reason;
+  return (
+    <div onClick={onClose} style={{position:'fixed', inset:0, background:'rgba(0,0,0,0.75)', zIndex:200, display:'flex', alignItems:'center', justifyContent:'center', backdropFilter:'blur(6px)'}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:'var(--bg-2)', border:'1px solid var(--red)', borderRadius:14, padding:26, width:'min(460px, 92vw)'}}>
+        <div style={{display:'flex', alignItems:'center', gap:10, marginBottom:6}}>
+          <span style={{fontSize:22}}>🚫</span>
+          <div className="serif" style={{fontSize:20, color:'#fff', fontWeight:600}}>Descartar a {proc.candidato}</div>
+        </div>
+        <div style={{fontSize:12, color:'var(--text-3)', marginBottom:18}}>El candidato queda archivado con motivo y fecha. Puedes restaurarlo luego.</div>
+
+        <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.2px', fontWeight:700, textTransform:'uppercase', marginBottom:8}}>Motivo</div>
+        <div style={{display:'grid', gap:6, marginBottom:12}}>
+          {PRESETS.map(p => (
+            <label key={p} style={{display:'flex', gap:10, alignItems:'center', padding:'9px 11px', background: reason===p?'var(--red-dim)':'var(--card)', border:`1px solid ${reason===p?'var(--red)':'var(--border)'}`, borderRadius:7, cursor:'pointer', fontSize:12.5, color: reason===p ? 'var(--red)' : 'var(--text)'}}>
+              <input type="radio" checked={reason===p} onChange={()=>setReason(p)} style={{accentColor:'var(--red)'}} />
+              {p}
+            </label>
+          ))}
+          <label style={{display:'flex', gap:10, alignItems:'center', padding:'9px 11px', background: reason==='__custom'?'var(--red-dim)':'var(--card)', border:`1px solid ${reason==='__custom'?'var(--red)':'var(--border)'}`, borderRadius:7, cursor:'pointer', fontSize:12.5}}>
+            <input type="radio" checked={reason==='__custom'} onChange={()=>setReason('__custom')} style={{accentColor:'var(--red)'}} />
+            Otro motivo…
+          </label>
+          {reason==='__custom' && (
+            <input autoFocus value={custom} onChange={e=>setCustom(e.target.value)} placeholder="Describe el motivo"
+              style={{...inputS, borderColor:'var(--red)'}} />
+          )}
+        </div>
+
+        <div style={{display:'flex', gap:10}}>
+          <button onClick={onClose} style={{flex:1, padding:11, background:'var(--card-3)', color:'var(--text)', borderRadius:8, fontWeight:600, fontSize:12, letterSpacing:'1px', textTransform:'uppercase'}}>Cancelar</button>
+          <button disabled={!final.trim()} onClick={()=>onConfirm(final.trim())}
+            style={{flex:2, padding:11, background: final.trim()?'var(--red)':'var(--card-3)', color:'#fff', borderRadius:8, fontWeight:700, fontSize:12, letterSpacing:'1px', textTransform:'uppercase', opacity: final.trim()?1:0.5, cursor: final.trim()?'pointer':'not-allowed'}}>
+            Descartar proceso
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* New Proceso Modal */
+const NewProcesoModal = ({open, onClose, onCreate}) => {
+  const [form, setForm] = React.useState({ candidato:'', cargo:'Garzón/a', local:'BC1', notas:'' });
+  if (!open) return null;
+  return (
+    <div onClick={onClose} style={{position:'fixed', inset:0, background:'rgba(0,0,0,0.7)', zIndex:100, display:'flex', alignItems:'center', justifyContent:'center', backdropFilter:'blur(6px)'}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:'var(--bg-2)', border:'1px solid var(--border)', borderRadius:14, padding:28, width:'min(440px, 92vw)'}}>
+        <div className="serif" style={{fontSize:22, color:'#fff', fontWeight:600, marginBottom:4}}>Nuevo proceso</div>
+        <div style={{fontSize:12, color:'var(--text-3)', marginBottom:22}}>Se inicializa en F1 Captación · fecha hoy</div>
+        <form onSubmit={(e)=>{ e.preventDefault(); if(!form.candidato.trim()) return; onCreate(form); onClose(); setForm({candidato:'', cargo:'Garzón/a', local:'BC1', notas:''}); }} style={{display:'grid', gap:14}}>
+          {[
+            {k:'candidato', label:'Nombre candidato', type:'input', placeholder:'Ej: Juan Pérez'},
+            {k:'cargo', label:'Cargo', type:'select', opts:['Garzón/a','Jefe de Local','Sub Jefe','Jefe de Cocina','Sous Chef','Cocinero/a','Copero/a','Entrenador/a']},
+            {k:'local', label:'Local', type:'select', opts:['BC1','BC2']},
+            {k:'notas', label:'Notas (opcional)', type:'textarea', placeholder:'Referencias, disponibilidad, comentarios…'},
+          ].map(f => (
+            <label key={f.k}>
+              <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.2px', fontWeight:700, textTransform:'uppercase', marginBottom:5}}>{f.label}</div>
+              {f.type==='input' && <input autoFocus={f.k==='candidato'} value={form[f.k]} onChange={e=>setForm({...form, [f.k]:e.target.value})} placeholder={f.placeholder} style={inputS} />}
+              {f.type==='select' && <select value={form[f.k]} onChange={e=>setForm({...form, [f.k]:e.target.value})} style={inputS}>{f.opts.map(o=><option key={o} value={o}>{o}</option>)}</select>}
+              {f.type==='textarea' && <textarea value={form[f.k]} onChange={e=>setForm({...form, [f.k]:e.target.value})} placeholder={f.placeholder} style={{...inputS, minHeight:72, resize:'vertical'}} />}
+            </label>
+          ))}
+          <div style={{display:'flex', gap:10, marginTop:8}}>
+            <button type="button" onClick={onClose} style={{flex:1, padding:11, background:'var(--card-3)', color:'var(--text)', borderRadius:8, fontWeight:600, fontSize:12, letterSpacing:'1px', textTransform:'uppercase'}}>Cancelar</button>
+            <button type="submit" style={{flex:2, padding:11, background:'var(--gold)', color:'#0a0a0a', borderRadius:8, fontWeight:700, fontSize:12, letterSpacing:'1px', textTransform:'uppercase'}}>Crear proceso</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+const inputS = { width:'100%', padding:'10px 12px', background:'var(--card)', border:'1px solid var(--border)', borderRadius:8, color:'var(--text)', fontSize:13, outline:'none' };
+
+/* Organigrama pane */
+const OrganigramaPanel = ({onClose}) => (
+  <div style={{padding:'24px 40px 40px'}}>
+    <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20}}>
+      <div>
+        <div style={{fontSize:10, color:'var(--gold)', letterSpacing:'2px', fontWeight:700}}>ORGANIGRAMA</div>
+        <h2 className="serif" style={{fontSize:26, color:'#fff', fontWeight:600}}>Equipo Black Chicken</h2>
+      </div>
+      <button onClick={onClose} style={{fontSize:12, color:'var(--text-2)', padding:'8px 12px', border:'1px solid var(--border-2)', borderRadius:6}}>Volver al pipeline</button>
+    </div>
+
+    {/* Gerencia */}
+    <div style={{marginBottom:24}}>
+      <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, marginBottom:10, textAlign:'center'}}>NIVEL 0 · GERENCIA GENERAL</div>
+      <div style={{display:'flex', gap:14, justifyContent:'center'}}>
+        {[{n:'Llige Yang', r:'Ventas, Marketing & Liderazgo'}, {n:'Daniel Fosk', r:'Operaciones'}].map(p=>(
+          <div key={p.n} style={{padding:'14px 20px', background:'var(--card)', border:'1px solid var(--gold)', borderRadius:10, minWidth:220, textAlign:'center'}}>
+            <Avatar name={p.n} track="garzones" size={36}/>
+            <div style={{fontSize:14, color:'#fff', fontWeight:600, marginTop:8}}>{p.n}</div>
+            <div style={{fontSize:11, color:'var(--text-2)'}}>{p.r}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Admin */}
+    <div style={{marginBottom:24}}>
+      <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, marginBottom:10, textAlign:'center'}}>NIVEL 1 · ADMINISTRACIÓN</div>
+      <div style={{display:'flex', justifyContent:'center'}}>
+        <div style={{padding:'14px 20px', background:'var(--card)', border:'1px solid var(--gold)', borderRadius:10, minWidth:220, textAlign:'center'}}>
+          <Avatar name="Nelsimar Rodriguez" track="jefatura" size={36}/>
+          <div style={{fontSize:14, color:'#fff', fontWeight:600, marginTop:8}}>Nelsimar Rodriguez</div>
+          <div style={{fontSize:11, color:'var(--text-2)'}}>Administradora · Ambos locales</div>
+        </div>
+      </div>
+    </div>
+
+    {/* BC1 / BC2 */}
+    <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, marginBottom:10, textAlign:'center'}}>NIVEL 2 · JEFATURAS POR LOCAL</div>
+    <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:14}}>
+      {[
+        { title:'BC1', color:'var(--bc1)', bg:'var(--bc1-dim)', team:[
+          ['Felipe Cofre','Jefe Local'],['Tomas Fuentes','Sub Jefe'],['Felipe Cornejo','Jefe Cocina'],
+          ['Jonathan Lobos','Sous Chef'],['Rossy Martinez','Entrenadora']
+        ] },
+        { title:'BC2', color:'var(--bc2)', bg:'var(--bc2-dim)', team:[
+          ['Saner Guillen','Jefe Local'],['Jennifer / Vanessa Ramonez','Jefe Cocina'],['Maria Angel','Jefe Salón']
+        ] },
+      ].map(loc => (
+        <div key={loc.title} style={{background:'var(--card)', border:`1px solid ${loc.color}`, borderRadius:12, padding:18}}>
+          <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:12}}>
+            <div style={{width:8, height:8, borderRadius:'50%', background:loc.color}} />
+            <div style={{fontSize:13, color:loc.color, fontWeight:700, letterSpacing:'1.5px'}}>🍗 {loc.title}</div>
+          </div>
+          <div style={{display:'grid', gap:8}}>
+            {loc.team.map(([name, role]) => (
+              <div key={name} style={{display:'flex', gap:10, alignItems:'center', padding:10, background:'var(--card-2)', borderRadius:8}}>
+                <Avatar name={name} track="garzones" size={28} />
+                <div>
+                  <div style={{fontSize:12.5, color:'#fff', fontWeight:600}}>{name}</div>
+                  <div style={{fontSize:11, color:'var(--text-3)'}}>{role}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+/* Tweaks panel */
+const TweaksPanel = ({tweaks, update, visible}) => {
+  if (!visible) return null;
+  const Row = ({label, children}) => (
+    <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px 14px', borderBottom:'1px solid var(--border)'}}>
+      <span style={{fontSize:11, color:'var(--text-2)', letterSpacing:'1px', fontWeight:600, textTransform:'uppercase'}}>{label}</span>
+      <div>{children}</div>
+    </div>
+  );
+  const Seg = ({value, options, onChange}) => (
+    <div style={{display:'flex', gap:2, background:'var(--card)', padding:2, borderRadius:6}}>
+      {options.map(o => (
+        <button key={o.v} onClick={()=>onChange(o.v)} style={{padding:'5px 9px', fontSize:11, fontWeight:600, borderRadius:4, background: value===o.v ? 'var(--card-3)' : 'transparent', color: value===o.v ? '#fff':'var(--text-2)'}}>{o.l}</button>
+      ))}
+    </div>
+  );
+  return (
+    <div style={{position:'fixed', bottom:20, right:20, width:300, background:'var(--bg-2)', border:'1px solid var(--gold)', borderRadius:12, zIndex:1000, boxShadow:'0 20px 50px rgba(0,0,0,0.6)', overflow:'hidden'}}>
+      <div style={{padding:'12px 14px', borderBottom:'1px solid var(--border)', display:'flex', alignItems:'center', gap:8}}>
+        <div style={{width:6, height:6, borderRadius:'50%', background:'var(--gold)'}} />
+        <div style={{fontSize:11, color:'var(--gold)', letterSpacing:'2px', fontWeight:700, textTransform:'uppercase'}}>Tweaks</div>
+      </div>
+      <Row label="Layout">
+        <Seg value={tweaks.layout} onChange={v=>update({layout:v})} options={[{v:'kanban',l:'Kanban'},{v:'list',l:'Lista'}]} />
+      </Row>
+      <Row label="Densidad">
+        <Seg value={tweaks.density} onChange={v=>update({density:v})} options={[{v:'comfortable',l:'Cómodo'},{v:'compact',l:'Compacto'}]} />
+      </Row>
+      <Row label="Acento">
+        <Seg value={tweaks.accent} onChange={v=>update({accent:v})} options={[{v:'gold',l:'Gold'},{v:'ember',l:'Ember'},{v:'brass',l:'Brass'},{v:'ice',l:'Ice'}]} />
+      </Row>
+      <Row label="Organigrama">
+        <Seg value={tweaks.showOrganigrama ? 'on':'off'} onChange={v=>update({showOrganigrama: v==='on'})} options={[{v:'on',l:'Mostrar'},{v:'off',l:'Ocultar'}]} />
+      </Row>
+    </div>
+  );
+};
+
+/* ============ APP ============ */
+function App(){
+  const [procesos, setProcesos] = React.useState(SAMPLE_PROCESOS);
+  const [activeProc, setActiveProc] = React.useState(null);
+  const [track, setTrack] = React.useState('all');
+  const [local, setLocal] = React.useState('all');
+  const [query, setQuery] = React.useState('');
+  const [showNew, setShowNew] = React.useState(false);
+  const [view, setView] = React.useState('pipeline'); // pipeline | organigrama
+  const [showDiscarded, setShowDiscarded] = React.useState(false);
+  const [discardTarget, setDiscardTarget] = React.useState(null);
+  const [tweaks, updateTweaks, editMode] = useTweaks();
+
+  // Apply accent
+  React.useEffect(()=>{
+    const a = ACCENTS[tweaks.accent] || ACCENTS.gold;
+    document.documentElement.style.setProperty('--gold', a.main);
+    document.documentElement.style.setProperty('--gold-soft', a.soft);
+    document.documentElement.style.setProperty('--gold-dim', a.dim);
+  }, [tweaks.accent]);
+
+  const filtered = procesos.filter(p => {
+    if (showDiscarded ? !p.descartado : p.descartado) return false;
+    if (track!=='all' && p.track!==track) return false;
+    if (local!=='all' && p.local!==local) return false;
+    if (query){
+      const q = query.toLowerCase();
+      if (!(p.candidato.toLowerCase().includes(q) || p.cargo.toLowerCase().includes(q) || (p.notas||'').toLowerCase().includes(q))) return false;
+    }
+    return true;
+  });
+  const discardedCount = procesos.filter(p=>p.descartado).length;
+
+  const activeProcData = activeProc ? procesos.find(p=>p.id===activeProc) : null;
+
+  const toggleItem = (procId, itemId) => {
+    setProcesos(prev => prev.map(p => {
+      if (p.id!==procId) return p;
+      const has = p.completados.includes(itemId);
+      const next = has ? p.completados.filter(x=>x!==itemId) : [...p.completados, itemId];
+      const avance = Math.round(next.filter(x=>!x.includes('-eval-')).length / getTotal(p.track) * 100);
+      return { ...p, completados: next, avance };
+    }));
+  };
+  const advancePhase = (procId, phase) => setProcesos(prev => prev.map(p => p.id===procId ? {...p, fase: phase} : p));
+  const updateNotas = (procId, notas) => setProcesos(prev => prev.map(p => p.id===procId ? {...p, notas} : p));
+  const discardProc = (procId, motivo) => {
+    const fecha = new Date().toISOString().slice(0,10);
+    setProcesos(prev => prev.map(p => p.id===procId ? {...p, descartado:true, motivoDescarte:motivo, fechaDescarte:fecha} : p));
+    setDiscardTarget(null);
+    setActiveProc(null);
+  };
+  const restoreProc = (procId) => setProcesos(prev => prev.map(p => p.id===procId ? {...p, descartado:false, motivoDescarte:undefined, fechaDescarte:undefined} : p));
+  const deleteProc = (procId) => { setProcesos(prev => prev.filter(p => p.id!==procId)); setActiveProc(null); };
+  const createProc = (form) => {
+    const id = Math.max(...procesos.map(p=>p.id)) + 1;
+    const trackMap = { 'Garzón/a':'garzones','Copero/a':'garzones','Entrenador/a':'garzones',
+      'Jefe de Local':'jefatura','Sub Jefe':'jefatura',
+      'Jefe de Cocina':'cocineros','Sous Chef':'cocineros','Cocinero/a':'cocineros' };
+    const newProc = buildProceso(id, form.candidato, trackMap[form.cargo]||'garzones', form.cargo, form.local, 'F1', {}, form.notas, 0);
+    setProcesos(prev => [newProc, ...prev]);
+    setActiveProc(id);
+  };
+
+  return (
+    <div className={tweaks.density==='compact' ? 'compact' : ''}>
+      <AppHeader procesos={procesos} onNew={()=>setShowNew(true)} />
+      <FilterBar track={track} setTrack={setTrack} query={query} setQuery={setQuery} local={local} setLocal={setLocal}
+        showDiscarded={showDiscarded} setShowDiscarded={setShowDiscarded} discardedCount={discardedCount} />
+      {showDiscarded && (
+        <div style={{padding:'10px 40px', background:'rgba(224,128,128,0.04)', borderBottom:'1px solid var(--border)', fontSize:11.5, color:'var(--red)', letterSpacing:'0.5px', display:'flex', alignItems:'center', gap:8}}>
+          <span>🚫</span><span>Mostrando procesos descartados · {discardedCount} registros</span>
+        </div>
+      )}
+
+      {view==='pipeline' && (tweaks.layout==='kanban'
+        ? <KanbanBoard procesos={filtered} onOpen={(p)=>setActiveProc(p.id)} activeId={activeProc} onMove={advancePhase} />
+        : <ListView procesos={filtered} onOpen={(p)=>setActiveProc(p.id)} activeId={activeProc} />
+      )}
+
+      {view==='organigrama' && <OrganigramaPanel onClose={()=>setView('pipeline')} />}
+
+      {tweaks.showOrganigrama && view==='pipeline' && (
+        <div style={{padding:'0 40px 40px'}}>
+          <button onClick={()=>setView('organigrama')}
+            style={{display:'flex', gap:14, alignItems:'center', width:'100%', padding:'16px 20px', background:'var(--card)', border:'1px solid var(--border)', borderRadius:12, textAlign:'left'}}>
+            <div style={{width:40, height:40, borderRadius:8, background:'var(--gold-dim)', border:'1px solid var(--gold)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:18}}>🏢</div>
+            <div style={{flex:1}}>
+              <div style={{fontSize:13, color:'#fff', fontWeight:600}}>Ver organigrama completo</div>
+              <div style={{fontSize:11, color:'var(--text-2)'}}>Gerencia, administración y jefaturas BC1 / BC2 · 10 personas</div>
+            </div>
+            <span style={{color:'var(--gold)', fontSize:18}}>→</span>
+          </button>
+        </div>
+      )}
+
+      <footer style={{padding:'24px 40px', borderTop:'1px solid var(--border)', textAlign:'center', color:'var(--text-3)', fontSize:11}}>
+        Black Chicken · Uso exclusivo RRHH · Sincronizado con Notion · Talentos@BlackChicken.cl
+      </footer>
+
+      {activeProcData && (
+        <CandidateDrawer proc={activeProcData} onClose={()=>setActiveProc(null)}
+          onToggle={toggleItem} onAdvance={(id,ph)=>advancePhase(id,ph)} onUpdateNotas={updateNotas}
+          onDiscard={(id)=>setDiscardTarget(id)} onRestore={restoreProc} onDelete={deleteProc} />
+      )}
+      {discardTarget && (
+        <DiscardModal proc={procesos.find(p=>p.id===discardTarget)} onClose={()=>setDiscardTarget(null)}
+          onConfirm={(motivo)=>discardProc(discardTarget, motivo)} />
+      )}
+      <NewProcesoModal open={showNew} onClose={()=>setShowNew(false)} onCreate={createProc} />
+      <TweaksPanel tweaks={tweaks} update={updateTweaks} visible={editMode} />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
