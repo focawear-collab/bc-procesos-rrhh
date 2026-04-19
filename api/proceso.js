@@ -43,8 +43,11 @@ export default async function handler(req, res) {
       if (estado) updatePayload.properties['Estado'] = { status: { name: estado } };
       if (avance !== undefined) updatePayload.properties['Avance %'] = { number: avance };
       if (items_completados !== undefined) {
+        const serialized = Array.isArray(items_completados)
+          ? JSON.stringify(items_completados)
+          : items_completados;
         updatePayload.properties['Items Completados'] = {
-          rich_text: [{ text: { content: items_completados } }]
+          rich_text: [{ text: { content: serialized } }]
         };
       }
       if (notas !== undefined) {

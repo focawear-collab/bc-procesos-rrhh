@@ -167,6 +167,62 @@ function buildProceso(id, candidato, track, cargo, local, fase, completedByPhase
 
 const discardedSeed = (p, motivo, daysAgoN) => ({...p, descartado:true, motivoDescarte:motivo, fechaDescarte:daysAgo(daysAgoN)});
 
+
+/* ============ NOTION INTEGRATION ============ */
+const FASE_TO_NOTION = {
+  'F1':'F1 Captación','F2':'F2 Entrevista',
+  'F3':'F3 Día prueba','F4':'F4 Contratación','F5':'F5 Onboarding'
+};
+const NOTION_TO_FASE = Object.fromEntries(Object.entries(FASE_TO_NOTION).map(([k,v])=>[v,k]));
+
+const CARGO_TRACK = {
+  'Garzón/a':'garzones','Copero/a':'garzones','Entrenador/a':'garzones',
+  'Jefe de Local':'jefatura','Sub Jefe':'jefatura','Jefe de Sub':'jefatura',
+  'Jefe de Cocina':'cocineros','Sous Chef':'cocineros','Cocinero/a':'cocineros'
+};
+
+let _localIdCounter = 1;
+function notionToApp(n) {
+  const cargo   = n.cargo || 'Garzón/a';
+  const track   = CARGO_TRACK[cargo] || 'garzones';
+  const fase    = NOTION_TO_FASE[n.fase] || n.fase || 'F1';
+  const completados = Array.isArray(n.items_completados) ? n.items_completados : [];
+  const descartado  = n.estado === 'Descartado';
+  let total = 0;
+  for (const p of ['F1','F2','F3','F4','F5']) total += (CHECKLISTS[track]?.[p]||[]).length;
+  const avance = total > 0 ? Math.round(completados.length / total * 100) : (n.avance||0);
+  return {
+    id: _localIdCounter++,
+    notionId: n.id,
+    idProceso: n.idProceso ? `RC${n.idProceso}` : `RC${1000+_localIdCounter}`,
+    candidato: n.candidato, track, cargo,
+    local: n.local || 'BC1',
+    fase, completados, notas: n.notas || '',
+    fechaInicio: n.fechaInicio || new Date().toISOString().split('T')[0],
+    avance, descartado,
+    motivoDescarte: descartado ? (n.motivoDescarte||'') : undefined,
+    fechaDescarte:  descartado ? (n.fechaDescarte||n.fechaInicio) : undefined
+  };
+}
+
+async function apiPatch(notionId, payload) {
+  try {
+    await fetch(`/api/proceso?id=${notionId}`, {
+      method:'PATCH', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+  } catch(e) { console.error('Notion PATCH error:', e); }
+}
+
+async function apiPost(payload) {
+  const res = await fetch('/api/procesos', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) throw new Error('Error creando proceso en Notion');
+  return await res.json();
+}
+
 const SAMPLE_PROCESOS = [
   discardedSeed(buildProceso(101,'Roberto Aliaga','garzones','Garzón/a','BC1','F2',{F1:4,F2:2},'Entrevista online ok pero sin experiencia en alta gastronomía.', 12), 'No cumple perfil', 10),
   discardedSeed(buildProceso(102,'María José Lagos','cocineros','Cocinero/a','BC2','F3',{F1:4,F2:3,F3:2},'', 20), 'No se presentó al día de prueba', 18),
@@ -864,7 +920,9 @@ const TweaksPanel = ({tweaks, update, visible}) => {
 
 /* ============ APP ============ */
 function App(){
-  const [procesos, setProcesos] = React.useState(SAMPLE_PROCESOS);
+  const [procesos, setProcesos] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [syncError, setSyncError] = React.useState(null);
   const [activeProc, setActiveProc] = React.useState(null);
   const [track, setTrack] = React.useState('all');
   const [local, setLocal] = React.useState('all');
@@ -874,6 +932,28 @@ function App(){
   const [showDiscarded, setShowDiscarded] = React.useState(false);
   const [discardTarget, setDiscardTarget] = React.useState(null);
   const [tweaks, updateTweaks, editMode] = useTweaks();
+
+  // Load procesos from Notion on mount
+  React.useEffect(()=>{
+    setLoading(true);
+    fetch('/api/procesos?status=all')
+      .then(r => r.json())
+      .then(data => {
+        _localIdCounter = 1;
+        if (Array.isArray(data)) {
+          setProcesos(data.map(n => notionToApp(n)));
+        } else {
+          console.warn('Notion returned unexpected data, using samples');
+          setProcesos(SAMPLE_PROCESOS);
+        }
+      })
+      .catch(err => {
+        console.error('Error loading from Notion:', err);
+        setSyncError('Sin conexión a Notion — mostrando datos de ejemplo');
+        setProcesos(SAMPLE_PROCESOS);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   // Apply accent
   React.useEffect(()=>{
@@ -903,31 +983,73 @@ function App(){
       const has = p.completados.includes(itemId);
       const next = has ? p.completados.filter(x=>x!==itemId) : [...p.completados, itemId];
       const avance = Math.round(next.filter(x=>!x.includes('-eval-')).length / getTotal(p.track) * 100);
+      if (p.notionId) apiPatch(p.notionId, { items_completados: next, avance });
       return { ...p, completados: next, avance };
     }));
   };
-  const advancePhase = (procId, phase) => setProcesos(prev => prev.map(p => p.id===procId ? {...p, fase: phase} : p));
-  const updateNotas = (procId, notas) => setProcesos(prev => prev.map(p => p.id===procId ? {...p, notas} : p));
+  const advancePhase = (procId, phase) => {
+    setProcesos(prev => prev.map(p => {
+      if (p.id!==procId) return p;
+      if (p.notionId) apiPatch(p.notionId, { fase: FASE_TO_NOTION[phase] || phase });
+      return { ...p, fase: phase };
+    }));
+  };
+  const updateNotas = (procId, notas) => {
+    setProcesos(prev => prev.map(p => {
+      if (p.id!==procId) return p;
+      if (p.notionId) apiPatch(p.notionId, { notas });
+      return { ...p, notas };
+    }));
+  };
   const discardProc = (procId, motivo) => {
     const fecha = new Date().toISOString().slice(0,10);
-    setProcesos(prev => prev.map(p => p.id===procId ? {...p, descartado:true, motivoDescarte:motivo, fechaDescarte:fecha} : p));
+    setProcesos(prev => prev.map(p => {
+      if (p.id!==procId) return p;
+      if (p.notionId) apiPatch(p.notionId, { estado: 'Descartado', notas: p.notas ? p.notas + `\nDescartado: ${motivo}` : `Descartado: ${motivo}` });
+      return { ...p, descartado:true, motivoDescarte:motivo, fechaDescarte:fecha };
+    }));
     setDiscardTarget(null);
     setActiveProc(null);
   };
-  const restoreProc = (procId) => setProcesos(prev => prev.map(p => p.id===procId ? {...p, descartado:false, motivoDescarte:undefined, fechaDescarte:undefined} : p));
+  const restoreProc = (procId) => {
+    setProcesos(prev => prev.map(p => {
+      if (p.id!==procId) return p;
+      if (p.notionId) apiPatch(p.notionId, { estado: 'En curso' });
+      return { ...p, descartado:false, motivoDescarte:undefined, fechaDescarte:undefined };
+    }));
+  };
   const deleteProc = (procId) => { setProcesos(prev => prev.filter(p => p.id!==procId)); setActiveProc(null); };
-  const createProc = (form) => {
-    const id = Math.max(...procesos.map(p=>p.id)) + 1;
+  const createProc = async (form) => {
     const trackMap = { 'Garzón/a':'garzones','Copero/a':'garzones','Entrenador/a':'garzones',
       'Jefe de Local':'jefatura','Sub Jefe':'jefatura',
       'Jefe de Cocina':'cocineros','Sous Chef':'cocineros','Cocinero/a':'cocineros' };
-    const newProc = buildProceso(id, form.candidato, trackMap[form.cargo]||'garzones', form.cargo, form.local, 'F1', {}, form.notas, 0);
-    setProcesos(prev => [newProc, ...prev]);
-    setActiveProc(id);
+    try {
+      const notionData = await apiPost({ candidato: form.candidato, cargo: form.cargo, local: form.local, notas: form.notas });
+      const newProc = notionToApp(notionData);
+      setProcesos(prev => [newProc, ...prev]);
+      setActiveProc(newProc.id);
+    } catch(e) {
+      console.error('Error creando en Notion:', e);
+      // Fallback local
+      const id = Math.max(0, ...procesos.map(p=>p.id)) + 1;
+      const newProc = buildProceso(id, form.candidato, trackMap[form.cargo]||'garzones', form.cargo, form.local, 'F1', {}, form.notas, 0);
+      setProcesos(prev => [newProc, ...prev]);
+      setActiveProc(id);
+    }
   };
 
   return (
     <div className={tweaks.density==='compact' ? 'compact' : ''}>
+      {loading && (
+        <div style={{position:'fixed',top:0,left:0,right:0,zIndex:9999,background:'rgba(212,175,55,0.12)',borderBottom:'1px solid rgba(212,175,55,0.3)',padding:'8px 20px',textAlign:'center',fontSize:12,color:'#d4af37',letterSpacing:'0.5px'}}>
+          ⏳ Cargando procesos desde Notion…
+        </div>
+      )}
+      {syncError && (
+        <div style={{position:'fixed',top:0,left:0,right:0,zIndex:9999,background:'rgba(224,80,80,0.12)',borderBottom:'1px solid rgba(224,80,80,0.3)',padding:'8px 20px',textAlign:'center',fontSize:12,color:'#e05050',letterSpacing:'0.5px',cursor:'pointer'}} onClick={()=>setSyncError(null)}>
+          ⚠ {syncError} · click para cerrar
+        </div>
+      )}
       <AppHeader procesos={procesos} onNew={()=>setShowNew(true)} />
       <FilterBar track={track} setTrack={setTrack} query={query} setQuery={setQuery} local={local} setLocal={setLocal}
         showDiscarded={showDiscarded} setShowDiscarded={setShowDiscarded} discardedCount={discardedCount} />
