@@ -834,10 +834,14 @@ const OrganigramaPanel = ({onClose}) => (
 
     {/* Gerencia */}
     <div style={{marginBottom:24}}>
-      <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, marginBottom:10, textAlign:'center'}}>NIVEL 0 · GERENCIA GENERAL</div>
-      <div style={{display:'flex', gap:14, justifyContent:'center'}}>
-        {[{n:'Llige Yang', r:'Ventas, Marketing & Liderazgo'}, {n:'Daniel Fosk', r:'Operaciones'}].map(p=>(
-          <div key={p.n} style={{padding:'14px 20px', background:'var(--card)', border:'1px solid var(--gold)', borderRadius:10, minWidth:220, textAlign:'center'}}>
+      <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, marginBottom:10, textAlign:'center'}}>NIVEL 0 · DIRECCIÓN</div>
+      <div style={{display:'flex', gap:14, justifyContent:'center', flexWrap:'wrap'}}>
+        {[
+          {n:'Jonathan Fosk', r:'Dueño · Comercial & Estrategia'},
+          {n:'Daniel Fosk',   r:'Cofundador · Gerente Operaciones'},
+          {n:'Llige Yang',    r:'Cofundadora · Ventas & Marketing'},
+        ].map(p=>(
+          <div key={p.n} style={{padding:'14px 20px', background:'var(--card)', border:'1px solid var(--gold)', borderRadius:10, minWidth:200, textAlign:'center'}}>
             <Avatar name={p.n} track="garzones" size={36}/>
             <div style={{fontSize:14, color:'#fff', fontWeight:600, marginTop:8}}>{p.n}</div>
             <div style={{fontSize:11, color:'var(--text-2)'}}>{p.r}</div>
@@ -849,11 +853,16 @@ const OrganigramaPanel = ({onClose}) => (
     {/* Admin */}
     <div style={{marginBottom:24}}>
       <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, marginBottom:10, textAlign:'center'}}>NIVEL 1 · ADMINISTRACIÓN</div>
-      <div style={{display:'flex', justifyContent:'center'}}>
-        <div style={{padding:'14px 20px', background:'var(--card)', border:'1px solid var(--gold)', borderRadius:10, minWidth:220, textAlign:'center'}}>
-          <Avatar name="Nelsimar Rodriguez" track="jefatura" size={36}/>
-          <div style={{fontSize:14, color:'#fff', fontWeight:600, marginTop:8}}>Nelsimar Rodriguez</div>
+      <div style={{display:'flex', gap:14, justifyContent:'center', flexWrap:'wrap'}}>
+        <div style={{padding:'14px 20px', background:'var(--card)', border:'1px solid var(--gold)', borderRadius:10, minWidth:200, textAlign:'center'}}>
+          <Avatar name="Nelsi Rodriguez" track="jefatura" size={36}/>
+          <div style={{fontSize:14, color:'#fff', fontWeight:600, marginTop:8}}>Nelsi Rodriguez</div>
           <div style={{fontSize:11, color:'var(--text-2)'}}>Administradora · Ambos locales</div>
+        </div>
+        <div style={{padding:'14px 20px', background:'var(--card)', border:'1px solid var(--border)', borderRadius:10, minWidth:200, textAlign:'center'}}>
+          <Avatar name="Inge Yang" track="jefatura" size={36}/>
+          <div style={{fontSize:14, color:'#fff', fontWeight:600, marginTop:8}}>Inge Yang</div>
+          <div style={{fontSize:11, color:'var(--text-2)'}}>Encargada RRHH · Externa</div>
         </div>
       </div>
     </div>
@@ -863,11 +872,14 @@ const OrganigramaPanel = ({onClose}) => (
     <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:14}}>
       {[
         { title:'BC1', color:'var(--bc1)', bg:'var(--bc1-dim)', team:[
-          ['Felipe Cofre','Jefe Local'],['Tomas Fuentes','Sub Jefe'],['Felipe Cornejo','Jefe Cocina'],
-          ['Jonathan Lobos','Sous Chef'],['Rossy Martinez','Entrenadora']
+          ['Felipe Cofre',    'Jefe de Local'],
+          ['Stephanie Ocando', 'Subjefe de Local'],
+          ['Waldo Cornejo',   'Jefe de Cocina (le dicen "Felipe")'],
+          ['Jonathan Lobos',  'Subjefe de Cocina'],
         ] },
         { title:'BC2', color:'var(--bc2)', bg:'var(--bc2-dim)', team:[
-          ['Saner Guillen','Jefe Local'],['Jennifer / Vanessa Ramonez','Jefe Cocina'],['Maria Angel','Jefe Salón']
+          ['Saner Guillen',  'Jefe de Local'],
+          ['Vanessa Ramones', 'Jefe de Cocina'],
         ] },
       ].map(loc => (
         <div key={loc.title} style={{background:'var(--card)', border:`1px solid ${loc.color}`, borderRadius:12, padding:18}}>
@@ -1349,7 +1361,7 @@ function App(){
             <div style={{width:40, height:40, borderRadius:8, background:'var(--gold-dim)', border:'1px solid var(--gold)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:18}}>🏢</div>
             <div style={{flex:1}}>
               <div style={{fontSize:13, color:'#fff', fontWeight:600}}>Ver organigrama completo</div>
-              <div style={{fontSize:11, color:'var(--text-2)'}}>Gerencia, administración y jefaturas BC1 / BC2 · 10 personas</div>
+              <div style={{fontSize:11, color:'var(--text-2)'}}>Dirección, administración y jefaturas BC1 / BC2 · 11 personas</div>
             </div>
             <span style={{color:'var(--gold)', fontSize:18}}>→</span>
           </button>
