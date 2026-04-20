@@ -856,7 +856,7 @@ const OrganigramaPanel = ({onClose}) => (
       <div style={{display:'flex', gap:14, justifyContent:'center', flexWrap:'wrap'}}>
         {[
           {n:'Nelsi Rodriguez',r:'Administradora · Ambos locales', border:'var(--gold)'},
-          {n:'Inge Yang',      r:'Encargada RRHH · Externa',border:'var(--border)'},
+          {n:'Inge Yang',      r:'Encargada RRHH',           border:'var(--border)'},
         ].map(p=>(
           <div key={p.n} style={{padding:'14px 20px', background:'var(--card)', border:`1px solid ${p.border}`, borderRadius:10, minWidth:200, textAlign:'center'}}>
             <Avatar name={p.n} track="jefatura" size={36}/>
