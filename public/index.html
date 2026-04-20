@@ -837,8 +837,9 @@ const OrganigramaPanel = ({onClose}) => (
       <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, marginBottom:10, textAlign:'center'}}>NIVEL 0 · DIRECCIÓN</div>
       <div style={{display:'flex', gap:14, justifyContent:'center', flexWrap:'wrap'}}>
         {[
-          {n:'Daniel Fosk', r:'Cofundador · Gerente Operaciones'},
-          {n:'Llige Yang',  r:'Cofundadora · Ventas & Marketing'},
+          {n:'Jonathan Fosk', r:'Gerente Comercial'},
+          {n:'Daniel Fosk',   r:'Cofundador · Gerente Operaciones'},
+          {n:'Llige Yang',    r:'Cofundadora · Ventas & Marketing'},
         ].map(p=>(
           <div key={p.n} style={{padding:'14px 20px', background:'var(--card)', border:'1px solid var(--gold)', borderRadius:10, minWidth:200, textAlign:'center'}}>
             <Avatar name={p.n} track="garzones" size={36}/>
@@ -854,7 +855,6 @@ const OrganigramaPanel = ({onClose}) => (
       <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, marginBottom:10, textAlign:'center'}}>NIVEL 1 · GESTIÓN</div>
       <div style={{display:'flex', gap:14, justifyContent:'center', flexWrap:'wrap'}}>
         {[
-          {n:'Jonathan Fosk',  r:'Gerente Comercial',       border:'var(--gold)'},
           {n:'Nelsi Rodriguez',r:'Administradora · Ambos locales', border:'var(--gold)'},
           {n:'Inge Yang',      r:'Encargada RRHH · Externa',border:'var(--border)'},
         ].map(p=>(
