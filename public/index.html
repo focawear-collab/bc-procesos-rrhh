@@ -312,7 +312,7 @@ const Tag = ({children, tone='default'}) => {
 const localTone = (l) => l==='BC1'?'bc1':'bc2';
 
 /* Header */
-const AppHeader = ({procesos, onNew, currentView, onViewChange}) => {
+const AppHeader = ({procesos, onNew, currentView, onViewChange, showMetrics, onToggleMetrics}) => {
   const active = procesos.filter(p=>p.fase!=='F5' || p.avance<100).length;
   const byPhase = phaseOrder.map(p => procesos.filter(pr=>pr.fase===p).length);
   return (
@@ -337,11 +337,11 @@ const AppHeader = ({procesos, onNew, currentView, onViewChange}) => {
               color: currentView==='organigrama' ? 'var(--gold)' : 'var(--text)'}}>
             🏢 Organigrama
           </button>
-          <button onClick={()=>onViewChange(currentView==='metrics'?'pipeline':'metrics')}
+          <button onClick={onToggleMetrics}
             style={{padding:'9px 14px', borderRadius:8, fontSize:12, fontWeight:600, transition:'all 0.15s',
-              background: currentView==='metrics' ? 'rgba(122,176,224,0.12)' : 'transparent',
-              border:`1px solid ${currentView==='metrics' ? 'var(--blue)' : 'var(--border-2)'}`,
-              color: currentView==='metrics' ? 'var(--blue)' : 'var(--text)'}}>
+              background: showMetrics ? 'rgba(122,176,224,0.12)' : 'transparent',
+              border:`1px solid ${showMetrics ? 'var(--blue)' : 'var(--border-2)'}`,
+              color: showMetrics ? 'var(--blue)' : 'var(--text)'}}>
             📊 Métricas
           </button>
           <button onClick={onNew} style={{padding:'9px 16px', borderRadius:8, background:'var(--gold)', color:'#0a0a0a', fontWeight:700, fontSize:13, boxShadow:'0 4px 16px rgba(212,175,55,0.25)'}}>
@@ -999,10 +999,10 @@ const MetricsView = ({procesos}) => {
   };
 
   return (
-    <div style={{padding:'28px 40px 60px'}}>
+    <div style={{padding:'20px 40px 28px', background:'linear-gradient(180deg,rgba(122,176,224,0.04) 0%,transparent 100%)', borderBottom:'1px solid var(--border)'}}>
 
       {/* Title row */}
-      <div style={{display:'flex', alignItems:'center', gap:12, marginBottom:24}}>
+      <div style={{display:'flex', alignItems:'center', gap:12, marginBottom:18}}>
         <div style={{fontSize:10, color:'var(--blue)', letterSpacing:'2px', fontWeight:700, textTransform:'uppercase'}}>📊 Métricas ATS</div>
         <div style={{flex:1, height:1, background:'var(--border)'}} />
         <div style={{fontSize:11, color:'var(--text-3)'}}>{allProcs.length} procesos registrados en Notion</div>
@@ -1195,6 +1195,7 @@ function App(){
   const [query, setQuery] = React.useState('');
   const [showNew, setShowNew] = React.useState(false);
   const [view, setView] = React.useState('pipeline'); // pipeline | organigrama
+  const [showMetrics, setShowMetrics] = React.useState(false);
   const [showDiscarded, setShowDiscarded] = React.useState(false);
   const [discardTarget, setDiscardTarget] = React.useState(null);
   const [tweaks, updateTweaks, editMode] = useTweaks();
@@ -1316,9 +1317,12 @@ function App(){
           ⚠ {syncError} · click para cerrar
         </div>
       )}
-      <AppHeader procesos={procesos} onNew={()=>setShowNew(true)} currentView={view} onViewChange={setView} />
+      <AppHeader procesos={procesos} onNew={()=>setShowNew(true)} currentView={view} onViewChange={setView}
+        showMetrics={showMetrics} onToggleMetrics={()=>setShowMetrics(v=>!v)} />
 
-      {view !== 'metrics' && (
+      {showMetrics && view !== 'organigrama' && <MetricsView procesos={procesos} />}
+
+      {view !== 'organigrama' && (
         <>
           <FilterBar track={track} setTrack={setTrack} query={query} setQuery={setQuery} local={local} setLocal={setLocal}
             showDiscarded={showDiscarded} setShowDiscarded={setShowDiscarded} discardedCount={discardedCount} />
@@ -1336,7 +1340,6 @@ function App(){
       )}
 
       {view==='organigrama' && <OrganigramaPanel onClose={()=>setView('pipeline')} />}
-      {view==='metrics' && <MetricsView procesos={procesos} />}
 
       {tweaks.showOrganigrama && view==='pipeline' && (
         <div style={{padding:'0 40px 40px'}}>
