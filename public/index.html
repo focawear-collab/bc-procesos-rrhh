@@ -312,7 +312,7 @@ const Tag = ({children, tone='default'}) => {
 const localTone = (l) => l==='BC1'?'bc1':'bc2';
 
 /* Header */
-const AppHeader = ({procesos, onNew}) => {
+const AppHeader = ({procesos, onNew, currentView, onViewChange}) => {
   const active = procesos.filter(p=>p.fase!=='F5' || p.avance<100).length;
   const byPhase = phaseOrder.map(p => procesos.filter(pr=>pr.fase===p).length);
   return (
@@ -330,8 +330,19 @@ const AppHeader = ({procesos, onNew}) => {
           <p style={{fontSize:13, color:'var(--text-2)'}}>Pipeline operativo · Uso exclusivo RRHH · {active} procesos activos</p>
         </div>
         <div style={{display:'flex', gap:8}}>
-          <button style={{padding:'9px 14px', borderRadius:8, background:'transparent', border:'1px solid var(--border-2)', color:'var(--text)', fontSize:12, fontWeight:600}}>
-            Organigrama
+          <button onClick={()=>onViewChange(currentView==='organigrama'?'pipeline':'organigrama')}
+            style={{padding:'9px 14px', borderRadius:8, fontSize:12, fontWeight:600, transition:'all 0.15s',
+              background: currentView==='organigrama' ? 'rgba(212,175,55,0.1)' : 'transparent',
+              border:`1px solid ${currentView==='organigrama' ? 'var(--gold)' : 'var(--border-2)'}`,
+              color: currentView==='organigrama' ? 'var(--gold)' : 'var(--text)'}}>
+            🏢 Organigrama
+          </button>
+          <button onClick={()=>onViewChange(currentView==='metrics'?'pipeline':'metrics')}
+            style={{padding:'9px 14px', borderRadius:8, fontSize:12, fontWeight:600, transition:'all 0.15s',
+              background: currentView==='metrics' ? 'rgba(122,176,224,0.12)' : 'transparent',
+              border:`1px solid ${currentView==='metrics' ? 'var(--blue)' : 'var(--border-2)'}`,
+              color: currentView==='metrics' ? 'var(--blue)' : 'var(--text)'}}>
+            📊 Métricas
           </button>
           <button onClick={onNew} style={{padding:'9px 16px', borderRadius:8, background:'var(--gold)', color:'#0a0a0a', fontWeight:700, fontSize:13, boxShadow:'0 4px 16px rgba(212,175,55,0.25)'}}>
             + Nuevo proceso
@@ -918,6 +929,261 @@ const TweaksPanel = ({tweaks, update, visible}) => {
   );
 };
 
+/* ============ METRICS VIEW ============ */
+const MetricsView = ({procesos}) => {
+  const now = new Date();
+  const daysDiff = (dateStr) => dateStr ? Math.max(0, Math.floor((now - new Date(dateStr)) / 86400000)) : 0;
+
+  const allProcs = procesos;
+  const active   = procesos.filter(p => !p.descartado);
+  const discarded = procesos.filter(p => p.descartado);
+  const inF5     = active.filter(p => p.fase === 'F5');
+  const globalConv = allProcs.length > 0 ? Math.round(inF5.length / allProcs.length * 100) : 0;
+
+  // Funnel: candidates at each phase or beyond (cumulative)
+  const phaseCumul = phaseOrder.map((ph, i) =>
+    active.filter(p => phaseOrder.indexOf(p.fase) >= i).length
+  );
+  const maxFunnel = Math.max(phaseCumul[0] || 1, 1);
+
+  // Phase-to-phase conversion rate
+  const phaseConv = phaseCumul.map((c, i) =>
+    i === 0 ? 100 : phaseCumul[i-1] > 0 ? Math.round(c / phaseCumul[i-1] * 100) : 0
+  );
+
+  // Drop count between phases (those that didn't advance)
+  const phaseDrop = phaseCumul.map((c, i) =>
+    i >= phaseCumul.length - 1 ? 0 : c - phaseCumul[i+1]
+  );
+
+  // By track stats
+  const trackStats = Object.entries(TRACKS).map(([key, def]) => ({
+    key, ...def,
+    active: active.filter(p => p.track === key).length,
+    disc:   discarded.filter(p => p.track === key).length,
+  }));
+
+  // By local stats
+  const localStats = ['BC1','BC2'].map(loc => ({
+    loc, tone: localTone(loc),
+    active: active.filter(p => p.local === loc).length,
+    disc:   discarded.filter(p => p.local === loc).length,
+  }));
+
+  // Discard reasons
+  const reasons = {};
+  discarded.forEach(p => { const r = p.motivoDescarte || 'Sin motivo'; reasons[r] = (reasons[r]||0)+1; });
+  const sortedReasons = Object.entries(reasons).sort((a,b) => b[1]-a[1]).slice(0,6);
+  const maxReason = sortedReasons[0]?.[1] || 1;
+
+  // Avg days per phase (active procesos currently in that phase)
+  const avgByPhase = phaseOrder.map(ph => {
+    const inPhase = active.filter(p => p.fase === ph);
+    return {
+      ph,
+      count: inPhase.length,
+      avg: inPhase.length ? Math.round(inPhase.reduce((s,p) => s + daysDiff(p.fechaInicio), 0) / inPhase.length) : null,
+    };
+  });
+  const avgGlobal = active.length ? Math.round(active.reduce((s,p) => s + daysDiff(p.fechaInicio), 0) / active.length) : 0;
+
+  const StatCard = ({label, value, sub, tone='default'}) => {
+    const colors = { default:'var(--text)', gold:'var(--gold)', bc1:'var(--bc1)', red:'var(--red)', blue:'var(--blue)' };
+    return (
+      <div style={{background:'var(--card)', border:'1px solid var(--border)', borderRadius:12, padding:'18px 20px', display:'flex', flexDirection:'column', gap:4}}>
+        <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, textTransform:'uppercase'}}>{label}</div>
+        <div style={{fontSize:32, fontWeight:700, color:colors[tone]||colors.default, fontFamily:'Fraunces', lineHeight:1.1}}>{value}</div>
+        {sub && <div style={{fontSize:11, color:'var(--text-3)', marginTop:2}}>{sub}</div>}
+      </div>
+    );
+  };
+
+  return (
+    <div style={{padding:'28px 40px 60px'}}>
+
+      {/* Title row */}
+      <div style={{display:'flex', alignItems:'center', gap:12, marginBottom:24}}>
+        <div style={{fontSize:10, color:'var(--blue)', letterSpacing:'2px', fontWeight:700, textTransform:'uppercase'}}>📊 Métricas ATS</div>
+        <div style={{flex:1, height:1, background:'var(--border)'}} />
+        <div style={{fontSize:11, color:'var(--text-3)'}}>{allProcs.length} procesos registrados en Notion</div>
+      </div>
+
+      {/* Stat cards */}
+      <div style={{display:'grid', gridTemplateColumns:'repeat(5, 1fr)', gap:12, marginBottom:24}}>
+        <StatCard label="Total procesos" value={allProcs.length} sub="Histórico completo" />
+        <StatCard label="En pipeline" value={active.length} sub="Candidatos activos" tone="gold" />
+        <StatCard label="En onboarding" value={inF5.length} sub="Fase F5 activa" tone="bc1" />
+        <StatCard label="Descartados" value={discarded.length} sub={`${allProcs.length>0?Math.round(discarded.length/allProcs.length*100):0}% del total`} tone="red" />
+        <StatCard label="Conversión global" value={`${globalConv}%`} sub="Llegaron a F5 / total" tone="blue" />
+      </div>
+
+      {/* Funnel */}
+      <div style={{background:'var(--card)', border:'1px solid var(--border)', borderRadius:12, padding:'22px 26px', marginBottom:24}}>
+        <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:18}}>
+          <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, textTransform:'uppercase'}}>Funnel de Reclutamiento · Candidatos activos por fase</div>
+          <div style={{fontSize:10, color:'var(--text-3)'}}>Acumulativo — incluye candidatos en fases posteriores</div>
+        </div>
+        {PHASES.map((ph, i) => {
+          const count = phaseCumul[i];
+          const barPct = Math.round(count / maxFunnel * 100);
+          const drop = phaseDrop[i];
+          const conv = phaseConv[i];
+          const convColor = conv >= 70 ? 'var(--bc1)' : conv >= 40 ? 'var(--gold)' : 'var(--red)';
+          return (
+            <div key={ph.id} style={{display:'grid', gridTemplateColumns:'90px 1fr 140px', alignItems:'center', gap:16, marginBottom:i < PHASES.length-1 ? 10 : 0}}>
+              <div>
+                <div style={{fontSize:10, color:'var(--gold)', fontWeight:700, letterSpacing:'1px', marginBottom:1}}>{ph.id}</div>
+                <div style={{fontSize:12, color:'#fff', fontWeight:600}}>{ph.name}</div>
+                <div style={{fontSize:10, color:'var(--text-3)'}}>{ph.sub}</div>
+              </div>
+              <div style={{position:'relative', height:36, background:'var(--card-2)', borderRadius:8, overflow:'hidden'}}>
+                <div style={{
+                  position:'absolute', top:0, left:0, bottom:0, width:`${barPct}%`,
+                  background:`linear-gradient(90deg, rgba(212,175,55,0.35), rgba(212,175,55,0.15))`,
+                  borderRight: count > 0 ? '2px solid var(--gold)' : 'none',
+                  transition:'width 0.6s ease', minWidth: count > 0 ? 4 : 0,
+                }} />
+                <div style={{position:'absolute', inset:0, display:'flex', alignItems:'center', padding:'0 14px'}}>
+                  <span style={{fontSize:18, fontWeight:700, color:'#fff', fontFamily:'Fraunces'}}>{count}</span>
+                  <span style={{fontSize:10, color:'var(--text-2)', marginLeft:6}}>candidato{count!==1?'s':''}</span>
+                </div>
+              </div>
+              <div style={{display:'flex', gap:12, justifyContent:'flex-end', alignItems:'center'}}>
+                {i > 0 && (
+                  <div style={{textAlign:'center'}}>
+                    <div style={{fontSize:14, fontWeight:700, color:convColor}}>{conv}%</div>
+                    <div style={{fontSize:9, color:'var(--text-3)', letterSpacing:'0.5px', textTransform:'uppercase'}}>vs F{i}</div>
+                  </div>
+                )}
+                {drop > 0 && (
+                  <div style={{textAlign:'center', padding:'4px 8px', background:'var(--red-dim)', borderRadius:6}}>
+                    <div style={{fontSize:13, fontWeight:700, color:'var(--red)'}}>−{drop}</div>
+                    <div style={{fontSize:9, color:'var(--red)', letterSpacing:'0.5px'}}>no pasan</div>
+                  </div>
+                )}
+                {i > 0 && drop === 0 && count > 0 && (
+                  <div style={{padding:'4px 8px', background:'rgba(106,184,106,0.12)', borderRadius:6}}>
+                    <div style={{fontSize:9, color:'var(--bc1)', fontWeight:700, letterSpacing:'0.5px'}}>SIN BAJA</div>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* 3-column grid */}
+      <div style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:16, marginBottom:20}}>
+
+        {/* By track */}
+        <div style={{background:'var(--card)', border:'1px solid var(--border)', borderRadius:12, padding:'18px 20px'}}>
+          <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, textTransform:'uppercase', marginBottom:14}}>Por track</div>
+          {trackStats.map((t, idx) => {
+            const total = t.active + t.disc;
+            const pct = allProcs.length > 0 ? Math.round(total / allProcs.length * 100) : 0;
+            return (
+              <div key={t.key} style={{display:'flex', alignItems:'center', gap:12, marginBottom: idx < trackStats.length-1 ? 14 : 0, paddingBottom: idx < trackStats.length-1 ? 14 : 0, borderBottom: idx < trackStats.length-1 ? '1px solid var(--border)' : 'none'}}>
+                <div style={{fontSize:22}}>{t.icon}</div>
+                <div style={{flex:1}}>
+                  <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:4}}>
+                    <div style={{fontSize:12, color:'#fff', fontWeight:600}}>{t.label}</div>
+                    <div style={{fontSize:14, fontWeight:700, color:t.color, fontFamily:'Fraunces'}}>{total}</div>
+                  </div>
+                  <div style={{height:3, background:'var(--card-2)', borderRadius:2, overflow:'hidden', marginBottom:4}}>
+                    <div style={{height:'100%', width:`${pct}%`, background:t.color, opacity:0.7, borderRadius:2}} />
+                  </div>
+                  <div style={{display:'flex', gap:8, fontSize:10}}>
+                    <span style={{color:'var(--text-2)'}}>{t.active} activos</span>
+                    {t.disc > 0 && <span style={{color:'var(--red)'}}>· {t.disc} desc.</span>}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Avg time per phase */}
+        <div style={{background:'var(--card)', border:'1px solid var(--border)', borderRadius:12, padding:'18px 20px'}}>
+          <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, textTransform:'uppercase', marginBottom:14}}>Días promedio en pipeline</div>
+          <div style={{display:'flex', alignItems:'center', gap:12, marginBottom:16, padding:'12px 14px', background:'var(--gold-dim)', border:'1px solid rgba(212,175,55,0.2)', borderRadius:10}}>
+            <div style={{fontSize:32, fontWeight:700, color:'var(--gold)', fontFamily:'Fraunces', lineHeight:1}}>{avgGlobal}</div>
+            <div>
+              <div style={{fontSize:12, color:'var(--gold)', fontWeight:600}}>días en promedio</div>
+              <div style={{fontSize:10, color:'var(--text-3)'}}>desde inicio · candidatos activos</div>
+            </div>
+          </div>
+          {avgByPhase.map(({ph, count, avg}) => {
+            const phData = PHASES.find(p=>p.id===ph);
+            const urgency = avg !== null && avg > 14 ? 'var(--red)' : avg > 7 ? 'var(--gold)' : 'var(--bc1)';
+            return (
+              <div key={ph} style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8, padding:'7px 0', borderBottom:'1px solid rgba(255,255,255,0.04)'}}>
+                <div style={{display:'flex', gap:8, alignItems:'center'}}>
+                  <span style={{fontSize:10, color:'var(--gold)', fontWeight:700, letterSpacing:'0.8px', minWidth:18}}>{ph}</span>
+                  <span style={{fontSize:11, color:'var(--text-2)'}}>{phData.name}</span>
+                </div>
+                <div style={{textAlign:'right'}}>
+                  {avg !== null ? (
+                    <span>
+                      <span style={{fontSize:13, fontWeight:700, color:urgency}}>{avg}</span>
+                      <span style={{fontSize:10, color:'var(--text-3)', marginLeft:3}}>días · {count} cand.</span>
+                    </span>
+                  ) : (
+                    <span style={{fontSize:10, color:'var(--text-3)', fontStyle:'italic'}}>sin datos</span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Discard reasons + by local */}
+        <div style={{background:'var(--card)', border:'1px solid var(--border)', borderRadius:12, padding:'18px 20px', display:'flex', flexDirection:'column'}}>
+          <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, textTransform:'uppercase', marginBottom:14}}>
+            Motivos de descarte{discarded.length > 0 ? ` · ${discarded.length} total` : ''}
+          </div>
+          {discarded.length === 0 ? (
+            <div style={{flex:1, display:'flex', alignItems:'center', justifyContent:'center', color:'var(--text-3)', fontSize:12, fontStyle:'italic'}}>Sin descartados registrados</div>
+          ) : (
+            <div style={{flex:1}}>
+              {sortedReasons.map(([reason, count]) => (
+                <div key={reason} style={{marginBottom:10}}>
+                  <div style={{display:'flex', justifyContent:'space-between', fontSize:11, marginBottom:4, gap:8}}>
+                    <span style={{color:'var(--text)', flex:1, lineHeight:1.4}}>{reason}</span>
+                    <span style={{color:'var(--red)', fontWeight:700, flexShrink:0}}>{count}</span>
+                  </div>
+                  <div style={{height:4, background:'var(--card-2)', borderRadius:2, overflow:'hidden'}}>
+                    <div style={{height:'100%', width:`${Math.round(count/maxReason*100)}%`, background:'var(--red)', borderRadius:2, opacity:0.75}} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <div style={{marginTop:16, paddingTop:14, borderTop:'1px solid var(--border)'}}>
+            <div style={{fontSize:9, color:'var(--text-3)', letterSpacing:'1.2px', fontWeight:700, textTransform:'uppercase', marginBottom:10}}>Por local</div>
+            {localStats.map(({loc, tone, active: a, disc: d}) => (
+              <div key={loc} style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8}}>
+                <Tag tone={tone}>{loc}</Tag>
+                <div style={{fontSize:11, color:'var(--text-2)'}}>
+                  <span style={{color:'#fff', fontWeight:600}}>{a}</span> activos
+                  {d > 0 && <> · <span style={{color:'var(--red)'}}>{d}</span> desc.</>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Footer note */}
+      <div style={{padding:'12px 16px', background:'var(--card)', border:'1px solid var(--border)', borderRadius:8, display:'flex', gap:10, alignItems:'flex-start'}}>
+        <span style={{fontSize:13, flexShrink:0}}>💡</span>
+        <div style={{fontSize:11, color:'var(--text-3)', lineHeight:1.7}}>
+          Métricas calculadas en tiempo real desde Notion. El <strong style={{color:'var(--text-2)'}}>funnel</strong> muestra candidatos <em>activos acumulados</em> por fase — quienes están en F3 también cuentan en F1 y F2. Los <strong style={{color:'var(--text-2)'}}>días promedio</strong> se calculan desde la fecha de inicio hasta hoy. La <strong style={{color:'var(--text-2)'}}>conversión global</strong> incluye descartados en el denominador.
+        </div>
+      </div>
+    </div>
+  );
+};
+
 /* ============ APP ============ */
 function App(){
   const [procesos, setProcesos] = React.useState([]);
@@ -1050,13 +1316,18 @@ function App(){
           ⚠ {syncError} · click para cerrar
         </div>
       )}
-      <AppHeader procesos={procesos} onNew={()=>setShowNew(true)} />
-      <FilterBar track={track} setTrack={setTrack} query={query} setQuery={setQuery} local={local} setLocal={setLocal}
-        showDiscarded={showDiscarded} setShowDiscarded={setShowDiscarded} discardedCount={discardedCount} />
-      {showDiscarded && (
-        <div style={{padding:'10px 40px', background:'rgba(224,128,128,0.04)', borderBottom:'1px solid var(--border)', fontSize:11.5, color:'var(--red)', letterSpacing:'0.5px', display:'flex', alignItems:'center', gap:8}}>
-          <span>🚫</span><span>Mostrando procesos descartados · {discardedCount} registros</span>
-        </div>
+      <AppHeader procesos={procesos} onNew={()=>setShowNew(true)} currentView={view} onViewChange={setView} />
+
+      {view !== 'metrics' && (
+        <>
+          <FilterBar track={track} setTrack={setTrack} query={query} setQuery={setQuery} local={local} setLocal={setLocal}
+            showDiscarded={showDiscarded} setShowDiscarded={setShowDiscarded} discardedCount={discardedCount} />
+          {showDiscarded && (
+            <div style={{padding:'10px 40px', background:'rgba(224,128,128,0.04)', borderBottom:'1px solid var(--border)', fontSize:11.5, color:'var(--red)', letterSpacing:'0.5px', display:'flex', alignItems:'center', gap:8}}>
+              <span>🚫</span><span>Mostrando procesos descartados · {discardedCount} registros</span>
+            </div>
+          )}
+        </>
       )}
 
       {view==='pipeline' && (tweaks.layout==='kanban'
@@ -1065,6 +1336,7 @@ function App(){
       )}
 
       {view==='organigrama' && <OrganigramaPanel onClose={()=>setView('pipeline')} />}
+      {view==='metrics' && <MetricsView procesos={procesos} />}
 
       {tweaks.showOrganigrama && view==='pipeline' && (
         <div style={{padding:'0 40px 40px'}}>
