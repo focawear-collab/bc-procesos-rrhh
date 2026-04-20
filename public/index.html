@@ -327,7 +327,8 @@ const AppHeader = ({procesos, onNew, currentView, onViewChange, showMetrics, onT
           <h1 className="serif" style={{fontSize:34, lineHeight:1.05, color:'#fff', fontWeight:600, letterSpacing:'-0.5px', marginBottom:6}}>
             Procesos de Reclutamiento <span style={{fontStyle:'italic', color:'var(--gold)'}}>&amp; Onboarding</span>
           </h1>
-          <p style={{fontSize:13, color:'var(--text-2)'}}>Pipeline operativo · Uso exclusivo RRHH · {active} procesos activos</p>
+          <p style={{fontSize:13, color:'var(--text-2)', marginBottom:5}}>Pipeline operativo · Uso exclusivo RRHH · {active} procesos activos</p>
+          <div style={{fontSize:11, color:'var(--gold)', letterSpacing:'0.3px', opacity:0.75}}>v1.3 — Notion sync completo + ATS Funnel Metrics + búsqueda + clave cartas</div>
         </div>
         <div style={{display:'flex', gap:8}}>
           <button onClick={()=>onViewChange(currentView==='organigrama'?'pipeline':'organigrama')}
