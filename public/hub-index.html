@@ -221,6 +221,78 @@
       font-weight: 600;
     }
 
+    /* Search */
+    .search-wrap {
+      margin-bottom: 32px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 16px 12px 42px;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: #d4af37;
+    }
+
+    .search-input::placeholder {
+      color: #555;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #555;
+      font-size: 15px;
+      pointer-events: none;
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #555;
+      font-size: 16px;
+      cursor: pointer;
+      display: none;
+      background: none;
+      border: none;
+      line-height: 1;
+      padding: 2px 4px;
+    }
+
+    .search-clear:hover { color: #aaa; }
+
+    .search-empty {
+      text-align: center;
+      padding: 40px 0;
+      color: #555;
+      font-size: 14px;
+      display: none;
+    }
+
+    .section.hidden { display: none; }
+    .card.hidden { display: none; }
+
+    .highlight {
+      background: rgba(212,175,55,0.25);
+      color: #f0c940;
+      border-radius: 2px;
+      padding: 0 1px;
+    }
+
     /* Footer */
     footer {
       text-align: center;
@@ -261,7 +333,7 @@
     <!-- Stats -->
     <div class="stats">
       <div class="stat">
-        <div class="stat-number">17</div>
+        <div class="stat-number">15</div>
         <div>Documentos activos</div>
       </div>
       <div class="stat">
@@ -269,10 +341,18 @@
         <div>Roles cubiertos</div>
       </div>
       <div class="stat">
-        <div class="stat-number">6</div>
+        <div class="stat-number">5</div>
         <div>Tipos de documento</div>
       </div>
     </div>
+
+    <!-- Buscador -->
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input id="hub-search" class="search-input" type="text" placeholder="Buscar documento, rol, cargo…" autocomplete="off" spellcheck="false">
+      <button class="search-clear" id="search-clear" title="Limpiar">✕</button>
+    </div>
+    <div class="search-empty" id="search-empty">Sin resultados para "<span id="search-term"></span>"</div>
 
     <!-- Section 1: Publicaciones públicas -->
     <div class="section">
@@ -308,10 +388,10 @@
     </div>
 
     <!-- Section 2: Cartas de oferta -->
-    <div class="section" id="cartas-section">
-      <div class="section-title">📄 Cartas de oferta · Privadas — post entrevista 🔒</div>
+    <div class="section">
+      <div class="section-title">📄 Cartas de oferta · Privadas — post entrevista</div>
       <div class="cards">
-        <a href="BC_CartaOferta_JefeLocal.html" class="card">
+        <a href="#" onclick="cartaGate('BC_CartaOferta_JefeLocal.html');return false;" class="card carta-locked">
           <div class="card-icon purple">👑</div>
           <div class="card-body">
             <div class="card-title">Carta Oferta — Jefe/a de Local</div>
@@ -322,9 +402,9 @@
               <span class="tag red">Requiere firma</span>
             </div>
           </div>
-          <div class="card-arrow">→</div>
+          <div class="card-arrow carta-lock-icon">🔒</div>
         </a>
-        <a href="BC_CartaOferta_SubJefe.html" class="card">
+        <a href="#" onclick="cartaGate('BC_CartaOferta_SubJefe.html');return false;" class="card carta-locked">
           <div class="card-icon gold">🧭</div>
           <div class="card-body">
             <div class="card-title">Carta Oferta — Sub Jefe/a</div>
@@ -335,9 +415,9 @@
               <span class="tag red">Requiere firma</span>
             </div>
           </div>
-          <div class="card-arrow">→</div>
+          <div class="card-arrow carta-lock-icon">🔒</div>
         </a>
-        <a href="BC_CartaOferta_JefeCocina.html" class="card">
+        <a href="#" onclick="cartaGate('BC_CartaOferta_JefeCocina.html');return false;" class="card carta-locked">
           <div class="card-icon gold">🔥</div>
           <div class="card-body">
             <div class="card-title">Carta Oferta — Jefe/a de Cocina</div>
@@ -348,9 +428,9 @@
               <span class="tag red">Requiere firma</span>
             </div>
           </div>
-          <div class="card-arrow">→</div>
+          <div class="card-arrow carta-lock-icon">🔒</div>
         </a>
-        <a href="BC_CartaOferta_SousChef.html" class="card">
+        <a href="#" onclick="cartaGate('BC_CartaOferta_SousChef.html');return false;" class="card carta-locked">
           <div class="card-icon gold">👨‍🍳</div>
           <div class="card-body">
             <div class="card-title">Carta Oferta — Sous Chef</div>
@@ -361,9 +441,9 @@
               <span class="tag red">Requiere firma</span>
             </div>
           </div>
-          <div class="card-arrow">→</div>
+          <div class="card-arrow carta-lock-icon">🔒</div>
         </a>
-        <a href="BC_CartaOferta_Cocinero.html" class="card">
+        <a href="#" onclick="cartaGate('BC_CartaOferta_Cocinero.html');return false;" class="card carta-locked">
           <div class="card-icon gold">🍳</div>
           <div class="card-body">
             <div class="card-title">Carta Oferta — Cocinero/a</div>
@@ -374,9 +454,9 @@
               <span class="tag red">Requiere firma</span>
             </div>
           </div>
-          <div class="card-arrow">→</div>
+          <div class="card-arrow carta-lock-icon">🔒</div>
         </a>
-        <a href="BlackChicken_Oferta_Garzon_FT.html" class="card">
+        <a href="#" onclick="cartaGate('BlackChicken_Oferta_Garzon_FT.html');return false;" class="card carta-locked">
           <div class="card-icon gold">🍽️</div>
           <div class="card-body">
             <div class="card-title">Carta Oferta — Garzón/a Full Time</div>
@@ -388,9 +468,9 @@
               <span class="tag red">Requiere firma</span>
             </div>
           </div>
-          <div class="card-arrow">→</div>
+          <div class="card-arrow carta-lock-icon">🔒</div>
         </a>
-        <a href="BC_CartaOferta_Copero.html" class="card">
+        <a href="#" onclick="cartaGate('BC_CartaOferta_Copero.html');return false;" class="card carta-locked">
           <div class="card-icon gold">🍹</div>
           <div class="card-body">
             <div class="card-title">Carta Oferta — Copero/a</div>
@@ -402,7 +482,7 @@
               <span class="tag red">Requiere firma</span>
             </div>
           </div>
-          <div class="card-arrow">→</div>
+          <div class="card-arrow carta-lock-icon">🔒</div>
         </a>
       </div>
     </div>
@@ -510,7 +590,7 @@
           </div>
           <div class="card-arrow">↗</div>
         </a>
-        <a href="https://y-opedn1qcl-focawear-collabs-projects.vercel.app" target="_blank" class="card">
+        <a href="https://bc-evaluacion-pares.vercel.app" target="_blank" class="card">
           <div class="card-icon purple">🔒</div>
           <div class="card-body">
             <div class="card-title">Evaluación entre Pares (Anónimo)</div>
@@ -531,118 +611,174 @@
     Black Chicken · Documentos internos de Personas & RRHH · Talentos@BlackChicken.cl / Uso exclusivo interno · No compartir con candidatos sin autorización
   </footer>
 
-<!-- PASSWORD GATE MODAL -->
-<div id="hub-gate" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:9999;align-items:center;justify-content:center;font-family:'Inter',sans-serif">
-  <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:40px 36px;max-width:380px;width:90%;text-align:center;animation:gateIn 0.25s ease">
-    <img src="./blackchicken_logo.png" alt="BC" style="width:60px;height:60px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(212,175,55,.3));margin-bottom:20px">
-    <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#d4af37;font-weight:700;margin-bottom:8px">Acceso Restringido</p>
-    <p style="font-size:14px;color:#777;line-height:1.6;margin-bottom:28px">Esta sección es de uso privado.<br>Ingresa el código de acceso para continuar.</p>
-    <input id="hub-gate-input" type="password" placeholder="Código de acceso" autocomplete="off"
-      style="width:100%;padding:13px 16px;background:#0f0f0f;border:1px solid #2a2a2a;border-radius:9px;color:#fff;font-size:15px;text-align:center;outline:none;font-family:'Inter',sans-serif;margin-bottom:12px;transition:border-color 0.2s,box-shadow 0.2s;letter-spacing:2px">
-    <button id="hub-gate-btn"
-      style="width:100%;padding:13px;background:linear-gradient(90deg,#d4af37,#f0c940);border:none;border-radius:9px;color:#0f0f0f;font-size:14px;font-weight:800;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:0.5px">
-      Acceder
-    </button>
-    <p id="hub-gate-err" style="font-size:12px;color:#e05050;margin-top:14px;display:none;font-weight:600">⚠ Código incorrecto</p>
-    <button id="hub-gate-close"
-      style="background:none;border:none;color:#444;font-size:12px;cursor:pointer;margin-top:18px;font-family:'Inter',sans-serif;text-decoration:underline">
-      Cancelar
-    </button>
+  <!-- Modal clave Cartas de Oferta -->
+  <div id="carta-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:none;align-items:center;justify-content:center;font-family:'Inter',sans-serif;">
+    <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:40px;max-width:380px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.7);">
+      <img src="./blackchicken_logo.png" alt="BC" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(212,175,55,.3));margin-bottom:18px;">
+      <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#d4af37;font-weight:700;margin-bottom:6px;">Acceso restringido</p>
+      <p style="font-size:13px;color:#666;margin-bottom:22px;">Documentos confidenciales · Solo RRHH</p>
+      <input id="carta-input" type="password" placeholder="Código de acceso" autocomplete="off"
+        style="width:100%;padding:12px 16px;background:#0f0f0f;border:1px solid #2a2a2a;border-radius:8px;color:#fff;font-size:15px;text-align:center;outline:none;font-family:'Inter',sans-serif;margin-bottom:12px;">
+      <button id="carta-btn"
+        style="width:100%;padding:12px;background:linear-gradient(90deg,#d4af37,#f0c940);border:none;border-radius:8px;color:#0f0f0f;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">
+        Acceder
+      </button>
+      <p id="carta-err" style="font-size:12px;color:#e05050;margin-top:10px;display:none;">Código incorrecto</p>
+      <p id="carta-cancel" onclick="closeCartaModal()" style="font-size:12px;color:#555;margin-top:14px;cursor:pointer;">Cancelar</p>
+    </div>
   </div>
-</div>
 
-<style>
-@keyframes gateIn {
-  from { opacity: 0; transform: scale(0.94) translateY(8px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
-}
-@keyframes shake {
-  0%,100% { transform: translateX(0); }
-  20%     { transform: translateX(-6px); }
-  40%     { transform: translateX(6px); }
-  60%     { transform: translateX(-4px); }
-  80%     { transform: translateX(4px); }
-}
-</style>
+  <style>
+    .carta-lock-icon { font-size:16px; opacity:0.7; }
+    .carta-locked { opacity:0.9; }
+    .carta-locked:hover .carta-lock-icon { opacity:1; }
+  </style>
 
-<script>
-(function () {
-  var PASS = "TalentosBC";
-  var KEY  = "bc_hub_cartas_auth";
+  <script>
+    (function() {
+      var KEY = 'bc_cartas_auth', PASS = 'TalentosBC';
+      var pendingUrl = null;
 
-  var modal        = document.getElementById("hub-gate");
-  var inputEl      = document.getElementById("hub-gate-input");
-  var btnAcceder   = document.getElementById("hub-gate-btn");
-  var errEl        = document.getElementById("hub-gate-err");
-  var btnClose     = document.getElementById("hub-gate-close");
-  var cartasSection = document.getElementById("cartas-section");
+      // Si ya autenticado, desbloquear visualmente
+      if (sessionStorage.getItem(KEY) === 'ok') unlockCartas();
 
-  var pendingUrl = null;
+      window.cartaGate = function(url) {
+        if (sessionStorage.getItem(KEY) === 'ok') {
+          window.location.href = url;
+          return;
+        }
+        pendingUrl = url;
+        var modal = document.getElementById('carta-modal');
+        modal.style.display = 'flex';
+        document.getElementById('carta-input').value = '';
+        document.getElementById('carta-err').style.display = 'none';
+        setTimeout(function(){ document.getElementById('carta-input').focus(); }, 100);
+      };
 
-  // Intercept clicks inside Cartas section
-  cartasSection.addEventListener("click", function (e) {
-    var card = e.target.closest("a.card");
-    if (!card) return;
-    if (sessionStorage.getItem(KEY) === "ok") return; // already unlocked
-    e.preventDefault();
-    pendingUrl = card.getAttribute("href");
-    showModal();
-  });
+      window.closeCartaModal = function() {
+        document.getElementById('carta-modal').style.display = 'none';
+        pendingUrl = null;
+      };
 
-  function showModal() {
-    modal.style.display = "flex";
-    inputEl.value = "";
-    errEl.style.display = "none";
-    inputEl.style.borderColor = "#2a2a2a";
-    inputEl.style.boxShadow = "none";
-    setTimeout(function () { inputEl.focus(); }, 80);
-  }
+      function attempt() {
+        var v = document.getElementById('carta-input').value;
+        if (v === PASS) {
+          sessionStorage.setItem(KEY, 'ok');
+          document.getElementById('carta-modal').style.display = 'none';
+          unlockCartas();
+          if (pendingUrl) window.location.href = pendingUrl;
+        } else {
+          var err = document.getElementById('carta-err');
+          var inp = document.getElementById('carta-input');
+          err.style.display = 'block';
+          inp.style.borderColor = '#e05050';
+          inp.value = '';
+          setTimeout(function(){ err.style.display='none'; inp.style.borderColor='#2a2a2a'; }, 2000);
+        }
+      }
 
-  function hideModal() {
-    modal.style.display = "none";
-    pendingUrl = null;
-  }
+      function unlockCartas() {
+        document.querySelectorAll('.carta-locked').forEach(function(el) {
+          var lockIcon = el.querySelector('.carta-lock-icon');
+          if (lockIcon) lockIcon.textContent = '→';
+          el.classList.remove('carta-locked');
+        });
+      }
 
-  function tryAccess() {
-    var v = inputEl.value.trim();
-    if (v === PASS) {
-      sessionStorage.setItem(KEY, "ok");
-      hideModal();
-      if (pendingUrl) window.location.href = pendingUrl;
-    } else {
-      errEl.style.display = "block";
-      inputEl.style.borderColor = "#e05050";
-      inputEl.style.boxShadow = "0 0 0 3px rgba(224,80,80,0.15)";
-      inputEl.style.animation = "shake 0.35s";
-      setTimeout(function () {
-        inputEl.style.animation = "";
-        errEl.style.display = "none";
-        inputEl.style.borderColor = "#2a2a2a";
-        inputEl.style.boxShadow = "none";
-        inputEl.select();
-      }, 2200);
-    }
-  }
+      document.getElementById('carta-btn').addEventListener('click', attempt);
+      document.getElementById('carta-input').addEventListener('keydown', function(e){ if(e.key==='Enter') attempt(); });
 
-  btnAcceder.addEventListener("click", tryAccess);
-  inputEl.addEventListener("keydown", function (e) { if (e.key === "Enter") tryAccess(); });
-  btnClose.addEventListener("click", hideModal);
-  modal.addEventListener("click", function (e) { if (e.target === modal) hideModal(); });
+      // Cerrar modal al click fuera
+      document.getElementById('carta-modal').addEventListener('click', function(e){
+        if (e.target === this) closeCartaModal();
+      });
+    })();
+  </script>
 
-  // Focus styling
-  inputEl.addEventListener("focus", function () {
-    if (inputEl.style.borderColor !== "#e05050") {
-      inputEl.style.borderColor = "#d4af37";
-      inputEl.style.boxShadow = "0 0 0 3px rgba(212,175,55,0.12)";
-    }
-  });
-  inputEl.addEventListener("blur", function () {
-    if (inputEl.style.borderColor !== "#e05050") {
-      inputEl.style.borderColor = "#2a2a2a";
-      inputEl.style.boxShadow = "none";
-    }
-  });
-})();
-</script>
+  <!-- Buscador script -->
+  <script>
+    (function() {
+      var input    = document.getElementById('hub-search');
+      var clearBtn = document.getElementById('search-clear');
+      var empty    = document.getElementById('search-empty');
+      var termSpan = document.getElementById('search-term');
+
+      // Recopilar todas las cards con su texto original (sin markup)
+      var cards = Array.from(document.querySelectorAll('.card'));
+      var sections = Array.from(document.querySelectorAll('.section'));
+
+      // Guardar texto búsqueda de cada card
+      cards.forEach(function(card) {
+        card.dataset.searchText = card.textContent.toLowerCase();
+      });
+
+      function stripHighlights(el) {
+        // Restaurar texto original en title y tags
+        el.querySelectorAll('.highlight').forEach(function(h) {
+          h.outerHTML = h.textContent;
+        });
+      }
+
+      function applyHighlight(el, q) {
+        if (!q) return;
+        var targets = el.querySelectorAll('.card-title, .card-desc, .tag');
+        targets.forEach(function(t) {
+          var html = t.textContent;
+          var regex = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+          t.innerHTML = html.replace(regex, '<span class="highlight">$1</span>');
+        });
+      }
+
+      function search(q) {
+        q = q.trim().toLowerCase();
+        var hasQ = q.length > 0;
+
+        clearBtn.style.display = hasQ ? 'block' : 'none';
+        termSpan.textContent = q;
+
+        // Restaurar highlights previos
+        cards.forEach(function(c) { stripHighlights(c); });
+
+        var totalVisible = 0;
+
+        cards.forEach(function(card) {
+          var match = !hasQ || card.dataset.searchText.includes(q);
+          card.classList.toggle('hidden', !match);
+          if (match && hasQ) applyHighlight(card, q);
+          if (match) totalVisible++;
+        });
+
+        // Ocultar secciones vacías
+        sections.forEach(function(section) {
+          var visible = section.querySelectorAll('.card:not(.hidden)').length;
+          section.classList.toggle('hidden', visible === 0);
+        });
+
+        empty.style.display = (hasQ && totalVisible === 0) ? 'block' : 'none';
+      }
+
+      input.addEventListener('input', function() { search(this.value); });
+
+      clearBtn.addEventListener('click', function() {
+        input.value = '';
+        search('');
+        input.focus();
+      });
+
+      // Atajo teclado: Escape limpia
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && document.activeElement !== input) {
+          input.value = '';
+          search('');
+        }
+        if ((e.key === 'f' && (e.metaKey || e.ctrlKey)) === false &&
+            e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+          e.preventDefault();
+          input.focus();
+        }
+      });
+    })();
+  </script>
+
 </body>
 </html>
