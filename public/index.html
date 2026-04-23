@@ -51,8 +51,7 @@
 const TWEAKS_DEFAULTS = /*EDITMODE-BEGIN*/{
   "layout": "kanban",
   "density": "comfortable",
-  "accent": "gold",
-  "showOrganigrama": true
+  "accent": "gold"
 }/*EDITMODE-END*/;
 
 const ACCENTS = {
@@ -322,7 +321,7 @@ const Tag = ({children, tone='default'}) => {
 const localTone = (l) => l==='BC1'?'bc1':'bc2';
 
 /* Header */
-const AppHeader = ({procesos, onNew, currentView, onViewChange, showMetrics, onToggleMetrics}) => {
+const AppHeader = ({procesos, onNew, showMetrics, onToggleMetrics}) => {
   const active = procesos.filter(p=>p.fase!=='F5' || p.avance<100).length;
   const byPhase = phaseOrder.map(p => procesos.filter(pr=>pr.fase===p).length);
   return (
@@ -341,13 +340,7 @@ const AppHeader = ({procesos, onNew, currentView, onViewChange, showMetrics, onT
           <div style={{fontSize:11, color:'var(--gold)', letterSpacing:'0.3px', opacity:0.75}}>v1.5 — fix: botón Termina proceso + descartados persisten en Notion</div>
         </div>
         <div style={{display:'flex', gap:8}}>
-          <button onClick={()=>onViewChange(currentView==='organigrama'?'pipeline':'organigrama')}
-            style={{padding:'9px 14px', borderRadius:8, fontSize:12, fontWeight:600, transition:'all 0.15s',
-              background: currentView==='organigrama' ? 'rgba(212,175,55,0.1)' : 'transparent',
-              border:`1px solid ${currentView==='organigrama' ? 'var(--gold)' : 'var(--border-2)'}`,
-              color: currentView==='organigrama' ? 'var(--gold)' : 'var(--text)'}}>
-            🏢 Organigrama
-          </button>
+
           <button onClick={onToggleMetrics}
             style={{padding:'9px 14px', borderRadius:8, fontSize:12, fontWeight:600, transition:'all 0.15s',
               background: showMetrics ? 'rgba(122,176,224,0.12)' : 'transparent',
@@ -831,90 +824,6 @@ const NewProcesoModal = ({open, onClose, onCreate}) => {
 };
 const inputS = { width:'100%', padding:'10px 12px', background:'var(--card)', border:'1px solid var(--border)', borderRadius:8, color:'var(--text)', fontSize:13, outline:'none' };
 
-/* Organigrama pane */
-const OrganigramaPanel = ({onClose}) => (
-  <div style={{padding:'24px 40px 40px'}}>
-    <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20}}>
-      <div>
-        <div style={{fontSize:10, color:'var(--gold)', letterSpacing:'2px', fontWeight:700}}>ORGANIGRAMA</div>
-        <h2 className="serif" style={{fontSize:26, color:'#fff', fontWeight:600}}>Equipo Black Chicken</h2>
-      </div>
-      <button onClick={onClose} style={{fontSize:12, color:'var(--text-2)', padding:'8px 12px', border:'1px solid var(--border-2)', borderRadius:6}}>Volver al pipeline</button>
-    </div>
-
-    {/* Gerencia */}
-    <div style={{marginBottom:24}}>
-      <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, marginBottom:10, textAlign:'center'}}>NIVEL 0 · DIRECCIÓN</div>
-      <div style={{display:'flex', gap:14, justifyContent:'center', flexWrap:'wrap'}}>
-        {[
-          {n:'Jonathan Fosk', r:'Gerente Comercial & Estrategia'},
-          {n:'Daniel Fosk',   r:'Cofundador · Gerente Operaciones'},
-          {n:'Llige Yang',    r:'Cofundadora · Ventas & Marketing'},
-        ].map(p=>(
-          <div key={p.n} style={{padding:'14px 20px', background:'var(--card)', border:'1px solid var(--gold)', borderRadius:10, minWidth:200, textAlign:'center'}}>
-            <Avatar name={p.n} track="garzones" size={36}/>
-            <div style={{fontSize:14, color:'#fff', fontWeight:600, marginTop:8}}>{p.n}</div>
-            <div style={{fontSize:11, color:'var(--text-2)'}}>{p.r}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-
-    {/* Admin */}
-    <div style={{marginBottom:24}}>
-      <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, marginBottom:10, textAlign:'center'}}>NIVEL 1 · GESTIÓN</div>
-      <div style={{display:'flex', gap:14, justifyContent:'center', flexWrap:'wrap'}}>
-        {[
-          {n:'Nelsi Rodriguez',r:'Administradora · Ambos locales', border:'var(--gold)'},
-          {n:'Inge Yang',      r:'Encargada RRHH',           border:'var(--border)'},
-        ].map(p=>(
-          <div key={p.n} style={{padding:'14px 20px', background:'var(--card)', border:`1px solid ${p.border}`, borderRadius:10, minWidth:200, textAlign:'center'}}>
-            <Avatar name={p.n} track="jefatura" size={36}/>
-            <div style={{fontSize:14, color:'#fff', fontWeight:600, marginTop:8}}>{p.n}</div>
-            <div style={{fontSize:11, color:'var(--text-2)'}}>{p.r}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-
-    {/* BC1 / BC2 */}
-    <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, marginBottom:10, textAlign:'center'}}>NIVEL 2 · JEFATURAS POR LOCAL</div>
-    <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:14}}>
-      {[
-        { title:'BC1', color:'var(--bc1)', bg:'var(--bc1-dim)', team:[
-          ['Felipe Cofre',    'Jefe de Local'],
-          ['Stephanie Ocando', 'Subjefe de Local'],
-          ['Waldo Cornejo',   'Jefe de Cocina (le dicen "Felipe")'],
-          ['Jonathan Lobos',  'Subjefe de Cocina'],
-          ['Rossy Martinez',  'Entrenadora'],
-        ] },
-        { title:'BC2', color:'var(--bc2)', bg:'var(--bc2-dim)', team:[
-          ['Saner Guillen',  'Jefe de Local'],
-          ['Vanessa Ramones', 'Jefe de Cocina'],
-          ['Maria Angel',    'Jefe de Salón'],
-        ] },
-      ].map(loc => (
-        <div key={loc.title} style={{background:'var(--card)', border:`1px solid ${loc.color}`, borderRadius:12, padding:18}}>
-          <div style={{display:'flex', alignItems:'center', gap:8, marginBottom:12}}>
-            <div style={{width:8, height:8, borderRadius:'50%', background:loc.color}} />
-            <div style={{fontSize:13, color:loc.color, fontWeight:700, letterSpacing:'1.5px'}}>🍗 {loc.title}</div>
-          </div>
-          <div style={{display:'grid', gap:8}}>
-            {loc.team.map(([name, role]) => (
-              <div key={name} style={{display:'flex', gap:10, alignItems:'center', padding:10, background:'var(--card-2)', borderRadius:8}}>
-                <Avatar name={name} track="garzones" size={28} />
-                <div>
-                  <div style={{fontSize:12.5, color:'#fff', fontWeight:600}}>{name}</div>
-                  <div style={{fontSize:11, color:'var(--text-3)'}}>{role}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-);
 
 /* Tweaks panel */
 const TweaksPanel = ({tweaks, update, visible}) => {
@@ -946,9 +855,6 @@ const TweaksPanel = ({tweaks, update, visible}) => {
       </Row>
       <Row label="Acento">
         <Seg value={tweaks.accent} onChange={v=>update({accent:v})} options={[{v:'gold',l:'Gold'},{v:'ember',l:'Ember'},{v:'brass',l:'Brass'},{v:'ice',l:'Ice'}]} />
-      </Row>
-      <Row label="Organigrama">
-        <Seg value={tweaks.showOrganigrama ? 'on':'off'} onChange={v=>update({showOrganigrama: v==='on'})} options={[{v:'on',l:'Mostrar'},{v:'off',l:'Ocultar'}]} />
       </Row>
     </div>
   );
@@ -1219,7 +1125,7 @@ function App(){
   const [local, setLocal] = React.useState('all');
   const [query, setQuery] = React.useState('');
   const [showNew, setShowNew] = React.useState(false);
-  const [view, setView] = React.useState('pipeline'); // pipeline | organigrama
+  const [view, setView] = React.useState('pipeline');
   const [showMetrics, setShowMetrics] = React.useState(false);
   const [showDiscarded, setShowDiscarded] = React.useState(false);
   const [discardTarget, setDiscardTarget] = React.useState(null);
@@ -1345,12 +1251,12 @@ function App(){
           ⚠ {syncError} · click para cerrar
         </div>
       )}
-      <AppHeader procesos={procesos} onNew={()=>setShowNew(true)} currentView={view} onViewChange={setView}
+      <AppHeader procesos={procesos} onNew={()=>setShowNew(true)}
         showMetrics={showMetrics} onToggleMetrics={()=>setShowMetrics(v=>!v)} />
 
-      {showMetrics && view !== 'organigrama' && <MetricsView procesos={procesos} />}
+      {showMetrics && <MetricsView procesos={procesos} />}
 
-      {view !== 'organigrama' && (
+      {(
         <>
           <FilterBar track={track} setTrack={setTrack} query={query} setQuery={setQuery} local={local} setLocal={setLocal}
             showDiscarded={showDiscarded} setShowDiscarded={setShowDiscarded} discardedCount={discardedCount} />
@@ -1367,21 +1273,6 @@ function App(){
         : <ListView procesos={filtered} onOpen={(p)=>setActiveProc(p.id)} activeId={activeProc} />
       )}
 
-      {view==='organigrama' && <OrganigramaPanel onClose={()=>setView('pipeline')} />}
-
-      {tweaks.showOrganigrama && view==='pipeline' && (
-        <div style={{padding:'0 40px 40px'}}>
-          <button onClick={()=>setView('organigrama')}
-            style={{display:'flex', gap:14, alignItems:'center', width:'100%', padding:'16px 20px', background:'var(--card)', border:'1px solid var(--border)', borderRadius:12, textAlign:'left'}}>
-            <div style={{width:40, height:40, borderRadius:8, background:'var(--gold-dim)', border:'1px solid var(--gold)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:18}}>🏢</div>
-            <div style={{flex:1}}>
-              <div style={{fontSize:13, color:'#fff', fontWeight:600}}>Ver organigrama completo</div>
-              <div style={{fontSize:11, color:'var(--text-2)'}}>Dirección, administración y jefaturas BC1 / BC2 · 11 personas</div>
-            </div>
-            <span style={{color:'var(--gold)', fontSize:18}}>→</span>
-          </button>
-        </div>
-      )}
 
       <footer style={{padding:'24px 40px', borderTop:'1px solid var(--border)', textAlign:'center', color:'var(--text-3)', fontSize:11}}>
         Black Chicken · Uso exclusivo RRHH · Sincronizado con Notion · Talentos@BlackChicken.cl
