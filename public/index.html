@@ -188,6 +188,16 @@ function notionToApp(n) {
   const fase    = NOTION_TO_FASE[n.fase] || n.fase || 'F1';
   const completados = Array.isArray(n.items_completados) ? n.items_completados : [];
   const descartado  = n.estado === 'Descartado';
+  // Parsear motivoDescarte y notas limpias desde el campo notas de Notion
+  let motivoDescarte = '';
+  let notasClean = n.notas || '';
+  if (descartado && n.notas) {
+    const match = n.notas.match(/\[DESCARTE:\s*(.+?)\]/);
+    if (match) {
+      motivoDescarte = match[1].trim();
+      notasClean = n.notas.replace(/\n?\[DESCARTE:\s*.+?\]/, '').trim();
+    }
+  }
   let total = 0;
   for (const p of ['F1','F2','F3','F4','F5']) total += (CHECKLISTS[track]?.[p]||[]).length;
   const avance = total > 0 ? Math.round(completados.length / total * 100) : (n.avance||0);
@@ -197,11 +207,11 @@ function notionToApp(n) {
     idProceso: n.idProceso ? `RC${n.idProceso}` : `RC${1000+_localIdCounter}`,
     candidato: n.candidato, track, cargo,
     local: n.local || 'BC1',
-    fase, completados, notas: n.notas || '',
+    fase, completados, notas: notasClean,
     fechaInicio: n.fechaInicio || new Date().toISOString().split('T')[0],
     avance, descartado,
-    motivoDescarte: descartado ? (n.motivoDescarte||'') : undefined,
-    fechaDescarte:  descartado ? (n.fechaDescarte||n.fechaInicio) : undefined
+    motivoDescarte: descartado ? motivoDescarte : undefined,
+    fechaDescarte:  descartado ? (n.fechaInicio || new Date().toISOString().slice(0,10)) : undefined
   };
 }
 
@@ -670,7 +680,7 @@ const CandidateDrawer = ({proc, onClose, onToggle, onAdvance, onUpdateNotas, onD
                   {phaseId==='F3' && (
                     <div style={{display:'flex', gap:8, marginTop:8}}>
                       <button onClick={()=>onAdvance(proc.id, 'F4')} style={{flex:1, padding:10, background:'rgba(106,184,106,0.15)', border:'1px solid var(--bc1)', color:'var(--bc1)', borderRadius:6, fontSize:11, fontWeight:700, letterSpacing:'1px', textTransform:'uppercase'}}>✓ Continúa a F4</button>
-                      <button style={{flex:1, padding:10, background:'rgba(224,128,128,0.12)', border:'1px solid var(--red)', color:'var(--red)', borderRadius:6, fontSize:11, fontWeight:700, letterSpacing:'1px', textTransform:'uppercase'}}>✗ Termina proceso</button>
+                      <button onClick={()=>onDiscard(proc.id)} style={{flex:1, padding:10, background:'rgba(224,128,128,0.12)', border:'1px solid var(--red)', color:'var(--red)', borderRadius:6, fontSize:11, fontWeight:700, letterSpacing:'1px', textTransform:'uppercase'}}>✗ Termina proceso</button>
                     </div>
                   )}
                   {phaseId==='F4' && (
@@ -1287,7 +1297,10 @@ function App(){
     const fecha = new Date().toISOString().slice(0,10);
     setProcesos(prev => prev.map(p => {
       if (p.id!==procId) return p;
-      if (p.notionId) apiPatch(p.notionId, { estado: 'Descartado', notas: p.notas ? p.notas + `\nDescartado: ${motivo}` : `Descartado: ${motivo}` });
+      if (p.notionId) {
+        const notasConMotivo = p.notas ? `${p.notas}\n[DESCARTE: ${motivo}]` : `[DESCARTE: ${motivo}]`;
+        apiPatch(p.notionId, { estado: 'Descartado', notas: notasConMotivo });
+      }
       return { ...p, descartado:true, motivoDescarte:motivo, fechaDescarte:fecha };
     }));
     setDiscardTarget(null);
