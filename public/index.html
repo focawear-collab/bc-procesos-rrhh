@@ -186,7 +186,9 @@ function notionToApp(n) {
   const track   = CARGO_TRACK[cargo] || 'garzones';
   const fase    = NOTION_TO_FASE[n.fase] || n.fase || 'F1';
   const completados = Array.isArray(n.items_completados) ? n.items_completados : [];
-  const descartado  = n.estado === 'Descartado';
+  // Descartado: detectar por tag en notas (no depende de status Notion)
+  const notasRaw = n.notas || '';
+  const descartado = notasRaw.includes('[DESCARTE:') || n.estado === 'Descartado';
   // Parsear motivoDescarte y notas limpias desde el campo notas de Notion
   let motivoDescarte = '';
   let notasClean = n.notas || '';
@@ -1204,8 +1206,9 @@ function App(){
     setProcesos(prev => prev.map(p => {
       if (p.id!==procId) return p;
       if (p.notionId) {
+        // Guardar motivo en notas — no usamos estado:'Descartado' para evitar error si no existe en Notion
         const notasConMotivo = p.notas ? `${p.notas}\n[DESCARTE: ${motivo}]` : `[DESCARTE: ${motivo}]`;
-        apiPatch(p.notionId, { estado: 'Descartado', notas: notasConMotivo });
+        apiPatch(p.notionId, { notas: notasConMotivo });
       }
       return { ...p, descartado:true, motivoDescarte:motivo, fechaDescarte:fecha };
     }));
@@ -1215,7 +1218,11 @@ function App(){
   const restoreProc = (procId) => {
     setProcesos(prev => prev.map(p => {
       if (p.id!==procId) return p;
-      if (p.notionId) apiPatch(p.notionId, { estado: 'En curso' });
+      if (p.notionId) {
+        // Quitar tag [DESCARTE:] de notas al restaurar
+        const notasLimpias = (p.notas || '').replace(/\n?\[DESCARTE:.*?\]/g, '').trim();
+        apiPatch(p.notionId, { notas: notasLimpias });
+      }
       return { ...p, descartado:false, motivoDescarte:undefined, fechaDescarte:undefined };
     }));
   };
