@@ -53,9 +53,25 @@
     .footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #1e1e1e; font-size: 12px; color: #444; }
     .footer span { color: #d4af37; }
     @media(max-width:600px) { .conditions-grid { grid-template-columns: 1fr; } .benefits-grid { grid-template-columns: 1fr 1fr; } .signature-grid { grid-template-columns: 1fr; } }
+  
+    /* Back to Hub button */
+    .back-hub {
+      position: fixed; top: 16px; left: 16px; z-index: 9999;
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(26,26,26,0.92); border: 1px solid #2a2a2a;
+      border-radius: 8px; padding: 8px 14px;
+      color: #999; font-size: 12px; font-weight: 600;
+      text-decoration: none; font-family: 'Inter', sans-serif;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      transition: all 0.2s;
+    }
+    .back-hub:hover { color: #d4af37; border-color: #d4af37; background: rgba(26,26,26,0.97); }
+    .back-hub-arrow { font-size: 14px; }
   </style>
 </head>
 <body>
+<a href="hub-index.html" class="back-hub"><span class="back-hub-arrow">←</span> Hub HR</a>
+
 <div class="doc-wrap">
   <div class="doc-header">
     <img src="./blackchicken_logo.png" alt="Black Chicken">

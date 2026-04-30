@@ -182,6 +182,31 @@
     .hrbrain-lock-icon { font-size:14px; opacity:0.7; }
     .hrbrain-locked { opacity:0.9; }
     .hrbrain-locked:hover .hrbrain-lock-icon { opacity:1; }
+
+    /* New badge */
+    .tag-new {
+      display: inline-block; padding: 2px 6px; border-radius: 3px;
+      font-size: 9px; font-weight: 800; letter-spacing: 1px;
+      background: linear-gradient(90deg, #d4af37, #f0c940);
+      color: #0f0f0f; vertical-align: middle; margin-left: 6px;
+    }
+
+    /* Updated date tag */
+    .tag-date {
+      background: rgba(255,255,255,0.04); color: #555;
+      font-size: 10px; font-weight: 500; letter-spacing: 0;
+      text-transform: none; padding: 3px 7px;
+    }
+
+    /* Mobile compact for HR Brain */
+    @media (max-width: 640px) {
+      [data-section="hrbrain"] .card { padding: 10px; gap: 8px; }
+      [data-section="hrbrain"] .card-icon { width: 32px; height: 32px; font-size: 16px; }
+      [data-section="hrbrain"] .card-desc { display: none; }
+      [data-section="hrbrain"] .card-title { font-size: 12px; }
+      [data-section="hrbrain"] .card-tags { gap: 4px; }
+      [data-section="hrbrain"] .tag { font-size: 9px; padding: 2px 6px; }
+    }
   </style>
 </head>
 <body>
@@ -190,7 +215,7 @@
       <div class="header-content">
         <h1>Hub de HR</h1>
         <p class="subtitle">Documentos, plataformas y base de conocimiento · Black Chicken Personas & RRHH</p>
-        <p style="font-size:11px;color:#d4af37;margin-top:6px;opacity:0.75;letter-spacing:0.3px;">v1.6 — Secciones colapsables · Reorden · Black Chicken</p>
+        <p style="font-size:11px;color:#d4af37;margin-top:6px;opacity:0.75;letter-spacing:0.3px;">v1.7 — UX mejorada · Navegación · Mobile · Black Chicken</p>
       </div>
     </div>
   </header>
@@ -199,7 +224,7 @@
     <!-- Stats -->
     <div class="stats">
       <div class="stat"><div class="stat-number">16</div><div>Documentos activos</div></div>
-      <div class="stat"><div class="stat-number">7</div><div>Roles cubiertos</div></div>
+      <div class="stat"><div class="stat-number">10</div><div>Roles cubiertos</div></div>
       <div class="stat"><div class="stat-number">6</div><div>Secciones</div></div>
     </div>
 
@@ -436,8 +461,9 @@
               <div class="card-desc"></div>
               <div class="card-tags">
                 <span class="tag gold">Jornada Completa</span>
-                <span class="tag">Sin datos de renta</span>
+                <span class="tag">42 hrs · 5×2</span>
                 <span class="tag blue">Para difundir</span>
+                <span class="tag tag-date">30-abr-2026</span>
               </div>
             </div>
             <div class="card-arrow">→</div>
@@ -445,12 +471,13 @@
           <a href="BC_Publicacion_SubJefeLocal.html" class="card">
             <div class="card-icon purple">🧭</div>
             <div class="card-body">
-              <div class="card-title">Publicación — Sub Jefe/a de Local</div>
+              <div class="card-title">Publicación — Sub Jefe/a de Local <span class="tag-new">NUEVO</span></div>
               <div class="card-desc"></div>
               <div class="card-tags">
                 <span class="tag gold">Jornada Completa</span>
                 <span class="tag">42 hrs · 5×2</span>
                 <span class="tag blue">Para difundir</span>
+                <span class="tag tag-date">30-abr-2026</span>
               </div>
             </div>
             <div class="card-arrow">→</div>
@@ -464,6 +491,7 @@
                 <span class="tag gold">Part Time·4hrs</span>
                 <span class="tag">12:00–16:30·Rotativo</span>
                 <span class="tag blue">Candidatos validados</span>
+                <span class="tag tag-date">30-abr-2026</span>
               </div>
             </div>
             <div class="card-arrow">→</div>
@@ -489,6 +517,7 @@
                 <span class="tag gold">Turno PM inicial</span>
                 <span class="tag">Solo post-entrevista</span>
                 <span class="tag red">Requiere firma</span>
+                <span class="tag tag-date">30-abr-2026</span>
               </div>
             </div>
             <div class="card-arrow carta-lock-icon">🔒</div>
@@ -502,6 +531,7 @@
                 <span class="tag gold">$850.000 líquidos</span>
                 <span class="tag">Solo post-entrevista</span>
                 <span class="tag red">Requiere firma</span>
+                <span class="tag tag-date">30-abr-2026</span>
               </div>
             </div>
             <div class="card-arrow carta-lock-icon">🔒</div>
@@ -515,6 +545,7 @@
                 <span class="tag gold">$1.200.000 líquidos</span>
                 <span class="tag">Solo post-entrevista</span>
                 <span class="tag red">Requiere firma</span>
+                <span class="tag tag-date">30-abr-2026</span>
               </div>
             </div>
             <div class="card-arrow carta-lock-icon">🔒</div>
@@ -528,6 +559,7 @@
                 <span class="tag gold">$850.000 líquidos</span>
                 <span class="tag">Solo post-entrevista</span>
                 <span class="tag red">Requiere firma</span>
+                <span class="tag tag-date">30-abr-2026</span>
               </div>
             </div>
             <div class="card-arrow carta-lock-icon">🔒</div>
@@ -541,6 +573,7 @@
                 <span class="tag gold">$650.000 líquidos</span>
                 <span class="tag">Solo post-entrevista</span>
                 <span class="tag red">Requiere firma</span>
+                <span class="tag tag-date">30-abr-2026</span>
               </div>
             </div>
             <div class="card-arrow carta-lock-icon">🔒</div>
@@ -555,6 +588,7 @@
                 <span class="tag">Jornada 5x2</span>
                 <span class="tag">Solo post-entrevista</span>
                 <span class="tag red">Requiere firma</span>
+                <span class="tag tag-date">30-abr-2026</span>
               </div>
             </div>
             <div class="card-arrow carta-lock-icon">🔒</div>
@@ -569,6 +603,7 @@
                 <span class="tag">Rotativo·11:00–20:30</span>
                 <span class="tag">Solo post-entrevista</span>
                 <span class="tag red">Requiere firma</span>
+                <span class="tag tag-date">30-abr-2026</span>
               </div>
             </div>
             <div class="card-arrow carta-lock-icon">🔒</div>
@@ -650,14 +685,16 @@
       }
     }
 
-    // Restore saved states on load (all closed by default)
+    // Restore saved states on load
     (function() {
       var state = getSavedState();
+      var defaultOpen = { hrbrain: true, cartas: true };
       document.querySelectorAll('.section').forEach(function(section) {
         var id = section.dataset.section;
         var toggle = section.querySelector('.section-toggle');
-        // Default: closed. Open if explicitly saved as open.
-        if (state[id] === true) {
+        // Use saved state if exists, otherwise use defaults
+        var shouldOpen = (state[id] !== undefined) ? state[id] : (defaultOpen[id] || false);
+        if (shouldOpen) {
           toggleSection(toggle, true);
         }
       });
