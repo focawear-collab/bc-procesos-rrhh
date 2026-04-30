@@ -3,14 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hub de Personas & RRHH</title>
+  <title>Hub de HR · Black Chicken</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -33,299 +29,168 @@
       position: relative;
       overflow: hidden;
     }
-
     header::before {
       content: '';
       position: absolute;
-      top: -50%;
-      right: -10%;
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+      top: -50%; right: -10%;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(212,175,55,0.1) 0%, transparent 70%);
       border-radius: 50%;
       pointer-events: none;
     }
+    .header-content { position: relative; z-index: 1; }
 
-    .header-content {
-      position: relative;
-      z-index: 1;
-    }
-
-    h1 {
-      font-size: 32px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 8px;
-    }
-
-    .subtitle {
-      font-size: 14px;
-      color: #777;
-      font-weight: 500;
-    }
+    h1 { font-size: 32px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    .subtitle { font-size: 14px; color: #777; font-weight: 500; }
 
     /* Stats */
     .stats {
-      display: flex;
-      gap: 24px;
-      margin-bottom: 40px;
+      display: flex; gap: 24px;
+      margin-bottom: 32px;
       padding: 16px 0;
       border-bottom: 1px solid #2a2a2a;
-      font-size: 13px;
-      color: #888;
+      font-size: 13px; color: #888;
     }
-
-    .stat {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .stat-number {
-      font-size: 18px;
-      font-weight: 700;
-      color: #d4af37;
-      margin-bottom: 4px;
-    }
-
-    /* Section */
-    .section {
-      margin-bottom: 40px;
-    }
-
-    .section-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: #777;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
-
-    /* Card */
-    .card {
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      border-radius: 12px;
-      padding: 16px;
-      display: flex;
-      gap: 12px;
-      text-decoration: none;
-      color: inherit;
-      transition: all 0.2s;
-    }
-
-    .card:hover {
-      background: #252525;
-      border-color: #3a3a3a;
-    }
-
-    .card-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      flex-shrink: 0;
-    }
-
-    .card-icon.purple {
-      background: rgba(138, 74, 138, 0.12);
-      border: 1px solid #8a4a8a;
-    }
-
-    .card-icon.gold {
-      background: rgba(212, 175, 55, 0.08);
-      border: 1px solid #d4af37;
-    }
-
-    .card-icon.green {
-      background: rgba(74, 138, 74, 0.08);
-      border: 1px solid #4a8a4a;
-    }
-
-    .card-icon.blue {
-      background: rgba(74, 106, 138, 0.12);
-      border: 1px solid #4a6a8a;
-    }
-
-    .card-body {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .card-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: #fff;
-      margin-bottom: 4px;
-    }
-
-    .card-desc {
-      font-size: 12px;
-      color: #888;
-      margin-bottom: 8px;
-      line-height: 1.5;
-    }
-
-    .card-tags {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .tag {
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .tag.gold {
-      background: rgba(212, 175, 55, 0.2);
-      color: #d4af37;
-    }
-
-    .tag.green {
-      background: rgba(74, 138, 74, 0.2);
-      color: #6ab86a;
-    }
-
-    .tag.blue {
-      background: rgba(74, 106, 138, 0.2);
-      color: #7ab0e0;
-    }
-
-    .tag.red {
-      background: rgba(224, 128, 128, 0.2);
-      color: #e08080;
-    }
-
-    .card-arrow {
-      display: flex;
-      align-items: center;
-      color: #555;
-      font-weight: 600;
-    }
+    .stat { display: flex; flex-direction: column; }
+    .stat-number { font-size: 18px; font-weight: 700; color: #d4af37; margin-bottom: 4px; }
 
     /* Search */
-    .search-wrap {
-      margin-bottom: 32px;
-      position: relative;
-    }
-
+    .search-wrap { margin-bottom: 28px; position: relative; }
     .search-input {
-      width: 100%;
-      padding: 12px 16px 12px 42px;
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      border-radius: 10px;
-      color: #fff;
-      font-size: 14px;
-      font-family: 'Inter', sans-serif;
-      outline: none;
-      transition: border-color 0.2s;
+      width: 100%; padding: 12px 16px 12px 42px;
+      background: #1a1a1a; border: 1px solid #2a2a2a;
+      border-radius: 10px; color: #fff;
+      font-size: 14px; font-family: 'Inter', sans-serif;
+      outline: none; transition: border-color 0.2s;
     }
-
-    .search-input:focus {
-      border-color: #d4af37;
-    }
-
-    .search-input::placeholder {
-      color: #555;
-    }
-
+    .search-input:focus { border-color: #d4af37; }
+    .search-input::placeholder { color: #555; }
     .search-icon {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #555;
-      font-size: 15px;
-      pointer-events: none;
+      position: absolute; left: 14px; top: 50%;
+      transform: translateY(-50%); color: #555;
+      font-size: 15px; pointer-events: none;
     }
-
     .search-clear {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #555;
-      font-size: 16px;
-      cursor: pointer;
-      display: none;
-      background: none;
-      border: none;
-      line-height: 1;
-      padding: 2px 4px;
+      position: absolute; right: 12px; top: 50%;
+      transform: translateY(-50%); color: #555;
+      font-size: 16px; cursor: pointer; display: none;
+      background: none; border: none; line-height: 1; padding: 2px 4px;
     }
-
     .search-clear:hover { color: #aaa; }
+    .search-empty { text-align: center; padding: 40px 0; color: #555; font-size: 14px; display: none; }
+    .highlight { background: rgba(212,175,55,0.25); color: #f0c940; border-radius: 2px; padding: 0 1px; }
 
-    .search-empty {
-      text-align: center;
-      padding: 40px 0;
-      color: #555;
-      font-size: 14px;
-      display: none;
+    /* Section collapsible */
+    .section { margin-bottom: 10px; border: 1px solid #2a2a2a; border-radius: 12px; overflow: hidden; }
+    .section.hidden { display: none; }
+
+    .section-toggle {
+      display: flex; align-items: center; gap: 10px;
+      padding: 16px 20px;
+      cursor: pointer; user-select: none;
+      background: #161616;
+      transition: background 0.15s;
+    }
+    .section-toggle:hover { background: #1e1e1e; }
+
+    .section-toggle-label {
+      font-size: 13px; font-weight: 700;
+      color: #999; text-transform: uppercase;
+      letter-spacing: 1.5px; flex: 1;
     }
 
-    .section.hidden { display: none; }
+    .section-chevron {
+      color: #555; font-size: 12px;
+      transition: transform 0.25s ease;
+      transform: rotate(0deg);
+      flex-shrink: 0;
+    }
+    .section-toggle.open .section-chevron { transform: rotate(90deg); }
+    .section-toggle.open .section-toggle-label { color: #c8a95e; }
+
+    .section-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, opacity 0.25s ease, padding 0.25s ease;
+      opacity: 0;
+      padding: 0 16px;
+    }
+    .section-body.open {
+      max-height: 3000px;
+      opacity: 1;
+      padding: 16px 16px 20px;
+    }
+
+    /* Cards */
+    .cards { display: grid; grid-template-columns: 1fr; gap: 10px; }
+
+    .card {
+      background: #1a1a1a; border: 1px solid #2a2a2a;
+      border-radius: 10px; padding: 15px;
+      display: flex; gap: 12px;
+      text-decoration: none; color: inherit;
+      transition: all 0.2s;
+    }
+    .card:hover { background: #252525; border-color: #3a3a3a; }
     .card.hidden { display: none; }
 
-    .highlight {
-      background: rgba(212,175,55,0.25);
-      color: #f0c940;
-      border-radius: 2px;
-      padding: 0 1px;
+    .card-icon {
+      width: 40px; height: 40px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
     }
+    .card-icon.purple { background: rgba(138,74,138,0.12); border: 1px solid #8a4a8a; }
+    .card-icon.gold   { background: rgba(212,175,55,0.08);  border: 1px solid #d4af37; }
+    .card-icon.green  { background: rgba(74,138,74,0.08);   border: 1px solid #4a8a4a; }
+    .card-icon.blue   { background: rgba(74,106,138,0.12);  border: 1px solid #4a6a8a; }
+
+    .card-body { flex: 1; min-width: 0; }
+    .card-title { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+    .card-desc  { font-size: 12px; color: #888; margin-bottom: 8px; line-height: 1.5; }
+    .card-tags  { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    .tag {
+      display: inline-block; padding: 4px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+      background: rgba(255,255,255,0.06); color: #888;
+    }
+    .tag.gold   { background: rgba(212,175,55,0.2);  color: #d4af37; }
+    .tag.green  { background: rgba(74,138,74,0.2);   color: #6ab86a; }
+    .tag.blue   { background: rgba(74,106,138,0.2);  color: #7ab0e0; }
+    .tag.red    { background: rgba(224,128,128,0.2); color: #e08080; }
+
+    .card-arrow { display: flex; align-items: center; color: #555; font-weight: 600; }
 
     /* Footer */
     footer {
-      text-align: center;
-      padding: 24px;
-      color: #555;
-      font-size: 12px;
-      margin-top: 48px;
+      text-align: center; padding: 24px; color: #555;
+      font-size: 12px; margin-top: 32px;
       border-top: 1px solid #2a2a2a;
     }
 
     /* Responsive */
     @media (max-width: 640px) {
-      .container {
-        padding: 24px 16px;
-      }
-
-      h1 {
-        font-size: 24px;
-      }
-
-      .stats {
-        gap: 16px;
-      }
+      .container { padding: 24px 16px; }
+      h1 { font-size: 24px; }
+      .stats { gap: 16px; }
     }
+
+    /* Locks */
+    .carta-lock-icon { font-size:16px; opacity:0.7; }
+    .carta-locked { opacity:0.9; }
+    .carta-locked:hover .carta-lock-icon { opacity:1; }
+    .hrbrain-lock-icon { font-size:14px; opacity:0.7; }
+    .hrbrain-locked { opacity:0.9; }
+    .hrbrain-locked:hover .hrbrain-lock-icon { opacity:1; }
   </style>
 </head>
 <body>
   <header>
     <div class="container">
       <div class="header-content">
-        <h1>Hub de Personas & RRHH</h1>
-        <p class="subtitle">Documentos oficiales de reclutamiento, incorporación y bienvenida · Black Chicken</p>
-        <p style="font-size:11px;color:#d4af37;margin-top:6px;opacity:0.75;letter-spacing:0.3px;">v1.5 — HR Brain + clave por sección + buscador + descriptores de cargo</p>
+        <h1>Hub de HR</h1>
+        <p class="subtitle">Documentos, plataformas y base de conocimiento · Black Chicken Personas & RRHH</p>
+        <p style="font-size:11px;color:#d4af37;margin-top:6px;opacity:0.75;letter-spacing:0.3px;">v1.6 — Secciones colapsables · Reorden · Black Chicken</p>
       </div>
     </div>
   </header>
@@ -333,18 +198,9 @@
   <div class="container">
     <!-- Stats -->
     <div class="stats">
-      <div class="stat">
-        <div class="stat-number">15</div>
-        <div>Documentos activos</div>
-      </div>
-      <div class="stat">
-        <div class="stat-number">7</div>
-        <div>Roles cubiertos</div>
-      </div>
-      <div class="stat">
-        <div class="stat-number">5</div>
-        <div>Tipos de documento</div>
-      </div>
+      <div class="stat"><div class="stat-number">15</div><div>Documentos activos</div></div>
+      <div class="stat"><div class="stat-number">7</div><div>Roles cubiertos</div></div>
+      <div class="stat"><div class="stat-number">6</div><div>Secciones</div></div>
     </div>
 
     <!-- Buscador -->
@@ -355,365 +211,367 @@
     </div>
     <div class="search-empty" id="search-empty">Sin resultados para "<span id="search-term"></span>"</div>
 
-    <!-- Section 1: Publicaciones públicas -->
-    <div class="section">
-      <div class="section-title">📢 Publicaciones públicas</div>
-      <div class="cards">
-        <a href="BC_Publicacion_JefeLocal.html" class="card">
-          <div class="card-icon purple">👑</div>
-          <div class="card-body">
-            <div class="card-title">Publicación — Jefe/a de Local</div>
-            <div class="card-desc"></div>
-            <div class="card-tags">
-              <span class="tag gold">Jornada Completa</span>
-              <span class="tag">Sin datos de renta</span>
-              <span class="tag blue">Para difundir</span>
+    <!-- 1) HR Brain -->
+    <div class="section" data-section="hrbrain">
+      <div class="section-toggle" onclick="toggleSection(this)">
+        <span class="section-toggle-label">🧠 HR Brain · Base de conocimiento RRHH</span>
+        <span class="section-chevron">▶</span>
+      </div>
+      <div class="section-body">
+        <div class="cards">
+          <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/1jmth3C-kd5syl_5OLYtmYkFNVx3dD4gr');return false;" class="card hrbrain-locked">
+            <div class="card-icon" style="background:rgba(212,175,55,0.15);color:#d4af37;font-size:22px;">🗂️</div>
+            <div class="card-body">
+              <div class="card-title">01 · Administración <span class="hrbrain-lock-icon">🔒</span></div>
+              <div class="card-desc">Contratos, finiquitos, documentación administrativa y gestión de personal.</div>
+              <div class="card-tags"><span class="tag gold">Google Drive</span><span class="tag">Administración</span></div>
             </div>
-          </div>
-          <div class="card-arrow">→</div>
-        </a>
-        <a href="BlackChicken_Oferta_Garzon_PT.html" class="card">
-          <div class="card-icon gold">🍽️</div>
-          <div class="card-body">
-            <div class="card-title">Publicación — Garzon Part Time</div>
-            <div class="card-desc"></div>
-            <div class="card-tags">
-              <span class="tag gold">Part Time·4hrs</span>
-              <span class="tag">12:00–16:30·Rotativo</span>
-              <span class="tag blue">Candidatos validados</span>
+            <div class="card-arrow">↗</div>
+          </a>
+          <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/16Oam6nWN0tIdhk2jCIEvnJuEcrr18XoH');return false;" class="card hrbrain-locked">
+            <div class="card-icon" style="background:rgba(212,175,55,0.15);color:#d4af37;font-size:22px;">🔍</div>
+            <div class="card-body">
+              <div class="card-title">02 · Reclutamiento y Selección <span class="hrbrain-lock-icon">🔒</span></div>
+              <div class="card-desc">Procesos de búsqueda, evaluación y selección de candidatos para todos los cargos.</div>
+              <div class="card-tags"><span class="tag gold">Google Drive</span><span class="tag">Reclutamiento</span></div>
             </div>
-          </div>
-          <div class="card-arrow">→</div>
-        </a>
+            <div class="card-arrow">↗</div>
+          </a>
+          <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/1TqKp6x7CRH2nch8Wr2kJ4OUS10TwnvsI');return false;" class="card hrbrain-locked">
+            <div class="card-icon" style="background:rgba(212,175,55,0.15);color:#d4af37;font-size:22px;">🎓</div>
+            <div class="card-body">
+              <div class="card-title">03 · Desarrollo y Capacitación <span class="hrbrain-lock-icon">🔒</span></div>
+              <div class="card-desc">Planes de formación, capacitación interna y desarrollo de carrera del equipo.</div>
+              <div class="card-tags"><span class="tag gold">Google Drive</span><span class="tag">Capacitación</span></div>
+            </div>
+            <div class="card-arrow">↗</div>
+          </a>
+          <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/1qhI1gHcRSA4pycy4q85kjMBIY4chG58x');return false;" class="card hrbrain-locked">
+            <div class="card-icon" style="background:rgba(212,175,55,0.15);color:#d4af37;font-size:22px;">💰</div>
+            <div class="card-body">
+              <div class="card-title">04 · Compensaciones y Beneficios <span class="hrbrain-lock-icon">🔒</span></div>
+              <div class="card-desc">Estructura salarial, beneficios, bonos e incentivos por desempeño.</div>
+              <div class="card-tags"><span class="tag gold">Google Drive</span><span class="tag">Remuneraciones</span></div>
+            </div>
+            <div class="card-arrow">↗</div>
+          </a>
+          <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/1EQmTiLCR5sC-kLMIGZN_Va9t58kTeWXA');return false;" class="card hrbrain-locked">
+            <div class="card-icon" style="background:rgba(212,175,55,0.15);color:#d4af37;font-size:22px;">🌡️</div>
+            <div class="card-body">
+              <div class="card-title">05 · Clima y Cultura <span class="hrbrain-lock-icon">🔒</span></div>
+              <div class="card-desc">Encuestas de clima, cultura organizacional y bienestar del equipo BC.</div>
+              <div class="card-tags"><span class="tag gold">Google Drive</span><span class="tag">Cultura</span></div>
+            </div>
+            <div class="card-arrow">↗</div>
+          </a>
+          <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/1OrmCDa4E4Xn8NEv4B0KHguRFbRYAW4ov');return false;" class="card hrbrain-locked">
+            <div class="card-icon" style="background:rgba(212,175,55,0.15);color:#d4af37;font-size:22px;">🤝</div>
+            <div class="card-body">
+              <div class="card-title">06 · Relaciones Laborales <span class="hrbrain-lock-icon">🔒</span></div>
+              <div class="card-desc">Normativa, resolución de conflictos y gestión de relaciones con el equipo.</div>
+              <div class="card-tags"><span class="tag gold">Google Drive</span><span class="tag">Normativa</span></div>
+            </div>
+            <div class="card-arrow">↗</div>
+          </a>
+          <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/1Ho8j0KF5Omb3_xdSleZ_bsBHAhyyRtxJ');return false;" class="card hrbrain-locked">
+            <div class="card-icon" style="background:rgba(212,175,55,0.15);color:#d4af37;font-size:22px;">⚠️</div>
+            <div class="card-body">
+              <div class="card-title">07 · Prevención de Riesgos <span class="hrbrain-lock-icon">🔒</span></div>
+              <div class="card-desc">Protocolos de seguridad, riesgos laborales y cumplimiento normativo.</div>
+              <div class="card-tags"><span class="tag gold">Google Drive</span><span class="tag">Seguridad</span></div>
+            </div>
+            <div class="card-arrow">↗</div>
+          </a>
+          <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/1wlTZvx9WVG0LqWXD_1j6kV2T4HyxzYxV');return false;" class="card hrbrain-locked">
+            <div class="card-icon" style="background:rgba(255,255,255,0.05);color:#666;font-size:22px;">📦</div>
+            <div class="card-body">
+              <div class="card-title">99 · Histórico <span class="hrbrain-lock-icon">🔒</span></div>
+              <div class="card-desc">Archivos y documentos anteriores. Registro histórico del área de personas.</div>
+              <div class="card-tags"><span class="tag">Google Drive</span><span class="tag">Archivo</span></div>
+            </div>
+            <div class="card-arrow">↗</div>
+          </a>
+        </div>
       </div>
     </div>
 
-    <!-- Section 2: Cartas de oferta -->
-    <div class="section">
-      <div class="section-title">📄 Cartas de oferta · Privadas — post entrevista</div>
-      <div class="cards">
-        <a href="#" onclick="cartaGate('BC_CartaOferta_JefeLocal.html');return false;" class="card carta-locked">
-          <div class="card-icon purple">👑</div>
-          <div class="card-body">
-            <div class="card-title">Carta Oferta — Jefe/a de Local</div>
-            <div class="card-desc"></div>
-            <div class="card-tags">
-              <span class="tag gold">Turno PM inicial</span>
-              <span class="tag">Solo post-entrevista</span>
-              <span class="tag red">Requiere firma</span>
+    <!-- 2) Procesos Internos -->
+    <div class="section" data-section="procesos">
+      <div class="section-toggle" onclick="toggleSection(this)">
+        <span class="section-toggle-label">🧰 Procesos internos · Uso exclusivo RRHH</span>
+        <span class="section-chevron">▶</span>
+      </div>
+      <div class="section-body">
+        <div class="cards">
+          <a href="index.html" class="card">
+            <div class="card-icon green">📋</div>
+            <div class="card-body">
+              <div class="card-title">ATS Recruiting</div>
+              <div class="card-desc">Tracking de candidatos por fase con checklists, perfiles de cargo y respaldo en Notion.</div>
+              <div class="card-tags">
+                <span class="tag green">Perfiles de Cargo</span>
+                <span class="tag blue">Checklists</span>
+                <span class="tag">Notion Sync</span>
+              </div>
             </div>
-          </div>
-          <div class="card-arrow carta-lock-icon">🔒</div>
-        </a>
-        <a href="#" onclick="cartaGate('BC_CartaOferta_SubJefe.html');return false;" class="card carta-locked">
-          <div class="card-icon gold">🧭</div>
-          <div class="card-body">
-            <div class="card-title">Carta Oferta — Sub Jefe/a</div>
-            <div class="card-desc"></div>
-            <div class="card-tags">
-              <span class="tag gold">$850.000 líquidos</span>
-              <span class="tag">Solo post-entrevista</span>
-              <span class="tag red">Requiere firma</span>
+            <div class="card-arrow">→</div>
+          </a>
+          <a href="https://bc-organigrama.vercel.app" target="_blank" class="card">
+            <div class="card-icon gold">🏢</div>
+            <div class="card-body">
+              <div class="card-title">Organigrama Black Chicken</div>
+              <div class="card-desc">Estructura completa del equipo por niveles. Editable — agrega, modifica o elimina personas y grupos en tiempo real.</div>
+              <div class="card-tags">
+                <span class="tag gold">Editable</span>
+                <span class="tag">Dirección · Gestión · Jefaturas</span>
+              </div>
             </div>
-          </div>
-          <div class="card-arrow carta-lock-icon">🔒</div>
-        </a>
-        <a href="#" onclick="cartaGate('BC_CartaOferta_JefeCocina.html');return false;" class="card carta-locked">
-          <div class="card-icon gold">🔥</div>
-          <div class="card-body">
-            <div class="card-title">Carta Oferta — Jefe/a de Cocina</div>
-            <div class="card-desc"></div>
-            <div class="card-tags">
-              <span class="tag gold">$1.200.000 líquidos</span>
-              <span class="tag">Solo post-entrevista</span>
-              <span class="tag red">Requiere firma</span>
-            </div>
-          </div>
-          <div class="card-arrow carta-lock-icon">🔒</div>
-        </a>
-        <a href="#" onclick="cartaGate('BC_CartaOferta_SousChef.html');return false;" class="card carta-locked">
-          <div class="card-icon gold">👨‍🍳</div>
-          <div class="card-body">
-            <div class="card-title">Carta Oferta — Sous Chef</div>
-            <div class="card-desc"></div>
-            <div class="card-tags">
-              <span class="tag gold">$850.000 líquidos</span>
-              <span class="tag">Solo post-entrevista</span>
-              <span class="tag red">Requiere firma</span>
-            </div>
-          </div>
-          <div class="card-arrow carta-lock-icon">🔒</div>
-        </a>
-        <a href="#" onclick="cartaGate('BC_CartaOferta_Cocinero.html');return false;" class="card carta-locked">
-          <div class="card-icon gold">🍳</div>
-          <div class="card-body">
-            <div class="card-title">Carta Oferta — Cocinero/a</div>
-            <div class="card-desc"></div>
-            <div class="card-tags">
-              <span class="tag gold">$650.000 líquidos</span>
-              <span class="tag">Solo post-entrevista</span>
-              <span class="tag red">Requiere firma</span>
-            </div>
-          </div>
-          <div class="card-arrow carta-lock-icon">🔒</div>
-        </a>
-        <a href="#" onclick="cartaGate('BlackChicken_Oferta_Garzon_FT.html');return false;" class="card carta-locked">
-          <div class="card-icon gold">🍽️</div>
-          <div class="card-body">
-            <div class="card-title">Carta Oferta — Garzón/a Full Time</div>
-            <div class="card-desc"></div>
-            <div class="card-tags">
-              <span class="tag gold">$550.000 líquidos</span>
-              <span class="tag">Jornada 5x2</span>
-              <span class="tag">Solo post-entrevista</span>
-              <span class="tag red">Requiere firma</span>
-            </div>
-          </div>
-          <div class="card-arrow carta-lock-icon">🔒</div>
-        </a>
-        <a href="#" onclick="cartaGate('BC_CartaOferta_Copero.html');return false;" class="card carta-locked">
-          <div class="card-icon gold">🍹</div>
-          <div class="card-body">
-            <div class="card-title">Carta Oferta — Copero/a</div>
-            <div class="card-desc"></div>
-            <div class="card-tags">
-              <span class="tag gold">$550.000 líquidos</span>
-              <span class="tag">Rotativo·11:00–20:30</span>
-              <span class="tag">Solo post-entrevista</span>
-              <span class="tag red">Requiere firma</span>
-            </div>
-          </div>
-          <div class="card-arrow carta-lock-icon">🔒</div>
-        </a>
+            <div class="card-arrow">↗</div>
+          </a>
+        </div>
       </div>
     </div>
 
-    <!-- Section 3: Onboarding -->
-    <div class="section">
-      <div class="section-title">🎉 Onboarding · Se entrega al ingresar</div>
-      <div class="cards">
-        <a href="https://bc-onboarding-bice.vercel.app" target="_blank" class="card">
-          <div class="card-icon green">🍗</div>
-          <div class="card-body">
-            <div class="card-title">Bienvenida — Equipo de Servicio (Garzón)</div>
-            <div class="card-desc"></div>
-            <div class="card-tags">
-              <span class="tag green">Al ingresar</span>
-              <span class="tag">Propinas por etapa</span>
-              <span class="tag">Contactos RRHH</span>
+    <!-- 3) Plataformas Digitales -->
+    <div class="section" data-section="plataformas">
+      <div class="section-toggle" onclick="toggleSection(this)">
+        <span class="section-toggle-label">🖥️ Plataformas digitales · Acceso en línea</span>
+        <span class="section-chevron">▶</span>
+      </div>
+      <div class="section-body">
+        <div class="cards">
+          <a href="https://bc-onboarding-bice.vercel.app" target="_blank" class="card">
+            <div class="card-icon green">🚀</div>
+            <div class="card-body">
+              <div class="card-title">Onboarding Garzones</div>
+              <div class="card-desc">Portal de bienvenida e incorporación para el equipo de servicio.</div>
+              <div class="card-tags">
+                <span class="tag green">Plataforma online</span>
+                <span class="tag">Equipo de servicio</span>
+                <span class="tag">Al ingresar</span>
+              </div>
             </div>
-          </div>
-          <div class="card-arrow">↗</div>
-        </a>
+            <div class="card-arrow">↗</div>
+          </a>
+          <a href="https://bc-evaluaciones.vercel.app" target="_blank" class="card">
+            <div class="card-icon blue">📊</div>
+            <div class="card-body">
+              <div class="card-title">Evaluación de Desempeño</div>
+              <div class="card-desc">Evaluación por competencias para seguimiento del rendimiento individual.</div>
+              <div class="card-tags">
+                <span class="tag blue">Plataforma online</span>
+                <span class="tag">Por competencias</span>
+                <span class="tag gold">Uso interno RRHH</span>
+              </div>
+            </div>
+            <div class="card-arrow">↗</div>
+          </a>
+          <a href="https://bc-evaluacion-pares.vercel.app" target="_blank" class="card">
+            <div class="card-icon purple">🔒</div>
+            <div class="card-body">
+              <div class="card-title">Evaluación entre Pares (Anónimo)</div>
+              <div class="card-desc">Feedback 360 anónimo entre compañeros de equipo.</div>
+              <div class="card-tags">
+                <span class="tag blue">Plataforma online</span>
+                <span class="tag">Anónimo</span>
+                <span class="tag green">Todo el equipo</span>
+              </div>
+            </div>
+            <div class="card-arrow">↗</div>
+          </a>
+        </div>
       </div>
     </div>
 
-    <!-- Section: Descriptores de Cargo -->
-    <div class="section">
-      <div class="section-title">📑 Descriptores de cargo · Perfiles formales</div>
-      <div class="cards">
-        <a href="BC_Descriptor_Entrenadora.html" class="card">
-          <div class="card-icon gold">🎓</div>
-          <div class="card-body">
-            <div class="card-title">Descriptor — Garzón/a con Mención Entrenadora</div>
-            <div class="card-desc">Garzona de referencia del equipo de sala. Combina operación diaria con función formativa, onboarding y seguimiento continuo en ambos locales.</div>
-            <div class="card-tags">
-              <span class="tag gold">Servicio de Sala</span>
-              <span class="tag">Ambos locales</span>
-              <span class="tag blue">Uso interno RRHH</span>
+    <!-- 4) Descriptores de Cargo -->
+    <div class="section" data-section="descriptores">
+      <div class="section-toggle" onclick="toggleSection(this)">
+        <span class="section-toggle-label">📑 Descriptores de cargo · Perfiles formales</span>
+        <span class="section-chevron">▶</span>
+      </div>
+      <div class="section-body">
+        <div class="cards">
+          <a href="BC_Descriptor_Entrenadora.html" class="card">
+            <div class="card-icon gold">🎓</div>
+            <div class="card-body">
+              <div class="card-title">Descriptor — Garzón/a con Mención Entrenadora</div>
+              <div class="card-desc">Garzona de referencia del equipo de sala. Combina operación diaria con función formativa, onboarding y seguimiento continuo en ambos locales.</div>
+              <div class="card-tags">
+                <span class="tag gold">Servicio de Sala</span>
+                <span class="tag">Ambos locales</span>
+                <span class="tag blue">Uso interno RRHH</span>
+              </div>
             </div>
-          </div>
-          <div class="card-arrow">→</div>
-        </a>
-        <a href="BC_Descriptor_CapitanGarzon.html" class="card">
-          <div class="card-icon gold">🍽️</div>
-          <div class="card-body">
-            <div class="card-title">Descriptor — Capitán Garzón</div>
-            <div class="card-desc">Responsable del equipo de servicio: atención al cliente, capacitación, supervisión, custodia de activos y distribución del salón.</div>
-            <div class="card-tags">
-              <span class="tag gold">Servicio de Sala</span>
-              <span class="tag">Local Asignado</span>
-              <span class="tag blue">Uso interno RRHH</span>
+            <div class="card-arrow">→</div>
+          </a>
+          <a href="BC_Descriptor_CapitanGarzon.html" class="card">
+            <div class="card-icon gold">🍽️</div>
+            <div class="card-body">
+              <div class="card-title">Descriptor — Capitán Garzón</div>
+              <div class="card-desc">Responsable del equipo de servicio: atención al cliente, capacitación, supervisión, custodia de activos y distribución del salón.</div>
+              <div class="card-tags">
+                <span class="tag gold">Servicio de Sala</span>
+                <span class="tag">Local Asignado</span>
+                <span class="tag blue">Uso interno RRHH</span>
+              </div>
             </div>
-          </div>
-          <div class="card-arrow">→</div>
-        </a>
+            <div class="card-arrow">→</div>
+          </a>
+        </div>
       </div>
     </div>
 
-    <!-- Section: HR BRAIN -->
-    <div class="section">
-      <div class="section-title">🧠 HR Brain · Base de conocimiento RRHH</div>
-      <div class="cards">
-
-        <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/1jmth3C-kd5syl_5OLYtmYkFNVx3dD4gr');return false;" class="card hrbrain-locked">
-          <div class="card-icon" style="background:rgba(212,175,55,0.15);color:#d4af37;font-size:22px;">🗂️</div>
-          <div class="card-body">
-            <div class="card-title">01 · Administración <span class="hrbrain-lock-icon">🔒</span></div>
-            <div class="card-desc">Contratos, finiquitos, documentación administrativa y gestión de personal.</div>
-            <div class="card-tags"><span class="tag gold">Google Drive</span><span class="tag">Administración</span></div>
-          </div>
-          <div class="card-arrow">↗</div>
-        </a>
-
-        <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/16Oam6nWN0tIdhk2jCIEvnJuEcrr18XoH');return false;" class="card hrbrain-locked">
-          <div class="card-icon" style="background:rgba(212,175,55,0.15);color:#d4af37;font-size:22px;">🔍</div>
-          <div class="card-body">
-            <div class="card-title">02 · Reclutamiento y Selección <span class="hrbrain-lock-icon">🔒</span></div>
-            <div class="card-desc">Procesos de búsqueda, evaluación y selección de candidatos para todos los cargos.</div>
-            <div class="card-tags"><span class="tag gold">Google Drive</span><span class="tag">Reclutamiento</span></div>
-          </div>
-          <div class="card-arrow">↗</div>
-        </a>
-
-        <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/1TqKp6x7CRH2nch8Wr2kJ4OUS10TwnvsI');return false;" class="card hrbrain-locked">
-          <div class="card-icon" style="background:rgba(212,175,55,0.15);color:#d4af37;font-size:22px;">🎓</div>
-          <div class="card-body">
-            <div class="card-title">03 · Desarrollo y Capacitación <span class="hrbrain-lock-icon">🔒</span></div>
-            <div class="card-desc">Planes de formación, capacitación interna y desarrollo de carrera del equipo.</div>
-            <div class="card-tags"><span class="tag gold">Google Drive</span><span class="tag">Capacitación</span></div>
-          </div>
-          <div class="card-arrow">↗</div>
-        </a>
-
-        <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/1qhI1gHcRSA4pycy4q85kjMBIY4chG58x');return false;" class="card hrbrain-locked">
-          <div class="card-icon" style="background:rgba(212,175,55,0.15);color:#d4af37;font-size:22px;">💰</div>
-          <div class="card-body">
-            <div class="card-title">04 · Compensaciones y Beneficios <span class="hrbrain-lock-icon">🔒</span></div>
-            <div class="card-desc">Estructura salarial, beneficios, bonos e incentivos por desempeño.</div>
-            <div class="card-tags"><span class="tag gold">Google Drive</span><span class="tag">Remuneraciones</span></div>
-          </div>
-          <div class="card-arrow">↗</div>
-        </a>
-
-        <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/1EQmTiLCR5sC-kLMIGZN_Va9t58kTeWXA');return false;" class="card hrbrain-locked">
-          <div class="card-icon" style="background:rgba(212,175,55,0.15);color:#d4af37;font-size:22px;">🌡️</div>
-          <div class="card-body">
-            <div class="card-title">05 · Clima y Cultura <span class="hrbrain-lock-icon">🔒</span></div>
-            <div class="card-desc">Encuestas de clima, cultura organizacional y bienestar del equipo BC.</div>
-            <div class="card-tags"><span class="tag gold">Google Drive</span><span class="tag">Cultura</span></div>
-          </div>
-          <div class="card-arrow">↗</div>
-        </a>
-
-        <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/1OrmCDa4E4Xn8NEv4B0KHguRFbRYAW4ov');return false;" class="card hrbrain-locked">
-          <div class="card-icon" style="background:rgba(212,175,55,0.15);color:#d4af37;font-size:22px;">🤝</div>
-          <div class="card-body">
-            <div class="card-title">06 · Relaciones Laborales <span class="hrbrain-lock-icon">🔒</span></div>
-            <div class="card-desc">Normativa, resolución de conflictos y gestión de relaciones con el equipo.</div>
-            <div class="card-tags"><span class="tag gold">Google Drive</span><span class="tag">Normativa</span></div>
-          </div>
-          <div class="card-arrow">↗</div>
-        </a>
-
-        <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/1Ho8j0KF5Omb3_xdSleZ_bsBHAhyyRtxJ');return false;" class="card hrbrain-locked">
-          <div class="card-icon" style="background:rgba(212,175,55,0.15);color:#d4af37;font-size:22px;">⚠️</div>
-          <div class="card-body">
-            <div class="card-title">07 · Prevención de Riesgos <span class="hrbrain-lock-icon">🔒</span></div>
-            <div class="card-desc">Protocolos de seguridad, riesgos laborales y cumplimiento normativo.</div>
-            <div class="card-tags"><span class="tag gold">Google Drive</span><span class="tag">Seguridad</span></div>
-          </div>
-          <div class="card-arrow">↗</div>
-        </a>
-
-        <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/1wlTZvx9WVG0LqWXD_1j6kV2T4HyxzYxV');return false;" class="card hrbrain-locked">
-          <div class="card-icon" style="background:rgba(255,255,255,0.05);color:#666;font-size:22px;">📦</div>
-          <div class="card-body">
-            <div class="card-title">99 · Histórico <span class="hrbrain-lock-icon">🔒</span></div>
-            <div class="card-desc">Archivos y documentos anteriores. Registro histórico del área de personas.</div>
-            <div class="card-tags"><span class="tag">Google Drive</span><span class="tag">Archivo</span></div>
-          </div>
-          <div class="card-arrow">↗</div>
-        </a>
-
+    <!-- 5) Publicaciones públicas -->
+    <div class="section" data-section="publicaciones">
+      <div class="section-toggle" onclick="toggleSection(this)">
+        <span class="section-toggle-label">📢 Publicaciones públicas</span>
+        <span class="section-chevron">▶</span>
+      </div>
+      <div class="section-body">
+        <div class="cards">
+          <a href="BC_Publicacion_JefeLocal.html" class="card">
+            <div class="card-icon purple">👑</div>
+            <div class="card-body">
+              <div class="card-title">Publicación — Jefe/a de Local</div>
+              <div class="card-desc"></div>
+              <div class="card-tags">
+                <span class="tag gold">Jornada Completa</span>
+                <span class="tag">Sin datos de renta</span>
+                <span class="tag blue">Para difundir</span>
+              </div>
+            </div>
+            <div class="card-arrow">→</div>
+          </a>
+          <a href="BlackChicken_Oferta_Garzon_PT.html" class="card">
+            <div class="card-icon gold">🍽️</div>
+            <div class="card-body">
+              <div class="card-title">Publicación — Garzon Part Time</div>
+              <div class="card-desc"></div>
+              <div class="card-tags">
+                <span class="tag gold">Part Time·4hrs</span>
+                <span class="tag">12:00–16:30·Rotativo</span>
+                <span class="tag blue">Candidatos validados</span>
+              </div>
+            </div>
+            <div class="card-arrow">→</div>
+          </a>
+        </div>
       </div>
     </div>
 
-    <!-- Section 4: Procesos internos (NEW) -->
-    <div class="section">
-      <div class="section-title">🧰 Procesos internos · Uso exclusivo RRHH</div>
-      <div class="cards">
-        <a href="index.html" class="card">
-          <div class="card-icon green">📋</div>
-          <div class="card-body">
-            <div class="card-title">ATS Recruiting</div>
-            <div class="card-desc">Tracking de candidatos por fase con checklists, perfiles de cargo y respaldo en Notion.</div>
-            <div class="card-tags">
-              <span class="tag green">Perfiles de Cargo</span>
-              <span class="tag blue">Checklists</span>
-              <span class="tag">Notion Sync</span>
+    <!-- 6) Cartas de oferta -->
+    <div class="section" data-section="cartas">
+      <div class="section-toggle" onclick="toggleSection(this)">
+        <span class="section-toggle-label">📄 Cartas de oferta · Privadas — post entrevista</span>
+        <span class="section-chevron">▶</span>
+      </div>
+      <div class="section-body">
+        <div class="cards">
+          <a href="#" onclick="cartaGate('BC_CartaOferta_JefeLocal.html');return false;" class="card carta-locked">
+            <div class="card-icon purple">👑</div>
+            <div class="card-body">
+              <div class="card-title">Carta Oferta — Jefe/a de Local</div>
+              <div class="card-desc"></div>
+              <div class="card-tags">
+                <span class="tag gold">Turno PM inicial</span>
+                <span class="tag">Solo post-entrevista</span>
+                <span class="tag red">Requiere firma</span>
+              </div>
             </div>
-          </div>
-          <div class="card-arrow">→</div>
-        </a>
-        <a href="https://bc-organigrama.vercel.app" target="_blank" class="card">
-          <div class="card-icon gold">🏢</div>
-          <div class="card-body">
-            <div class="card-title">Organigrama Black Chicken</div>
-            <div class="card-desc">Estructura completa del equipo por niveles. Editable — agrega, modifica o elimina personas y grupos en tiempo real.</div>
-            <div class="card-tags">
-              <span class="tag gold">Editable</span>
-              <span class="tag">Dirección · Gestión · Jefaturas</span>
+            <div class="card-arrow carta-lock-icon">🔒</div>
+          </a>
+          <a href="#" onclick="cartaGate('BC_CartaOferta_SubJefe.html');return false;" class="card carta-locked">
+            <div class="card-icon gold">🧭</div>
+            <div class="card-body">
+              <div class="card-title">Carta Oferta — Sub Jefe/a</div>
+              <div class="card-desc"></div>
+              <div class="card-tags">
+                <span class="tag gold">$850.000 líquidos</span>
+                <span class="tag">Solo post-entrevista</span>
+                <span class="tag red">Requiere firma</span>
+              </div>
             </div>
-          </div>
-          <div class="card-arrow">↗</div>
-        </a>
+            <div class="card-arrow carta-lock-icon">🔒</div>
+          </a>
+          <a href="#" onclick="cartaGate('BC_CartaOferta_JefeCocina.html');return false;" class="card carta-locked">
+            <div class="card-icon gold">🔥</div>
+            <div class="card-body">
+              <div class="card-title">Carta Oferta — Jefe/a de Cocina</div>
+              <div class="card-desc"></div>
+              <div class="card-tags">
+                <span class="tag gold">$1.200.000 líquidos</span>
+                <span class="tag">Solo post-entrevista</span>
+                <span class="tag red">Requiere firma</span>
+              </div>
+            </div>
+            <div class="card-arrow carta-lock-icon">🔒</div>
+          </a>
+          <a href="#" onclick="cartaGate('BC_CartaOferta_SousChef.html');return false;" class="card carta-locked">
+            <div class="card-icon gold">👨‍🍳</div>
+            <div class="card-body">
+              <div class="card-title">Carta Oferta — Sous Chef</div>
+              <div class="card-desc"></div>
+              <div class="card-tags">
+                <span class="tag gold">$850.000 líquidos</span>
+                <span class="tag">Solo post-entrevista</span>
+                <span class="tag red">Requiere firma</span>
+              </div>
+            </div>
+            <div class="card-arrow carta-lock-icon">🔒</div>
+          </a>
+          <a href="#" onclick="cartaGate('BC_CartaOferta_Cocinero.html');return false;" class="card carta-locked">
+            <div class="card-icon gold">🍳</div>
+            <div class="card-body">
+              <div class="card-title">Carta Oferta — Cocinero/a</div>
+              <div class="card-desc"></div>
+              <div class="card-tags">
+                <span class="tag gold">$650.000 líquidos</span>
+                <span class="tag">Solo post-entrevista</span>
+                <span class="tag red">Requiere firma</span>
+              </div>
+            </div>
+            <div class="card-arrow carta-lock-icon">🔒</div>
+          </a>
+          <a href="#" onclick="cartaGate('BlackChicken_Oferta_Garzon_FT.html');return false;" class="card carta-locked">
+            <div class="card-icon gold">🍽️</div>
+            <div class="card-body">
+              <div class="card-title">Carta Oferta — Garzón/a Full Time</div>
+              <div class="card-desc"></div>
+              <div class="card-tags">
+                <span class="tag gold">$550.000 líquidos</span>
+                <span class="tag">Jornada 5x2</span>
+                <span class="tag">Solo post-entrevista</span>
+                <span class="tag red">Requiere firma</span>
+              </div>
+            </div>
+            <div class="card-arrow carta-lock-icon">🔒</div>
+          </a>
+          <a href="#" onclick="cartaGate('BC_CartaOferta_Copero.html');return false;" class="card carta-locked">
+            <div class="card-icon gold">🍹</div>
+            <div class="card-body">
+              <div class="card-title">Carta Oferta — Copero/a</div>
+              <div class="card-desc"></div>
+              <div class="card-tags">
+                <span class="tag gold">$550.000 líquidos</span>
+                <span class="tag">Rotativo·11:00–20:30</span>
+                <span class="tag">Solo post-entrevista</span>
+                <span class="tag red">Requiere firma</span>
+              </div>
+            </div>
+            <div class="card-arrow carta-lock-icon">🔒</div>
+          </a>
+        </div>
       </div>
     </div>
 
-    <!-- Section 5: Plataformas digitales -->
-    <div class="section">
-      <div class="section-title">🖥️ Plataformas digitales · Acceso en línea</div>
-      <div class="cards">
-        <a href="https://bc-onboarding-bice.vercel.app" target="_blank" class="card">
-          <div class="card-icon green">🚀</div>
-          <div class="card-body">
-            <div class="card-title">Onboarding Garzones</div>
-            <div class="card-desc"></div>
-            <div class="card-tags">
-              <span class="tag green">Plataforma online</span>
-              <span class="tag">Equipo de servicio</span>
-              <span class="tag">Al ingresar</span>
-            </div>
-          </div>
-          <div class="card-arrow">↗</div>
-        </a>
-        <a href="https://bc-evaluaciones.vercel.app" target="_blank" class="card">
-          <div class="card-icon blue">📊</div>
-          <div class="card-body">
-            <div class="card-title">Evaluación de Desempeño</div>
-            <div class="card-desc"></div>
-            <div class="card-tags">
-              <span class="tag blue">Plataforma online</span>
-              <span class="tag">Por competencias</span>
-              <span class="tag gold">Uso interno RRHH</span>
-            </div>
-          </div>
-          <div class="card-arrow">↗</div>
-        </a>
-        <a href="https://bc-evaluacion-pares.vercel.app" target="_blank" class="card">
-          <div class="card-icon purple">🔒</div>
-          <div class="card-body">
-            <div class="card-title">Evaluación entre Pares (Anónimo)</div>
-            <div class="card-desc"></div>
-            <div class="card-tags">
-              <span class="tag blue">Plataforma online</span>
-              <span class="tag">Anónimo</span>
-              <span class="tag green">Todo el equipo</span>
-            </div>
-          </div>
-          <div class="card-arrow">↗</div>
-        </a>
-      </div>
-    </div>
-  </div>
+  </div><!-- /container -->
 
   <footer>
-    Black Chicken · Documentos internos de Personas & RRHH · Talentos@BlackChicken.cl / Uso exclusivo interno · No compartir con candidatos sin autorización
+    Black Chicken · Hub de HR · Uso exclusivo interno · No compartir sin autorización
   </footer>
 
   <!-- Modal clave Cartas de Oferta -->
-  <div id="carta-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:none;align-items:center;justify-content:center;font-family:'Inter',sans-serif;">
+  <div id="carta-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;align-items:center;justify-content:center;font-family:'Inter',sans-serif;">
     <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:40px;max-width:380px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.7);">
       <img src="./blackchicken_logo.png" alt="BC" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(212,175,55,.3));margin-bottom:18px;">
       <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#d4af37;font-weight:700;margin-bottom:6px;">Acceso restringido</p>
@@ -728,73 +586,6 @@
       <p id="carta-cancel" onclick="closeCartaModal()" style="font-size:12px;color:#555;margin-top:14px;cursor:pointer;">Cancelar</p>
     </div>
   </div>
-
-  <style>
-    .carta-lock-icon { font-size:16px; opacity:0.7; }
-    .carta-locked { opacity:0.9; }
-    .carta-locked:hover .carta-lock-icon { opacity:1; }
-  </style>
-
-  <script>
-    (function() {
-      var KEY = 'bc_cartas_auth', PASS = 'TalentosBC';
-      var pendingUrl = null;
-
-      // Si ya autenticado, desbloquear visualmente
-      if (sessionStorage.getItem(KEY) === 'ok') unlockCartas();
-
-      window.cartaGate = function(url) {
-        if (sessionStorage.getItem(KEY) === 'ok') {
-          window.location.href = url;
-          return;
-        }
-        pendingUrl = url;
-        var modal = document.getElementById('carta-modal');
-        modal.style.display = 'flex';
-        document.getElementById('carta-input').value = '';
-        document.getElementById('carta-err').style.display = 'none';
-        setTimeout(function(){ document.getElementById('carta-input').focus(); }, 100);
-      };
-
-      window.closeCartaModal = function() {
-        document.getElementById('carta-modal').style.display = 'none';
-        pendingUrl = null;
-      };
-
-      function attempt() {
-        var v = document.getElementById('carta-input').value;
-        if (v === PASS) {
-          sessionStorage.setItem(KEY, 'ok');
-          document.getElementById('carta-modal').style.display = 'none';
-          unlockCartas();
-          if (pendingUrl) window.location.href = pendingUrl;
-        } else {
-          var err = document.getElementById('carta-err');
-          var inp = document.getElementById('carta-input');
-          err.style.display = 'block';
-          inp.style.borderColor = '#e05050';
-          inp.value = '';
-          setTimeout(function(){ err.style.display='none'; inp.style.borderColor='#2a2a2a'; }, 2000);
-        }
-      }
-
-      function unlockCartas() {
-        document.querySelectorAll('.carta-locked').forEach(function(el) {
-          var lockIcon = el.querySelector('.carta-lock-icon');
-          if (lockIcon) lockIcon.textContent = '→';
-          el.classList.remove('carta-locked');
-        });
-      }
-
-      document.getElementById('carta-btn').addEventListener('click', attempt);
-      document.getElementById('carta-input').addEventListener('keydown', function(e){ if(e.key==='Enter') attempt(); });
-
-      // Cerrar modal al click fuera
-      document.getElementById('carta-modal').addEventListener('click', function(e){
-        if (e.target === this) closeCartaModal();
-      });
-    })();
-  </script>
 
   <!-- Modal clave HR Brain -->
   <div id="hrbrain-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;align-items:center;justify-content:center;font-family:'Inter',sans-serif;">
@@ -813,13 +604,99 @@
     </div>
   </div>
 
-  <style>
-    .hrbrain-lock-icon { font-size:14px; opacity:0.7; }
-    .hrbrain-locked { opacity:0.9; }
-    .hrbrain-locked:hover .hrbrain-lock-icon { opacity:1; }
-  </style>
-
   <script>
+    /* ── Collapsible sections ── */
+    var STORAGE_KEY = 'bc_hub_open_sections';
+
+    function getSavedState() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e) { return {}; }
+    }
+    function saveState(state) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+    }
+
+    function toggleSection(toggle, force) {
+      var body = toggle.parentElement.querySelector('.section-body');
+      var isOpen = toggle.classList.contains('open');
+      var newState = (force !== undefined) ? force : !isOpen;
+
+      if (newState) {
+        toggle.classList.add('open');
+        body.classList.add('open');
+      } else {
+        toggle.classList.remove('open');
+        body.classList.remove('open');
+      }
+
+      // Persist state
+      var sectionId = toggle.parentElement.dataset.section;
+      if (sectionId) {
+        var state = getSavedState();
+        state[sectionId] = newState;
+        saveState(state);
+      }
+    }
+
+    // Restore saved states on load (all closed by default)
+    (function() {
+      var state = getSavedState();
+      document.querySelectorAll('.section').forEach(function(section) {
+        var id = section.dataset.section;
+        var toggle = section.querySelector('.section-toggle');
+        // Default: closed. Open if explicitly saved as open.
+        if (state[id] === true) {
+          toggleSection(toggle, true);
+        }
+      });
+    })();
+
+    /* ── Modales Cartas de Oferta ── */
+    (function() {
+      var KEY = 'bc_cartas_auth', PASS = 'TalentosBC';
+      var pendingUrl = null;
+
+      if (sessionStorage.getItem(KEY) === 'ok') unlockCartas();
+
+      window.cartaGate = function(url) {
+        if (sessionStorage.getItem(KEY) === 'ok') { window.location.href = url; return; }
+        pendingUrl = url;
+        var modal = document.getElementById('carta-modal');
+        modal.style.display = 'flex';
+        document.getElementById('carta-input').value = '';
+        document.getElementById('carta-err').style.display = 'none';
+        setTimeout(function(){ document.getElementById('carta-input').focus(); }, 100);
+      };
+      window.closeCartaModal = function() {
+        document.getElementById('carta-modal').style.display = 'none';
+        pendingUrl = null;
+      };
+      function attempt() {
+        var v = document.getElementById('carta-input').value;
+        if (v === PASS) {
+          sessionStorage.setItem(KEY, 'ok');
+          document.getElementById('carta-modal').style.display = 'none';
+          unlockCartas();
+          if (pendingUrl) window.location.href = pendingUrl;
+        } else {
+          var err = document.getElementById('carta-err');
+          var inp = document.getElementById('carta-input');
+          err.style.display = 'block'; inp.style.borderColor = '#e05050'; inp.value = '';
+          setTimeout(function(){ err.style.display='none'; inp.style.borderColor='#2a2a2a'; }, 2000);
+        }
+      }
+      function unlockCartas() {
+        document.querySelectorAll('.carta-locked').forEach(function(el) {
+          var lockIcon = el.querySelector('.carta-lock-icon');
+          if (lockIcon) lockIcon.textContent = '→';
+          el.classList.remove('carta-locked');
+        });
+      }
+      document.getElementById('carta-btn').addEventListener('click', attempt);
+      document.getElementById('carta-input').addEventListener('keydown', function(e){ if(e.key==='Enter') attempt(); });
+      document.getElementById('carta-modal').addEventListener('click', function(e){ if(e.target===this) closeCartaModal(); });
+    })();
+
+    /* ── Modal HR Brain ── */
     (function() {
       var KEY = 'bc_hrbrain_auth', PASS = 'TalentosBC.2026';
       var pendingUrl = null;
@@ -827,10 +704,7 @@
       if (sessionStorage.getItem(KEY) === 'ok') unlockHrBrain();
 
       window.hrBrainGate = function(url) {
-        if (sessionStorage.getItem(KEY) === 'ok') {
-          window.open(url, '_blank');
-          return;
-        }
+        if (sessionStorage.getItem(KEY) === 'ok') { window.open(url, '_blank'); return; }
         pendingUrl = url;
         var modal = document.getElementById('hrbrain-modal');
         modal.style.display = 'flex';
@@ -838,12 +712,10 @@
         document.getElementById('hrbrain-err').style.display = 'none';
         setTimeout(function(){ document.getElementById('hrbrain-input').focus(); }, 100);
       };
-
       window.closeHrBrainModal = function() {
         document.getElementById('hrbrain-modal').style.display = 'none';
         pendingUrl = null;
       };
-
       function attempt() {
         var v = document.getElementById('hrbrain-input').value;
         if (v === PASS) {
@@ -854,13 +726,10 @@
         } else {
           var err = document.getElementById('hrbrain-err');
           var inp = document.getElementById('hrbrain-input');
-          err.style.display = 'block';
-          inp.style.borderColor = '#e05050';
-          inp.value = '';
+          err.style.display = 'block'; inp.style.borderColor = '#e05050'; inp.value = '';
           setTimeout(function(){ err.style.display='none'; inp.style.borderColor='#2a2a2a'; }, 2000);
         }
       }
-
       function unlockHrBrain() {
         document.querySelectorAll('.hrbrain-locked').forEach(function(el) {
           var lockIcon = el.querySelector('.hrbrain-lock-icon');
@@ -868,43 +737,28 @@
           el.classList.remove('hrbrain-locked');
         });
       }
-
       document.getElementById('hrbrain-btn').addEventListener('click', attempt);
       document.getElementById('hrbrain-input').addEventListener('keydown', function(e){ if(e.key==='Enter') attempt(); });
-      document.getElementById('hrbrain-modal').addEventListener('click', function(e){
-        if (e.target === this) closeHrBrainModal();
-      });
+      document.getElementById('hrbrain-modal').addEventListener('click', function(e){ if(e.target===this) closeHrBrainModal(); });
     })();
-  </script>
 
-  <!-- Buscador script -->
-  <script>
+    /* ── Buscador ── */
     (function() {
       var input    = document.getElementById('hub-search');
       var clearBtn = document.getElementById('search-clear');
       var empty    = document.getElementById('search-empty');
       var termSpan = document.getElementById('search-term');
-
-      // Recopilar todas las cards con su texto original (sin markup)
-      var cards = Array.from(document.querySelectorAll('.card'));
+      var cards    = Array.from(document.querySelectorAll('.card'));
       var sections = Array.from(document.querySelectorAll('.section'));
 
-      // Guardar texto búsqueda de cada card
-      cards.forEach(function(card) {
-        card.dataset.searchText = card.textContent.toLowerCase();
-      });
+      cards.forEach(function(card) { card.dataset.searchText = card.textContent.toLowerCase(); });
 
       function stripHighlights(el) {
-        // Restaurar texto original en title y tags
-        el.querySelectorAll('.highlight').forEach(function(h) {
-          h.outerHTML = h.textContent;
-        });
+        el.querySelectorAll('.highlight').forEach(function(h) { h.outerHTML = h.textContent; });
       }
-
       function applyHighlight(el, q) {
         if (!q) return;
-        var targets = el.querySelectorAll('.card-title, .card-desc, .tag');
-        targets.forEach(function(t) {
+        el.querySelectorAll('.card-title, .card-desc, .tag').forEach(function(t) {
           var html = t.textContent;
           var regex = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
           t.innerHTML = html.replace(regex, '<span class="highlight">$1</span>');
@@ -914,15 +768,11 @@
       function search(q) {
         q = q.trim().toLowerCase();
         var hasQ = q.length > 0;
-
         clearBtn.style.display = hasQ ? 'block' : 'none';
         termSpan.textContent = q;
-
-        // Restaurar highlights previos
         cards.forEach(function(c) { stripHighlights(c); });
 
         var totalVisible = 0;
-
         cards.forEach(function(card) {
           var match = !hasQ || card.dataset.searchText.includes(q);
           card.classList.toggle('hidden', !match);
@@ -930,37 +780,26 @@
           if (match) totalVisible++;
         });
 
-        // Ocultar secciones vacías
+        // Auto-open sections with matches, hide empty ones
         sections.forEach(function(section) {
           var visible = section.querySelectorAll('.card:not(.hidden)').length;
           section.classList.toggle('hidden', visible === 0);
+          if (hasQ && visible > 0) {
+            var toggle = section.querySelector('.section-toggle');
+            if (!toggle.classList.contains('open')) toggleSection(toggle, true);
+          }
         });
 
         empty.style.display = (hasQ && totalVisible === 0) ? 'block' : 'none';
       }
 
       input.addEventListener('input', function() { search(this.value); });
-
-      clearBtn.addEventListener('click', function() {
-        input.value = '';
-        search('');
-        input.focus();
-      });
-
-      // Atajo teclado: Escape limpia
+      clearBtn.addEventListener('click', function() { input.value = ''; search(''); input.focus(); });
       document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && document.activeElement !== input) {
-          input.value = '';
-          search('');
-        }
-        if ((e.key === 'f' && (e.metaKey || e.ctrlKey)) === false &&
-            e.key === '/' && document.activeElement.tagName !== 'INPUT') {
-          e.preventDefault();
-          input.focus();
-        }
+        if (e.key === 'Escape') { input.value = ''; search(''); }
+        if (e.key === '/' && document.activeElement.tagName !== 'INPUT') { e.preventDefault(); input.focus(); }
       });
     })();
   </script>
-
 </body>
 </html>
