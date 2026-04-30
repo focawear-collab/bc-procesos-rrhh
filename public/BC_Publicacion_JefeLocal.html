@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oferta Laboral — Jefe/a de Local | Black Chicken</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #0f0f0f; color: #e8e8e8; min-height: 100vh; }
+
+    .hero {
+      background: linear-gradient(160deg, #1a1a0a 0%, #0f0f0f 50%, #1a0a0a 100%);
+      border-bottom: 1px solid #2a2a2a;
+      padding: 48px 40px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; left: 50%;
+      transform: translateX(-50%);
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .logo-wrap { display: flex; justify-content: center; margin-bottom: 28px; }
+    .logo-wrap img { width: 100px; height: 100px; object-fit: contain; filter: drop-shadow(0 4px 16px rgba(212,175,55,0.3)); }
+    .badge-hiring { display: inline-block; background: linear-gradient(90deg, #d4af37, #f0c940); color: #0f0f0f; font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; padding: 5px 16px; border-radius: 20px; margin-bottom: 20px; }
+    .hero h1 { font-size: 42px; font-weight: 900; color: #ffffff; line-height: 1.1; margin-bottom: 10px; }
+    .hero h1 span { background: linear-gradient(90deg, #d4af37, #f0c940); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-sub { font-size: 16px; color: #888; font-weight: 400; margin-bottom: 32px; }
+    .hero-tags { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .tag { background: #1a1a1a; border: 1px solid #2a2a2a; color: #ccc; font-size: 13px; padding: 6px 14px; border-radius: 20px; display: flex; align-items: center; gap: 6px; }
+    .tag.gold { border-color: #d4af37; color: #d4af37; }
+
+    .container { max-width: 860px; margin: 0 auto; padding: 48px 40px; }
+    .section { margin-bottom: 40px; }
+    .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #2a2a2a; }
+    .section-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #d4af37, #f0c940); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .section-title { font-size: 18px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+
+    .schedule-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .schedule-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 20px; }
+    .schedule-card.highlight { border-color: #d4af37; background: linear-gradient(135deg, #1a1505, #1a1a1a); }
+    .sc-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #666; margin-bottom: 8px; }
+    .sc-value { font-size: 22px; font-weight: 800; color: #fff; line-height: 1.2; }
+    .sc-value.gold { color: #d4af37; }
+    .sc-sub { font-size: 13px; color: #777; margin-top: 4px; }
+
+    .func-list { display: flex; flex-direction: column; gap: 10px; }
+    .func-item { display: flex; align-items: flex-start; gap: 12px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; padding: 14px 16px; }
+    .func-dot { width: 8px; height: 8px; background: #d4af37; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+    .func-text { font-size: 15px; color: #ccc; line-height: 1.5; }
+    .func-text strong { color: #fff; }
+
+    .req-list { display: flex; flex-direction: column; gap: 10px; }
+    .req-item { display: flex; align-items: center; gap: 14px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; padding: 14px 16px; }
+    .req-check { width: 24px; height: 24px; background: #1a2a1a; border: 1.5px solid #4a7a4a; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #5cb85c; font-size: 12px; flex-shrink: 0; }
+
+    .benefits-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .benefit-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 20px 16px; text-align: center; transition: border-color 0.2s; }
+    .benefit-card:hover { border-color: #d4af37; }
+    .benefit-icon { font-size: 28px; margin-bottom: 10px; display: block; }
+    .benefit-name { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .benefit-desc { font-size: 12px; color: #666; line-height: 1.4; }
+    .benefit-card.deferred { opacity: 0.65; }
+    .benefit-card.deferred .benefit-name { color: #aaa; }
+    .deferred-note { font-size: 11px; color: #d4af37; margin-top: 4px; font-weight: 600; }
+
+    .cta-block { background: linear-gradient(135deg, #1a1505 0%, #1a1a0a 100%); border: 1px solid #d4af37; border-radius: 16px; padding: 36px; text-align: center; margin-top: 48px; }
+    .cta-title { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+    .cta-sub { font-size: 15px; color: #888; margin-bottom: 24px; }
+    .cta-email { display: inline-block; background: linear-gradient(90deg, #d4af37, #f0c940); color: #0f0f0f; font-size: 16px; font-weight: 800; padding: 14px 32px; border-radius: 30px; text-decoration: none; letter-spacing: 0.5px; }
+    .cta-note { font-size: 13px; color: #555; margin-top: 16px; }
+
+    .footer { background: #111; border-top: 1px solid #2a2a2a; padding: 20px 40px; text-align: center; }
+    .footer-text { font-size: 12px; color: #444; }
+    .footer-text span { color: #d4af37; }
+
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 28px; }
+      .schedule-grid { grid-template-columns: 1fr; }
+      .benefits-grid { grid-template-columns: repeat(2, 1fr); }
+      .container { padding: 32px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="logo-wrap">
+    <img src="./blackchicken_logo.png" alt="Black Chicken">
+  </div>
+  <div class="badge-hiring">✦ Buscamos Talento</div>
+  <h1>Jefe/a de <span>Local</span></h1>
+  <p class="hero-sub">Cerro El Plomo, Las Condes · Santiago</p>
+  <div class="hero-tags">
+    <span class="tag gold">👑 Liderazgo</span>
+    <span class="tag">📍 Las Condes</span>
+    <span class="tag">🕛 Jornada Completa</span>
+    <span class="tag">📅 L–D con día libre rotativo</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon">🎯</div>
+      <h2 class="section-title">El Rol</h2>
+    </div>
+    <div class="func-item" style="background: linear-gradient(135deg, #1a1505, #1a1a1a); border-color: #d4af37;">
+      <div class="func-dot" style="background: #d4af37; width: 10px; height: 10px;"></div>
+      <p class="func-text" style="color: #e8d080; line-height: 1.7;">
+        En Black Chicken buscamos a alguien que lidere con convicción, cuide al equipo y lleve al restaurante a su mejor versión todos los días. El Jefe/a de Local es la persona responsable de la operación completa — desde la apertura hasta el cierre, desde el equipo hasta los resultados.
+      </p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon">🕐</div>
+      <h2 class="section-title">Jornada y Horario</h2>
+    </div>
+    <div class="schedule-grid">
+      <div class="schedule-card highlight">
+        <p class="sc-label">Jornada</p>
+        <p class="sc-value gold">Completa</p>
+        <p class="sc-sub">42 horas semanales con día libre rotativo</p>
+      </div>
+      <div class="schedule-card highlight">
+        <p class="sc-label">Horario</p>
+        <p class="sc-value gold">Apertura – Cierre</p>
+        <p class="sc-sub">Turnos AM y PM rotativos según necesidad del local</p>
+      </div>
+      <div class="schedule-card">
+        <p class="sc-label">Tipo de contrato</p>
+        <p class="sc-value">Indefinido</p>
+        <p class="sc-sub">Con período de prueba inicial de 3 meses</p>
+      </div>
+      <div class="schedule-card">
+        <p class="sc-label">Inicio</p>
+        <p class="sc-value">Inmediato</p>
+        <p class="sc-sub">Incorporación según disponibilidad del candidato/a</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon">📋</div>
+      <h2 class="section-title">Tus Responsabilidades</h2>
+    </div>
+    <div class="func-list">
+      <div class="func-item">
+        <div class="func-dot"></div>
+        <p class="func-text"><strong>Operación diaria</strong> — Supervisar el correcto funcionamiento del local en todos los turnos, asegurando estándares de calidad y servicio.</p>
+      </div>
+      <div class="func-item">
+        <div class="func-dot"></div>
+        <p class="func-text"><strong>Gestión de equipo</strong> — Liderar, capacitar, motivar y desarrollar a los colaboradores del local. Gestionar horarios y ausencias.</p>
+      </div>
+      <div class="func-item">
+        <div class="func-dot"></div>
+        <p class="func-text"><strong>Control de costos e inventario</strong> — Gestionar materias primas, reducir merma y controlar el food cost del local.</p>
+      </div>
+      <div class="func-item">
+        <div class="func-dot"></div>
+        <p class="func-text"><strong>Estándares operacionales</strong> — Implementar y supervisar los procedimientos y checklists del local. Velar por BPM y seguridad alimentaria.</p>
+      </div>
+      <div class="func-item">
+        <div class="func-dot"></div>
+        <p class="func-text"><strong>Resultados y métricas</strong> — Monitorear KPIs del local (ventas, ticket promedio, NPS) y reportar resultados a la dirección.</p>
+      </div>
+      <div class="func-item">
+        <div class="func-dot"></div>
+        <p class="func-text"><strong>Experiencia del cliente</strong> — Asegurar que cada visita sea memorable. Ser embajador/a de la cultura Black Chicken.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon">✅</div>
+      <h2 class="section-title">¿Qué buscamos?</h2>
+    </div>
+    <div class="req-list">
+      <div class="req-item">
+        <div class="req-check">✓</div>
+        <p class="func-text">Experiencia mínima de 2 años liderando equipos en restaurantes, casinos u operaciones de food service.</p>
+      </div>
+      <div class="req-item">
+        <div class="req-check">✓</div>
+        <p class="func-text">Habilidades de liderazgo demostradas — capacidad de motivar, dar feedback y resolver conflictos en el equipo.</p>
+      </div>
+      <div class="req-item">
+        <div class="req-check">✓</div>
+        <p class="func-text">Manejo de costos operacionales: food cost, labor cost, inventarios y merma.</p>
+      </div>
+      <div class="req-item">
+        <div class="req-check">✓</div>
+        <p class="func-text">Disponibilidad para trabajar jornada completa en turnos rotativos, incluyendo fines de semana.</p>
+      </div>
+      <div class="req-item">
+        <div class="req-check">✓</div>
+        <p class="func-text">Orientación al cliente, buena presencia y habilidades de comunicación.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon">🎁</div>
+      <h2 class="section-title">¿Qué te Ofrecemos?</h2>
+    </div>
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <span class="benefit-icon">🍗</span>
+        <p class="benefit-name">Colación incluida</p>
+        <p class="benefit-desc">Almuerzo del local en cada turno sin costo.</p>
+      </div>
+      <div class="benefit-card">
+        <span class="benefit-icon">👕</span>
+        <p class="benefit-name">Uniforme</p>
+        <p class="benefit-desc">Equipamiento completo desde el primer día.</p>
+      </div>
+      <div class="benefit-card">
+        <span class="benefit-icon">🎂</span>
+        <p class="benefit-name">Día de cumpleaños</p>
+        <p class="benefit-desc">Tu día de cumpleaños es libre.</p>
+      </div>
+    </div>
+    <div style="margin-top:16px;padding-top:16px;border-top:1px dashed #2a2a2a;">
+      <p style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;text-align:center;">Beneficios con segundo contrato y contrato indefinido</p>
+      <div class="benefits-grid">
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">🥡</span>
+          <p class="benefit-name">Comida para llevar</p>
+          <p class="benefit-desc">$22.000 en comida para tu casa.</p>
+          <p class="deferred-note">Desde 2° contrato a plazo fijo</p>
+        </div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">🏋️</span>
+          <p class="benefit-name">Aporte Gimnasio</p>
+          <p class="benefit-desc">$30.000 mensuales para actividad física.</p>
+          <p class="deferred-note">Con contrato indefinido</p>
+        </div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">🎂</span>
+          <p class="benefit-name">Bono Cumpleaños</p>
+          <p class="benefit-desc">$25.000 en tu cumpleaños.</p>
+          <p class="deferred-note">Con contrato indefinido</p>
+        </div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">📦</span>
+          <p class="benefit-name">Caja Los Andes</p>
+          <p class="benefit-desc">Afiliación a Caja de Compensación.</p>
+          <p class="deferred-note">Con contrato indefinido</p>
+        </div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">🇨🇱</span>
+          <p class="benefit-name">Aguinaldo Fiestas Patrias</p>
+          <p class="benefit-desc">Bono especial en septiembre.</p>
+          <p class="deferred-note">Con contrato indefinido</p>
+        </div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">🎄</span>
+          <p class="benefit-name">Aguinaldo Navidad</p>
+          <p class="benefit-desc">Bono especial en diciembre.</p>
+          <p class="deferred-note">Con contrato indefinido</p>
+        </div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">🏥</span>
+          <p class="benefit-name">Seguro Complementario</p>
+          <p class="benefit-desc">Seguro complementario Vida Cámara.</p>
+          <p class="deferred-note">Desde 1 año de antigüedad</p>
+        </div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">🎁</span>
+          <p class="benefit-name">Bono Anual</p>
+          <p class="benefit-desc">$200.000 pagado en dos cuotas.</p>
+          <p class="deferred-note">Desde 1 año de antigüedad</p>
+        </div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">🏆</span>
+          <p class="benefit-name">Bono Antigüedad</p>
+          <p class="benefit-desc">1 sueldo completo cada 5 años.</p>
+          <p class="deferred-note">Con contrato indefinido</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon">📈</div>
+      <h2 class="section-title">Oportunidad de Desarrollo</h2>
+    </div>
+    <div class="func-item" style="background: linear-gradient(135deg, #1a1505, #1a1a1a); border-color: #d4af37;">
+      <div class="func-dot" style="background: #d4af37; width: 10px; height: 10px;"></div>
+      <p class="func-text" style="color: #e8d080; line-height: 1.7;">
+        En Black Chicken creemos en el crecimiento de nuestra gente. Como Jefe/a de Local tendrás un rol protagónico en la construcción de la marca y del equipo. Hay camino hacia roles de operaciones multi-local y participación directa en la expansión de la cadena.
+      </p>
+    </div>
+  </div>
+
+  <div class="cta-block">
+    <p class="cta-title">¿Te interesa liderar Black Chicken?</p>
+    <p class="cta-sub">Envíanos tu CV o escríbenos directamente. Nos contactamos contigo en 48 horas.</p>
+    <a href="mailto:talentos@blackchicken.cl?subject=Postulación%20Jefe%20de%20Local" class="cta-email">
+      📩 talentos@blackchicken.cl
+    </a>
+    <p class="cta-note">Incluye una breve presentación y tu experiencia más relevante. Todas las postulaciones son tratadas con total confidencialidad.</p>
+  </div>
+
+</div>
+
+<div class="footer">
+  <p class="footer-text"><span>Black Chicken</span> · Cerro El Plomo 5931 / 5630, Las Condes · Santiago · talentos@blackchicken.cl</p>
+</div>
+
+</body>
+</html>

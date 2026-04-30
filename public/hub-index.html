@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hub de Personas & RRHH</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f0f0f;
+      color: #e8e8e8;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 48px 32px;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(160deg, #1a1a0a 0%, #0f0f0f 60%);
+      padding: 40px 0;
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #777;
+      font-weight: 500;
+    }
+
+    /* Stats */
+    .stats {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 40px;
+      padding: 16px 0;
+      border-bottom: 1px solid #2a2a2a;
+      font-size: 13px;
+      color: #888;
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-number {
+      font-size: 18px;
+      font-weight: 700;
+      color: #d4af37;
+      margin-bottom: 4px;
+    }
+
+    /* Section */
+    .section {
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #777;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    /* Card */
+    .card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s;
+    }
+
+    .card:hover {
+      background: #252525;
+      border-color: #3a3a3a;
+    }
+
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .card-icon.purple {
+      background: rgba(138, 74, 138, 0.12);
+      border: 1px solid #8a4a8a;
+    }
+
+    .card-icon.gold {
+      background: rgba(212, 175, 55, 0.08);
+      border: 1px solid #d4af37;
+    }
+
+    .card-icon.green {
+      background: rgba(74, 138, 74, 0.08);
+      border: 1px solid #4a8a4a;
+    }
+
+    .card-icon.blue {
+      background: rgba(74, 106, 138, 0.12);
+      border: 1px solid #4a6a8a;
+    }
+
+    .card-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .card-desc {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tag.gold {
+      background: rgba(212, 175, 55, 0.2);
+      color: #d4af37;
+    }
+
+    .tag.green {
+      background: rgba(74, 138, 74, 0.2);
+      color: #6ab86a;
+    }
+
+    .tag.blue {
+      background: rgba(74, 106, 138, 0.2);
+      color: #7ab0e0;
+    }
+
+    .tag.red {
+      background: rgba(224, 128, 128, 0.2);
+      color: #e08080;
+    }
+
+    .card-arrow {
+      display: flex;
+      align-items: center;
+      color: #555;
+      font-weight: 600;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: #555;
+      font-size: 12px;
+      margin-top: 48px;
+      border-top: 1px solid #2a2a2a;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .container {
+        padding: 24px 16px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .stats {
+        gap: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <h1>Hub de Personas & RRHH</h1>
+        <p class="subtitle">Documentos oficiales de reclutamiento, incorporación y bienvenida · Black Chicken</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-number">18</div>
+        <div>Documentos activos</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">7</div>
+        <div>Roles cubiertos</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">6</div>
+        <div>Tipos de documento</div>
+      </div>
+    </div>
+
+    <!-- Section 1: Publicaciones públicas -->
+    <div class="section">
+      <div class="section-title">📢 Publicaciones públicas</div>
+      <div class="cards">
+        <a href="BC_Publicacion_JefeLocal.html" class="card">
+          <div class="card-icon purple">👑</div>
+          <div class="card-body">
+            <div class="card-title">Publicación — Jefe/a de Local</div>
+            <div class="card-desc"></div>
+            <div class="card-tags">
+              <span class="tag gold">Jornada Completa</span>
+              <span class="tag">Sin datos de renta</span>
+              <span class="tag blue">Para difundir</span>
+            </div>
+          </div>
+          <div class="card-arrow">→</div>
+        </a>
+        <a href="BC_Publicacion_SubJefeLocal.html" class="card">
+          <div class="card-icon gold">⚡</div>
+          <div class="card-body">
+            <div class="card-title">Publicación — Sub Jefe/a de Local</div>
+            <div class="card-desc"></div>
+            <div class="card-tags">
+              <span class="tag gold">Jornada Completa</span>
+              <span class="tag">42 hrs · 5×2</span>
+              <span class="tag blue">Para difundir</span>
+            </div>
+          </div>
+          <div class="card-arrow">→</div>
+        </a>
+        <a href="BlackChicken_Oferta_Garzon_PT.html" class="card">
+          <div class="card-icon gold">🍽️</div>
+          <div class="card-body">
+            <div class="card-title">Publicación — Garzon Part Time</div>
+            <div class="card-desc"></div>
+            <div class="card-tags">
+              <span class="tag gold">Part Time·4hrs</span>
+              <span class="tag">12:00–16:30·Rotativo</span>
+              <span class="tag blue">Candidatos validados</span>
+            </div>
+          </div>
+          <div class="card-arrow">→</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Section 2: Cartas de oferta -->
+    <div class="section" id="cartas-section">
+      <div class="section-title">📄 Cartas de oferta · Privadas — post entrevista 🔒</div>
+      <div class="cards">
+        <a href="BC_CartaOferta_JefeLocal.html" class="card">
+          <div class="card-icon purple">👑</div>
+          <div class="card-body">
+            <div class="card-title">Carta Oferta — Jefe/a de Local</div>
+            <div class="card-desc"></div>
+            <div class="card-tags">
+              <span class="tag gold">Turno PM inicial</span>
+              <span class="tag">Solo post-entrevista</span>
+              <span class="tag red">Requiere firma</span>
+            </div>
+          </div>
+          <div class="card-arrow">→</div>
+        </a>
+        <a href="BC_CartaOferta_SubJefe.html" class="card">
+          <div class="card-icon gold">🧭</div>
+          <div class="card-body">
+            <div class="card-title">Carta Oferta — Sub Jefe/a</div>
+            <div class="card-desc"></div>
+            <div class="card-tags">
+              <span class="tag gold">$850.000 líquidos</span>
+              <span class="tag">Solo post-entrevista</span>
+              <span class="tag red">Requiere firma</span>
+            </div>
+          </div>
+          <div class="card-arrow">→</div>
+        </a>
+        <a href="BC_CartaOferta_JefeCocina.html" class="card">
+          <div class="card-icon gold">🔥</div>
+          <div class="card-body">
+            <div class="card-title">Carta Oferta — Jefe/a de Cocina</div>
+            <div class="card-desc"></div>
+            <div class="card-tags">
+              <span class="tag gold">$1.200.000 líquidos</span>
+              <span class="tag">Solo post-entrevista</span>
+              <span class="tag red">Requiere firma</span>
+            </div>
+          </div>
+          <div class="card-arrow">→</div>
+        </a>
+        <a href="BC_CartaOferta_SousChef.html" class="card">
+          <div class="card-icon gold">👨‍🍳</div>
+          <div class="card-body">
+            <div class="card-title">Carta Oferta — Sous Chef</div>
+            <div class="card-desc"></div>
+            <div class="card-tags">
+              <span class="tag gold">$850.000 líquidos</span>
+              <span class="tag">Solo post-entrevista</span>
+              <span class="tag red">Requiere firma</span>
+            </div>
+          </div>
+          <div class="card-arrow">→</div>
+        </a>
+        <a href="BC_CartaOferta_Cocinero.html" class="card">
+          <div class="card-icon gold">🍳</div>
+          <div class="card-body">
+            <div class="card-title">Carta Oferta — Cocinero/a</div>
+            <div class="card-desc"></div>
+            <div class="card-tags">
+              <span class="tag gold">$650.000 líquidos</span>
+              <span class="tag">Solo post-entrevista</span>
+              <span class="tag red">Requiere firma</span>
+            </div>
+          </div>
+          <div class="card-arrow">→</div>
+        </a>
+        <a href="BlackChicken_Oferta_Garzon_FT.html" class="card">
+          <div class="card-icon gold">🍽️</div>
+          <div class="card-body">
+            <div class="card-title">Carta Oferta — Garzón/a Full Time</div>
+            <div class="card-desc"></div>
+            <div class="card-tags">
+              <span class="tag gold">$550.000 líquidos</span>
+              <span class="tag">Jornada 5x2</span>
+              <span class="tag">Solo post-entrevista</span>
+              <span class="tag red">Requiere firma</span>
+            </div>
+          </div>
+          <div class="card-arrow">→</div>
+        </a>
+        <a href="BC_CartaOferta_Copero.html" class="card">
+          <div class="card-icon gold">🍹</div>
+          <div class="card-body">
+            <div class="card-title">Carta Oferta — Copero/a</div>
+            <div class="card-desc"></div>
+            <div class="card-tags">
+              <span class="tag gold">$550.000 líquidos</span>
+              <span class="tag">Rotativo·11:00–20:30</span>
+              <span class="tag">Solo post-entrevista</span>
+              <span class="tag red">Requiere firma</span>
+            </div>
+          </div>
+          <div class="card-arrow">→</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Section 3: Onboarding -->
+    <div class="section">
+      <div class="section-title">🎉 Onboarding · Se entrega al ingresar</div>
+      <div class="cards">
+        <a href="https://bc-onboarding-bice.vercel.app" target="_blank" class="card">
+          <div class="card-icon green">🍗</div>
+          <div class="card-body">
+            <div class="card-title">Bienvenida — Equipo de Servicio (Garzón)</div>
+            <div class="card-desc"></div>
+            <div class="card-tags">
+              <span class="tag green">Al ingresar</span>
+              <span class="tag">Propinas por etapa</span>
+              <span class="tag">Contactos RRHH</span>
+            </div>
+          </div>
+          <div class="card-arrow">↗</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Section: Descriptores de Cargo -->
+    <div class="section">
+      <div class="section-title">📑 Descriptores de cargo · Perfiles formales</div>
+      <div class="cards">
+        <a href="BC_Descriptor_Entrenadora.html" class="card">
+          <div class="card-icon gold">🎓</div>
+          <div class="card-body">
+            <div class="card-title">Descriptor — Garzón/a con Mención Entrenadora</div>
+            <div class="card-desc">Garzona de referencia del equipo de sala. Combina operación diaria con función formativa, onboarding y seguimiento continuo en ambos locales.</div>
+            <div class="card-tags">
+              <span class="tag gold">Servicio de Sala</span>
+              <span class="tag">Ambos locales</span>
+              <span class="tag blue">Uso interno RRHH</span>
+            </div>
+          </div>
+          <div class="card-arrow">→</div>
+        </a>
+        <a href="BC_Descriptor_CapitanGarzon.html" class="card">
+          <div class="card-icon gold">🍽️</div>
+          <div class="card-body">
+            <div class="card-title">Descriptor — Capitán Garzón</div>
+            <div class="card-desc">Responsable del equipo de servicio: atención al cliente, capacitación, supervisión, custodia de activos y distribución del salón.</div>
+            <div class="card-tags">
+              <span class="tag gold">Servicio de Sala</span>
+              <span class="tag">Local Asignado</span>
+              <span class="tag blue">Uso interno RRHH</span>
+            </div>
+          </div>
+          <div class="card-arrow">→</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Section 4: Procesos internos (NEW) -->
+    <div class="section">
+      <div class="section-title">🧰 Procesos internos · Uso exclusivo RRHH</div>
+      <div class="cards">
+        <a href="index.html" class="card">
+          <div class="card-icon green">📋</div>
+          <div class="card-body">
+            <div class="card-title">Proceso De Reclutamiento Y Onboarding</div>
+            <div class="card-desc">Organigrama, perfiles de cargo con pautas de evaluación, y checklists de onboarding por área. Tracking de candidatos con respaldo en Notion.</div>
+            <div class="card-tags">
+              <span class="tag gold">Organigrama</span>
+              <span class="tag green">Perfiles de Cargo</span>
+              <span class="tag blue">Checklists Onboarding</span>
+            </div>
+          </div>
+          <div class="card-arrow">→</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Section 5: Plataformas digitales -->
+    <div class="section">
+      <div class="section-title">🖥️ Plataformas digitales · Acceso en línea</div>
+      <div class="cards">
+        <a href="https://bc-onboarding-bice.vercel.app" target="_blank" class="card">
+          <div class="card-icon green">🚀</div>
+          <div class="card-body">
+            <div class="card-title">Onboarding Garzones</div>
+            <div class="card-desc"></div>
+            <div class="card-tags">
+              <span class="tag green">Plataforma online</span>
+              <span class="tag">Equipo de servicio</span>
+              <span class="tag">Al ingresar</span>
+            </div>
+          </div>
+          <div class="card-arrow">↗</div>
+        </a>
+        <a href="https://bc-evaluaciones.vercel.app" target="_blank" class="card">
+          <div class="card-icon blue">📊</div>
+          <div class="card-body">
+            <div class="card-title">Evaluación de Desempeño</div>
+            <div class="card-desc"></div>
+            <div class="card-tags">
+              <span class="tag blue">Plataforma online</span>
+              <span class="tag">Por competencias</span>
+              <span class="tag gold">Uso interno RRHH</span>
+            </div>
+          </div>
+          <div class="card-arrow">↗</div>
+        </a>
+        <a href="https://y-opedn1qcl-focawear-collabs-projects.vercel.app" target="_blank" class="card">
+          <div class="card-icon purple">🔒</div>
+          <div class="card-body">
+            <div class="card-title">Evaluación entre Pares (Anónimo)</div>
+            <div class="card-desc"></div>
+            <div class="card-tags">
+              <span class="tag blue">Plataforma online</span>
+              <span class="tag">Anónimo</span>
+              <span class="tag green">Todo el equipo</span>
+            </div>
+          </div>
+          <div class="card-arrow">↗</div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Black Chicken · Documentos internos de Personas & RRHH · Talentos@BlackChicken.cl / Uso exclusivo interno · No compartir con candidatos sin autorización
+  </footer>
+
+<!-- PASSWORD GATE MODAL -->
+<div id="hub-gate" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:9999;align-items:center;justify-content:center;font-family:'Inter',sans-serif">
+  <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:40px 36px;max-width:380px;width:90%;text-align:center;animation:gateIn 0.25s ease">
+    <img src="./blackchicken_logo.png" alt="BC" style="width:60px;height:60px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(212,175,55,.3));margin-bottom:20px">
+    <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#d4af37;font-weight:700;margin-bottom:8px">Acceso Restringido</p>
+    <p style="font-size:14px;color:#777;line-height:1.6;margin-bottom:28px">Esta sección es de uso privado.<br>Ingresa el código de acceso para continuar.</p>
+    <input id="hub-gate-input" type="password" placeholder="Código de acceso" autocomplete="off"
+      style="width:100%;padding:13px 16px;background:#0f0f0f;border:1px solid #2a2a2a;border-radius:9px;color:#fff;font-size:15px;text-align:center;outline:none;font-family:'Inter',sans-serif;margin-bottom:12px;transition:border-color 0.2s,box-shadow 0.2s;letter-spacing:2px">
+    <button id="hub-gate-btn"
+      style="width:100%;padding:13px;background:linear-gradient(90deg,#d4af37,#f0c940);border:none;border-radius:9px;color:#0f0f0f;font-size:14px;font-weight:800;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:0.5px">
+      Acceder
+    </button>
+    <p id="hub-gate-err" style="font-size:12px;color:#e05050;margin-top:14px;display:none;font-weight:600">⚠ Código incorrecto</p>
+    <button id="hub-gate-close"
+      style="background:none;border:none;color:#444;font-size:12px;cursor:pointer;margin-top:18px;font-family:'Inter',sans-serif;text-decoration:underline">
+      Cancelar
+    </button>
+  </div>
+</div>
+
+<style>
+@keyframes gateIn {
+  from { opacity: 0; transform: scale(0.94) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%     { transform: translateX(-6px); }
+  40%     { transform: translateX(6px); }
+  60%     { transform: translateX(-4px); }
+  80%     { transform: translateX(4px); }
+}
+</style>
+
+<script>
+(function () {
+  var PASS = "TalentosBC";
+  var KEY  = "bc_hub_cartas_auth";
+
+  var modal        = document.getElementById("hub-gate");
+  var inputEl      = document.getElementById("hub-gate-input");
+  var btnAcceder   = document.getElementById("hub-gate-btn");
+  var errEl        = document.getElementById("hub-gate-err");
+  var btnClose     = document.getElementById("hub-gate-close");
+  var cartasSection = document.getElementById("cartas-section");
+
+  var pendingUrl = null;
+
+  // Intercept clicks inside Cartas section
+  cartasSection.addEventListener("click", function (e) {
+    var card = e.target.closest("a.card");
+    if (!card) return;
+    if (sessionStorage.getItem(KEY) === "ok") return; // already unlocked
+    e.preventDefault();
+    pendingUrl = card.getAttribute("href");
+    showModal();
+  });
+
+  function showModal() {
+    modal.style.display = "flex";
+    inputEl.value = "";
+    errEl.style.display = "none";
+    inputEl.style.borderColor = "#2a2a2a";
+    inputEl.style.boxShadow = "none";
+    setTimeout(function () { inputEl.focus(); }, 80);
+  }
+
+  function hideModal() {
+    modal.style.display = "none";
+    pendingUrl = null;
+  }
+
+  function tryAccess() {
+    var v = inputEl.value.trim();
+    if (v === PASS) {
+      sessionStorage.setItem(KEY, "ok");
+      hideModal();
+      if (pendingUrl) window.location.href = pendingUrl;
+    } else {
+      errEl.style.display = "block";
+      inputEl.style.borderColor = "#e05050";
+      inputEl.style.boxShadow = "0 0 0 3px rgba(224,80,80,0.15)";
+      inputEl.style.animation = "shake 0.35s";
+      setTimeout(function () {
+        inputEl.style.animation = "";
+        errEl.style.display = "none";
+        inputEl.style.borderColor = "#2a2a2a";
+        inputEl.style.boxShadow = "none";
+        inputEl.select();
+      }, 2200);
+    }
+  }
+
+  btnAcceder.addEventListener("click", tryAccess);
+  inputEl.addEventListener("keydown", function (e) { if (e.key === "Enter") tryAccess(); });
+  btnClose.addEventListener("click", hideModal);
+  modal.addEventListener("click", function (e) { if (e.target === modal) hideModal(); });
+
+  // Focus styling
+  inputEl.addEventListener("focus", function () {
+    if (inputEl.style.borderColor !== "#e05050") {
+      inputEl.style.borderColor = "#d4af37";
+      inputEl.style.boxShadow = "0 0 0 3px rgba(212,175,55,0.12)";
+    }
+  });
+  inputEl.addEventListener("blur", function () {
+    if (inputEl.style.borderColor !== "#e05050") {
+      inputEl.style.borderColor = "#2a2a2a";
+      inputEl.style.boxShadow = "none";
+    }
+  });
+})();
+</script>
+</body>
+</html>

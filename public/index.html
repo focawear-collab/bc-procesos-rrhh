@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proceso De Reclutamiento Y Onboarding</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f0f0f;
+      color: #e8e8e8;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 48px 32px;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(160deg, #1a1a0a 0%, #0f0f0f 60%);
+      padding: 40px 0;
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .back-link {
+      display: inline-block;
+      color: #d4af37;
+      text-decoration: none;
+      font-size: 14px;
+      margin-bottom: 16px;
+      transition: opacity 0.2s;
+    }
+
+    .back-link:hover {
+      opacity: 0.8;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #777;
+      font-weight: 500;
+    }
+
+    /* Active Processes Bar */
+    .active-bar {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 40px;
+    }
+
+    .active-bar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .active-count {
+      font-size: 14px;
+      color: #777;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .btn-nuevo {
+      background: #d4af37;
+      color: #0f0f0f;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn-nuevo:hover {
+      opacity: 0.9;
+    }
+
+    .active-processes {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .proceso-card {
+      background: #252525;
+      border: 1px solid #3a3a3a;
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .proceso-card:hover {
+      border-color: #d4af37;
+      background: #2a2a2a;
+    }
+
+    .proceso-card.active {
+      border-color: #d4af37;
+      background: rgba(212, 175, 55, 0.1);
+    }
+
+    .proceso-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .proceso-meta {
+      font-size: 11px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      background: #1a1a1a;
+      height: 4px;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      background: #d4af37;
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+      font-size: 13px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid #2a2a2a;
+      margin-bottom: 40px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: #777;
+      padding: 12px 20px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      color: #d4af37;
+    }
+
+    .tab-btn.active {
+      color: #fff;
+      border-bottom-color: #d4af37;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Section Labels */
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin: 32px 0 24px 0;
+      padding-left: 12px;
+      border-left: 3px solid #d4af37;
+    }
+
+    /* Profile Section */
+    .profile-content {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .profile-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .profile-text {
+      font-size: 13px;
+      line-height: 1.8;
+      color: #bbb;
+      margin-bottom: 12px;
+    }
+
+    .profile-highlight {
+      background: rgba(212, 175, 55, 0.1);
+      border-left: 3px solid #d4af37;
+      padding: 12px 16px;
+      margin: 16px 0;
+      font-size: 13px;
+      color: #d4af37;
+      border-radius: 4px;
+    }
+
+    .profile-warning {
+      background: rgba(212, 175, 55, 0.05);
+      border-left: 3px solid #e08080;
+      padding: 12px 16px;
+      margin: 16px 0;
+      font-size: 13px;
+      color: #bbb;
+      border-radius: 4px;
+    }
+
+    /* Evaluation Grid */
+    .eval-grid {
+      display: grid;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .eval-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #252525;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #3a3a3a;
+    }
+
+    .eval-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #d4af37;
+    }
+
+    .eval-item label {
+      flex: 1;
+      cursor: pointer;
+      font-size: 13px;
+      color: #bbb;
+    }
+
+    /* Checklist */
+    .checklist {
+      display: grid;
+      gap: 12px;
+    }
+
+    .checklist-section {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .checklist-header {
+      background: #252525;
+      padding: 12px 16px;
+      font-weight: 600;
+      font-size: 13px;
+      color: #fff;
+      border-bottom: 1px solid #2a2a2a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .phase-label {
+      color: #d4af37;
+    }
+
+    .checklist-items {
+      padding: 16px;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+      padding: 12px;
+      background: #252525;
+      border-radius: 8px;
+      border: 1px solid #3a3a3a;
+    }
+
+    .checklist-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .checklist-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      cursor: pointer;
+      flex-shrink: 0;
+      accent-color: #d4af37;
+    }
+
+    .checklist-item label {
+      flex: 1;
+      cursor: pointer;
+      font-size: 13px;
+      color: #bbb;
+      line-height: 1.5;
+    }
+
+    .checklist-item input:checked + label {
+      color: #d4af37;
+      text-decoration: line-through;
+    }
+
+    .checklist-note {
+      font-size: 12px;
+      color: #777;
+      margin-top: 8px;
+      font-style: italic;
+    }
+
+    /* Decision Box */
+    .decision-box {
+      display: flex;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .decision-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+
+    .decision-yes {
+      background: #4a8a4a;
+      color: #fff;
+    }
+
+    .decision-yes:hover {
+      background: #6ab86a;
+    }
+
+    .decision-no {
+      background: #8a4a4a;
+      color: #fff;
+    }
+
+    .decision-no:hover {
+      background: #e08080;
+    }
+
+    /* Organigrama */
+    .org-section {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .org-level {
+      margin-bottom: 32px;
+    }
+
+    .org-level:last-child {
+      margin-bottom: 0;
+    }
+
+    .org-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 16px;
+    }
+
+    .org-cards {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .org-card {
+      background: rgba(212, 175, 55, 0.08);
+      border: 1px solid #d4af37;
+      border-radius: 8px;
+      padding: 12px 16px;
+      min-width: 200px;
+    }
+
+    .org-card.green {
+      background: rgba(74, 138, 74, 0.08);
+      border-color: #4a8a4a;
+    }
+
+    .org-card.purple {
+      background: rgba(138, 74, 138, 0.08);
+      border-color: #8a4a8a;
+    }
+
+    .org-name {
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .org-role {
+      font-size: 12px;
+      color: #888;
+    }
+
+    .org-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .org-column {
+      background: #252525;
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .org-column.green {
+      border: 1px solid #4a8a4a;
+    }
+
+    .org-column.purple {
+      border: 1px solid #8a4a8a;
+    }
+
+    .org-column-title {
+      font-weight: 600;
+      color: #d4af37;
+      margin-bottom: 12px;
+      font-size: 13px;
+    }
+
+    .org-column-items {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .org-person {
+      font-size: 12px;
+      color: #bbb;
+      padding: 8px;
+      background: #1a1a1a;
+      border-radius: 4px;
+    }
+
+    /* Tags */
+    .tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tag.gold {
+      background: rgba(212, 175, 55, 0.2);
+      color: #d4af37;
+    }
+
+    .tag.green {
+      background: rgba(74, 138, 74, 0.2);
+      color: #6ab86a;
+    }
+
+    .tag.blue {
+      background: rgba(74, 106, 138, 0.2);
+      color: #7ab0e0;
+    }
+
+    .tag.red {
+      background: rgba(224, 128, 128, 0.2);
+      color: #e08080;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 32px;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .modal h2 {
+      font-size: 20px;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #777;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      background: #252525;
+      border: 1px solid #3a3a3a;
+      border-radius: 6px;
+      color: #e8e8e8;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #d4af37;
+      background: #2a2a2a;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .modal-actions button {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    .btn-crear {
+      background: #d4af37;
+      color: #0f0f0f;
+    }
+
+    .btn-crear:hover {
+      opacity: 0.9;
+    }
+
+    .btn-cancelar {
+      background: #3a3a3a;
+      color: #bbb;
+    }
+
+    .btn-cancelar:hover {
+      background: #4a4a4a;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #1a1a1a;
+      border: 1px solid #3a3a3a;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #bbb;
+      z-index: 200;
+      animation: slideIn 0.3s ease-out;
+      max-width: 300px;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .toast.error {
+      border-color: #8a4a4a;
+      color: #e08080;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: #555;
+      font-size: 12px;
+      margin-top: 48px;
+      border-top: 1px solid #2a2a2a;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .container {
+        padding: 24px 16px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .tabs {
+        margin-bottom: 24px;
+      }
+
+      .org-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <a href="hub-index.html" class="back-link">← Volver al Hub</a>
+        <h1>Proceso De Reclutamiento Y Onboarding</h1>
+        <p class="subtitle">Checklist operativo por área · Uso exclusivo RRHH · Black Chicken</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Active Processes Bar -->
+    <div class="active-bar">
+      <div class="active-bar-header">
+        <span class="active-count">Procesos Activos</span>
+        <button class="btn-nuevo" onclick="openModal()">+ Nuevo Proceso</button>
+      </div>
+      <div id="activeProcesses" class="active-processes">
+        <div class="empty-state">Cargando procesos...</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('organigrama')">Organigrama</button>
+      <button class="tab-btn" onclick="switchTab('garzones')">Garzones</button>
+      <button class="tab-btn" onclick="switchTab('jefatura')">Jefatura</button>
+      <button class="tab-btn" onclick="switchTab('cocineros')">Cocineros</button>
+    </div>
+
+    <!-- TAB: ORGANIGRAMA -->
+    <div id="organigrama" class="tab-content active">
+      <div class="org-section">
+        <div class="org-level">
+          <div class="org-title">Nivel 0 — Gerencia General</div>
+          <div class="org-cards">
+            <div class="org-card">
+              <div class="org-name">Llige Yang</div>
+              <div class="org-role">Gerente Ventas, Marketing & Liderazgo</div>
+            </div>
+            <div class="org-card">
+              <div class="org-name">Daniel Fosk</div>
+              <div class="org-role">Gerente de Operaciones</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="org-level">
+          <div class="org-title">Nivel 1 — Administración</div>
+          <div class="org-cards">
+            <div class="org-card">
+              <div class="org-name">Nelsimar Rodriguez</div>
+              <div class="org-role">Administradora Ambos Locales</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="org-level">
+          <div class="org-title">Nivel 2 — Jefaturas por Local</div>
+          <div class="org-grid">
+            <div class="org-column green">
+              <div class="org-column-title">🍗 BC1 — Green</div>
+              <div class="org-column-items">
+                <div class="org-person">Felipe Cofre — Jefe Local</div>
+                <div class="org-person">Tomas Fuentes — Sub Jefe</div>
+                <div class="org-person">Felipe Cornejo — Jefe Cocina</div>
+                <div class="org-person">Jonathan Lobos — Sous Chef</div>
+                <div class="org-person">Rossy Martinez — Entrenadora</div>
+              </div>
+            </div>
+            <div class="org-column purple">
+              <div class="org-column-title">🍗 BC2 — Purple</div>
+              <div class="org-column-items">
+                <div class="org-person">Saner Guillen — Jefe Local</div>
+                <div class="org-person">Jennifer/Vanessa Ramonez — Jefe Cocina</div>
+                <div class="org-person">Maria Angel — Jefe Salón</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: GARZONES -->
+    <div id="garzones" class="tab-content">
+      <!-- Profile Section -->
+      <div class="section-label">🍽️ Perfil del Cargo</div>
+      <div class="profile-content">
+        <div class="profile-title">Garzón / Garzona</div>
+        <div class="profile-text"><strong>Experiencia:</strong> Alta gastronomía, confort food, restaurantes de autor. NO comida rápida, cafeterías, hotelería.</div>
+        <div class="profile-text"><strong>Perfil:</strong> 25–40 años · Buen aspecto · Buena dicción · No contextura grande</div>
+        <div class="profile-text"><strong>Competencias:</strong> Proactivo, presión, eficiente, VENDEDOR no tomador de pedidos</div>
+        <div class="profile-text"><strong>Requisitos:</strong> RUT (puede ser temporal), cuenta bancaria, turnos rotativos</div>
+        <div class="profile-text"><strong>Estándares:</strong> Cabello amarrado, sin barba, maquillaje discreto, uñas cortas, uniforme limpio</div>
+        <div class="profile-highlight">Buscamos garzones vendedores, no tomadores de pedidos</div>
+      </div>
+
+      <!-- Checklist -->
+      <div class="section-label">📋 Proceso de Onboarding</div>
+      <div class="checklist" id="garzones-checklist">
+        <!-- F1 -->
+        <div class="checklist-section">
+          <div class="checklist-header">
+            <span>F1 — <span class="phase-label">Captación y filtro inicial</span></span>
+          </div>
+          <div class="checklist-items">
+            <div class="checklist-item">
+              <input type="checkbox" id="garzon-f1-0" class="checklist-input" data-item-id="garzon-f1-0" onchange="onCheckboxChange(this)">
+              <label for="garzon-f1-0">Recibir postulación del candidato a Garzón/a</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="garzon-f1-1" class="checklist-input" data-item-id="garzon-f1-1" onchange="onCheckboxChange(this)">
+              <label for="garzon-f1-1">Aplicar filtro inicial por área de sala / servicio</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="garzon-f1-2" class="checklist-input" data-item-id="garzon-f1-2" onchange="onCheckboxChange(this)">
+              <label for="garzon-f1-2">Presentar seleccionados a Llige para aprobación</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="garzon-f1-3" class="checklist-input" data-item-id="garzon-f1-3" onchange="onCheckboxChange(this)">
+              <label for="garzon-f1-3">Dar OK y coordinar entrevista online</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- F2 -->
+        <div class="checklist-section">
+          <div class="checklist-header">
+            <span>F2 — <span class="phase-label">Entrevista online</span></span>
+          </div>
+          <div class="checklist-items">
+            <div class="checklist-note">Modalidad: Videollamada — No requiere presencia en local</div>
+            <div class="checklist-item">
+              <input type="checkbox" id="garzon-f2-0" class="checklist-input" data-item-id="garzon-f2-0" onchange="onCheckboxChange(this)">
+              <label for="garzon-f2-0">Coordinar fecha y hora con el candidato/a</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="garzon-f2-1" class="checklist-input" data-item-id="garzon-f2-1" onchange="onCheckboxChange(this)">
+              <label for="garzon-f2-1">Realizar entrevista online</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="garzon-f2-2" class="checklist-input" data-item-id="garzon-f2-2" onchange="onCheckboxChange(this)">
+              <label for="garzon-f2-2">Evaluar perfil y tomar decisión de avance</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- F3 -->
+        <div class="checklist-section">
+          <div class="checklist-header">
+            <span>F3 — <span class="phase-label">Día de prueba</span></span>
+          </div>
+          <div class="checklist-items">
+            <div class="checklist-item">
+              <input type="checkbox" id="garzon-f3-0" class="checklist-input" data-item-id="garzon-f3-0" onchange="onCheckboxChange(this)">
+              <label for="garzon-f3-0">Coordinar con jefatura de sala quién se presenta y horario</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="garzon-f3-1" class="checklist-input" data-item-id="garzon-f3-1" onchange="onCheckboxChange(this)">
+              <label for="garzon-f3-1">Verificar que la persona llegó al local</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="garzon-f3-2" class="checklist-input" data-item-id="garzon-f3-2" onchange="onCheckboxChange(this)">
+              <label for="garzon-f3-2">Hablar con la persona al final del día</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="garzon-f3-3" class="checklist-input" data-item-id="garzon-f3-3" onchange="onCheckboxChange(this)">
+              <label for="garzon-f3-3">Retomar contacto con jefatura y pedir feedback</label>
+            </div>
+            <div class="decision-box">
+              <button class="decision-btn decision-yes" onclick="alert('✓ Continúa a siguiente fase')">✓ Continúa</button>
+              <button class="decision-btn decision-no" onclick="alert('✗ Termina proceso')">✗ No Continúa</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- F4 -->
+        <div class="checklist-section">
+          <div class="checklist-header">
+            <span>F4 — <span class="phase-label">Seguimiento de contratación</span></span>
+          </div>
+          <div class="checklist-items">
+            <div class="checklist-item">
+              <input type="checkbox" id="garzon-f4-0" class="checklist-input" data-item-id="garzon-f4-0" onchange="onCheckboxChange(this)">
+              <label for="garzon-f4-0">Cierre día 3 — ¿Continúa a la semana?</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="garzon-f4-1" class="checklist-input" data-item-id="garzon-f4-1" onchange="onCheckboxChange(this)">
+              <label for="garzon-f4-1">Cierre semana 1 — ¿Continúa a semana 2?</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="garzon-f4-2" class="checklist-input" data-item-id="garzon-f4-2" onchange="onCheckboxChange(this)">
+              <label for="garzon-f4-2">Cierre semana 2 — Término proceso evaluación</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="garzon-f4-3" class="checklist-input" data-item-id="garzon-f4-3" onchange="onCheckboxChange(this)">
+              <label for="garzon-f4-3">Si se aprueba → Emitir primer contrato</label>
+            </div>
+            <div class="profile-warning">⚠ Antes del contrato indefinido: consultar con jefatura si seguirá antes de emitirlo.</div>
+          </div>
+        </div>
+
+        <!-- F5 -->
+        <div class="checklist-section">
+          <div class="checklist-header">
+            <span>F5 — <span class="phase-label">Progresión de roles en sala</span></span>
+          </div>
+          <div class="checklist-items">
+            <div class="checklist-note">Etapas: 1→Runner | 2→Mesas | 3→Delivery | 4→Puerta/Beepers</div>
+            <div class="checklist-item">
+              <input type="checkbox" id="garzon-f5-0" class="checklist-input" data-item-id="garzon-f5-0" onchange="onCheckboxChange(this)">
+              <label for="garzon-f5-0">Etapa 1 — Runner: soporte y logística en sala</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="garzon-f5-1" class="checklist-input" data-item-id="garzon-f5-1" onchange="onCheckboxChange(this)">
+              <label for="garzon-f5-1">Etapa 2 — Servicio al cliente en mesas</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="garzon-f5-2" class="checklist-input" data-item-id="garzon-f5-2" onchange="onCheckboxChange(this)">
+              <label for="garzon-f5-2">Etapa 3 — Envoltura de pedidos delivery</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="garzon-f5-3" class="checklist-input" data-item-id="garzon-f5-3" onchange="onCheckboxChange(this)">
+              <label for="garzon-f5-3">Etapa 4 — Puerta: entrega de beepers a clientes</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="garzon-f5-4" class="checklist-input" data-item-id="garzon-f5-4" onchange="onCheckboxChange(this)">
+              <label for="garzon-f5-4">Preguntar en qué etapa va el nuevo garzón/a</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="garzon-f5-5" class="checklist-input" data-item-id="garzon-f5-5" onchange="onCheckboxChange(this)">
+              <label for="garzon-f5-5">Verificar que jefatura esté ejecutando onboarding correcto</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="garzon-f5-6" class="checklist-input" data-item-id="garzon-f5-6" onchange="onCheckboxChange(this)">
+              <label for="garzon-f5-6">Registrar avances y eventuales retrasos</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: JEFATURA -->
+    <div id="jefatura" class="tab-content">
+      <!-- Profile Section -->
+      <div class="section-label">👑 Perfil del Cargo</div>
+      <div class="profile-content">
+        <div class="profile-title">Jefe de Local / Sub Jefe</div>
+        <div class="profile-text"><strong>Experiencia:</strong> Jefe/a en restaurantes alta gastronomía, comida rápida o cadenas. NO cafeterías ni hoteles.</div>
+        <div class="profile-text"><strong>Perfil:</strong> 30–40 años · Buen aspecto · No contextura grande</div>
+        <div class="profile-text"><strong>Competencias:</strong> Resolutivo, proactivo, resiliente, experiencia administrativa</div>
+        <div class="profile-text"><strong>Gestión:</strong> RUT vigente, inventarios, KPIs, apertura/cierre</div>
+        <div class="profile-warning">⚠️ OBLIGATORIO: Llamar empleador anterior</div>
+
+        <div style="margin-top: 20px;">
+          <div class="profile-text" style="margin-bottom: 12px;"><strong>Pauta evaluación:</strong></div>
+          <div class="eval-grid">
+            <div class="eval-item">
+              <input type="checkbox" id="jefatura-eval-0" class="checklist-input" data-item-id="jefatura-eval-0" onchange="onCheckboxChange(this)">
+              <label for="jefatura-eval-0">Resolutivo — capacidad de tomar decisiones bajo presión</label>
+            </div>
+            <div class="eval-item">
+              <input type="checkbox" id="jefatura-eval-1" class="checklist-input" data-item-id="jefatura-eval-1" onchange="onCheckboxChange(this)">
+              <label for="jefatura-eval-1">Experiencia administrativa — inventarios, cierres, KPIs</label>
+            </div>
+            <div class="eval-item">
+              <input type="checkbox" id="jefatura-eval-2" class="checklist-input" data-item-id="jefatura-eval-2" onchange="onCheckboxChange(this)">
+              <label for="jefatura-eval-2">Manejo de presión — historial en ambientes de alto volumen</label>
+            </div>
+            <div class="eval-item">
+              <input type="checkbox" id="jefatura-eval-3" class="checklist-input" data-item-id="jefatura-eval-3" onchange="onCheckboxChange(this)">
+              <label for="jefatura-eval-3">Presentación personal — aspecto, dicción, porte</label>
+            </div>
+            <div class="eval-item">
+              <input type="checkbox" id="jefatura-eval-4" class="checklist-input" data-item-id="jefatura-eval-4" onchange="onCheckboxChange(this)">
+              <label for="jefatura-eval-4">Documentación — RUT vigente, antecedentes al día</label>
+            </div>
+            <div class="eval-item">
+              <input type="checkbox" id="jefatura-eval-5" class="checklist-input" data-item-id="jefatura-eval-5" onchange="onCheckboxChange(this)">
+              <label for="jefatura-eval-5">Referencias — confirmación con empleador anterior</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Checklist -->
+      <div class="section-label">📋 Proceso de Onboarding</div>
+      <div class="checklist" id="jefatura-checklist">
+        <!-- F1 -->
+        <div class="checklist-section">
+          <div class="checklist-header">
+            <span>F1 — <span class="phase-label">Captación</span></span>
+          </div>
+          <div class="checklist-items">
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f1-0" class="checklist-input" data-item-id="jefatura-f1-0" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f1-0">Recibir postulación del candidato a cargo de jefatura</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f1-1" class="checklist-input" data-item-id="jefatura-f1-1" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f1-1">Aplicar filtro por área y competencias de liderazgo</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f1-2" class="checklist-input" data-item-id="jefatura-f1-2" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f1-2">Presentar seleccionados a Llige para aprobación</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f1-3" class="checklist-input" data-item-id="jefatura-f1-3" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f1-3">Dar OK y coordinar entrevista presencial</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- F2 -->
+        <div class="checklist-section">
+          <div class="checklist-header">
+            <span>F2 — <span class="phase-label">Entrevista presencial dinámica</span></span>
+          </div>
+          <div class="checklist-items">
+            <div class="checklist-note">Modalidad: Presencial grupal — 3 a 4 candidatos simultáneos. Requiere acompañante.</div>
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f2-0" class="checklist-input" data-item-id="jefatura-f2-0" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f2-0">Confirmar acompañante: Nelsi / Llige / Daniel</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f2-1" class="checklist-input" data-item-id="jefatura-f2-1" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f2-1">Coordinar disponibilidad del acompañante</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f2-2" class="checklist-input" data-item-id="jefatura-f2-2" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f2-2">Invitar 3-4 candidatos</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f2-3" class="checklist-input" data-item-id="jefatura-f2-3" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f2-3">Confirmar asistencia</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f2-4" class="checklist-input" data-item-id="jefatura-f2-4" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f2-4">Realizar entrevista grupal dinámica</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f2-5" class="checklist-input" data-item-id="jefatura-f2-5" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f2-5">Evaluar desempeño, liderazgo y cultura fit</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f2-6" class="checklist-input" data-item-id="jefatura-f2-6" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f2-6">Tomar decisión en conjunto con acompañante</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- F3 -->
+        <div class="checklist-section">
+          <div class="checklist-header">
+            <span>F3 — <span class="phase-label">Día de prueba</span></span>
+          </div>
+          <div class="checklist-items">
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f3-0" class="checklist-input" data-item-id="jefatura-f3-0" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f3-0">Coordinar con el área quién se presenta</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f3-1" class="checklist-input" data-item-id="jefatura-f3-1" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f3-1">Verificar que llegó al local</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f3-2" class="checklist-input" data-item-id="jefatura-f3-2" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f3-2">Hablar al término del día 1</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f3-3" class="checklist-input" data-item-id="jefatura-f3-3" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f3-3">Pedir feedback a jefatura</label>
+            </div>
+            <div class="decision-box">
+              <button class="decision-btn decision-yes" onclick="alert('✓ Continúa a siguiente fase')">✓ Continúa</button>
+              <button class="decision-btn decision-no" onclick="alert('✗ Termina proceso')">✗ No Continúa</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- F4 -->
+        <div class="checklist-section">
+          <div class="checklist-header">
+            <span>F4 — <span class="phase-label">Seguimiento contratación</span></span>
+          </div>
+          <div class="checklist-items">
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f4-0" class="checklist-input" data-item-id="jefatura-f4-0" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f4-0">Cierre día 3</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f4-1" class="checklist-input" data-item-id="jefatura-f4-1" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f4-1">Cierre semana 1</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f4-2" class="checklist-input" data-item-id="jefatura-f4-2" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f4-2">Cierre semana 2</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f4-3" class="checklist-input" data-item-id="jefatura-f4-3" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f4-3">Emitir primer contrato</label>
+            </div>
+            <div class="profile-warning">⚠ Antes del contrato indefinido: consultar con jefatura si seguirá antes de emitirlo.</div>
+          </div>
+        </div>
+
+        <!-- F5 -->
+        <div class="checklist-section">
+          <div class="checklist-header">
+            <span>F5 — <span class="phase-label">Seguimiento onboarding</span></span>
+          </div>
+          <div class="checklist-items">
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f5-0" class="checklist-input" data-item-id="jefatura-f5-0" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f5-0">Consultar a jefatura qué ha hecho con nuevos</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f5-1" class="checklist-input" data-item-id="jefatura-f5-1" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f5-1">Verificar etapa de capacitación</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f5-2" class="checklist-input" data-item-id="jefatura-f5-2" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f5-2">Confirmar lineamientos correctos</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="jefatura-f5-3" class="checklist-input" data-item-id="jefatura-f5-3" onchange="onCheckboxChange(this)">
+              <label for="jefatura-f5-3">Registrar avances y dar feedback</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: COCINEROS -->
+    <div id="cocineros" class="tab-content">
+      <!-- Profile Section -->
+      <div class="section-label">🍳 Cocinero / Cocinera</div>
+      <div class="profile-content">
+        <div class="profile-title">Cocinero / Cocinera</div>
+        <div class="profile-text"><strong>Experiencia:</strong> Alta gastronomía, confort food, comida rápida alto volumen. NO cafeterías ni hotelería.</div>
+        <div class="profile-text"><strong>Perfil:</strong> 25–40 años · No contextura grande</div>
+        <div class="profile-text"><strong>Competencias:</strong> Proactivo, presión alta, rápido y ordenado, aprende fichas técnicas</div>
+        <div class="profile-text"><strong>Requisitos:</strong> RUT (temporal OK), cuenta bancaria, turnos rotativos, libreta sanitaria</div>
+        <div class="profile-highlight">Se valora experiencia en cocinas de alto volumen y buen manejo de tiempos</div>
+      </div>
+
+      <!-- Profile 2 -->
+      <div class="section-label">🔥 Jefe de Cocina</div>
+      <div class="profile-content">
+        <div class="profile-title">Jefe de Cocina</div>
+        <div class="profile-text"><strong>Experiencia:</strong> Alta gastronomía o cadenas, comida rápida alto volumen. NO cafeterías ni hoteles.</div>
+        <div class="profile-text"><strong>Perfil:</strong> 30–40 años · No contextura grande</div>
+        <div class="profile-text"><strong>Competencias:</strong> Altamente resolutivo, proactivo, presión alta, gestión equipo</div>
+        <div class="profile-text"><strong>Gestión:</strong> RUT, inventarios, merma, compras, KPIs producción</div>
+        <div class="profile-warning">⚠️ OBLIGATORIO: Llamar empleador anterior</div>
+
+        <div style="margin-top: 20px;">
+          <div class="profile-text" style="margin-bottom: 12px;"><strong>Pauta evaluación:</strong></div>
+          <div class="eval-grid">
+            <div class="eval-item">
+              <input type="checkbox" id="cocinero-eval-0" class="checklist-input" data-item-id="cocinero-eval-0" onchange="onCheckboxChange(this)">
+              <label for="cocinero-eval-0">Manejo de presión</label>
+            </div>
+            <div class="eval-item">
+              <input type="checkbox" id="cocinero-eval-1" class="checklist-input" data-item-id="cocinero-eval-1" onchange="onCheckboxChange(this)">
+              <label for="cocinero-eval-1">Experiencia administrativa</label>
+            </div>
+            <div class="eval-item">
+              <input type="checkbox" id="cocinero-eval-2" class="checklist-input" data-item-id="cocinero-eval-2" onchange="onCheckboxChange(this)">
+              <label for="cocinero-eval-2">Experiencia válida</label>
+            </div>
+            <div class="eval-item">
+              <input type="checkbox" id="cocinero-eval-3" class="checklist-input" data-item-id="cocinero-eval-3" onchange="onCheckboxChange(this)">
+              <label for="cocinero-eval-3">Documentación</label>
+            </div>
+            <div class="eval-item">
+              <input type="checkbox" id="cocinero-eval-4" class="checklist-input" data-item-id="cocinero-eval-4" onchange="onCheckboxChange(this)">
+              <label for="cocinero-eval-4">Referencias</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Checklist -->
+      <div class="section-label">📋 Proceso de Onboarding</div>
+      <div class="checklist" id="cocineros-checklist">
+        <!-- F1 -->
+        <div class="checklist-section">
+          <div class="checklist-header">
+            <span>F1 — <span class="phase-label">Captación</span></span>
+          </div>
+          <div class="checklist-items">
+            <div class="checklist-item">
+              <input type="checkbox" id="cocinero-f1-0" class="checklist-input" data-item-id="cocinero-f1-0" onchange="onCheckboxChange(this)">
+              <label for="cocinero-f1-0">Recibir postulación del candidato a cargo</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="cocinero-f1-1" class="checklist-input" data-item-id="cocinero-f1-1" onchange="onCheckboxChange(this)">
+              <label for="cocinero-f1-1">Aplicar filtro cocina</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="cocinero-f1-2" class="checklist-input" data-item-id="cocinero-f1-2" onchange="onCheckboxChange(this)">
+              <label for="cocinero-f1-2">Presentar a Llige</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="cocinero-f1-3" class="checklist-input" data-item-id="cocinero-f1-3" onchange="onCheckboxChange(this)">
+              <label for="cocinero-f1-3">Coordinar entrevista online</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- F2 -->
+        <div class="checklist-section">
+          <div class="checklist-header">
+            <span>F2 — <span class="phase-label">Entrevista online</span></span>
+          </div>
+          <div class="checklist-items">
+            <div class="checklist-note">Modalidad: Videollamada</div>
+            <div class="checklist-item">
+              <input type="checkbox" id="cocinero-f2-0" class="checklist-input" data-item-id="cocinero-f2-0" onchange="onCheckboxChange(this)">
+              <label for="cocinero-f2-0">Coordinar fecha y hora</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="cocinero-f2-1" class="checklist-input" data-item-id="cocinero-f2-1" onchange="onCheckboxChange(this)">
+              <label for="cocinero-f2-1">Realizar entrevista</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="cocinero-f2-2" class="checklist-input" data-item-id="cocinero-f2-2" onchange="onCheckboxChange(this)">
+              <label for="cocinero-f2-2">Evaluar fit BC</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- F3 -->
+        <div class="checklist-section">
+          <div class="checklist-header">
+            <span>F3 — <span class="phase-label">Día de prueba</span></span>
+          </div>
+          <div class="checklist-items">
+            <div class="checklist-item">
+              <input type="checkbox" id="cocinero-f3-0" class="checklist-input" data-item-id="cocinero-f3-0" onchange="onCheckboxChange(this)">
+              <label for="cocinero-f3-0">Coordinar con jefatura cocina</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="cocinero-f3-1" class="checklist-input" data-item-id="cocinero-f3-1" onchange="onCheckboxChange(this)">
+              <label for="cocinero-f3-1">Verificar llegada</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="cocinero-f3-2" class="checklist-input" data-item-id="cocinero-f3-2" onchange="onCheckboxChange(this)">
+              <label for="cocinero-f3-2">Hablar al final del día</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="cocinero-f3-3" class="checklist-input" data-item-id="cocinero-f3-3" onchange="onCheckboxChange(this)">
+              <label for="cocinero-f3-3">Feedback jefatura cocina</label>
+            </div>
+            <div class="decision-box">
+              <button class="decision-btn decision-yes" onclick="alert('✓ Continúa a siguiente fase')">✓ Continúa</button>
+              <button class="decision-btn decision-no" onclick="alert('✗ Termina proceso')">✗ No Continúa</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- F4 -->
+        <div class="checklist-section">
+          <div class="checklist-header">
+            <span>F4 — <span class="phase-label">Seguimiento contratación</span></span>
+          </div>
+          <div class="checklist-items">
+            <div class="checklist-item">
+              <input type="checkbox" id="cocinero-f4-0" class="checklist-input" data-item-id="cocinero-f4-0" onchange="onCheckboxChange(this)">
+              <label for="cocinero-f4-0">Cierre día 3</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="cocinero-f4-1" class="checklist-input" data-item-id="cocinero-f4-1" onchange="onCheckboxChange(this)">
+              <label for="cocinero-f4-1">Cierre semana 1</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="cocinero-f4-2" class="checklist-input" data-item-id="cocinero-f4-2" onchange="onCheckboxChange(this)">
+              <label for="cocinero-f4-2">Cierre semana 2</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="cocinero-f4-3" class="checklist-input" data-item-id="cocinero-f4-3" onchange="onCheckboxChange(this)">
+              <label for="cocinero-f4-3">Emitir contrato</label>
+            </div>
+            <div class="profile-warning">⚠ Antes del contrato indefinido: consultar con jefatura si seguirá antes de emitirlo.</div>
+          </div>
+        </div>
+
+        <!-- F5 -->
+        <div class="checklist-section">
+          <div class="checklist-header">
+            <span>F5 — <span class="phase-label">Seguimiento onboarding</span></span>
+          </div>
+          <div class="checklist-items">
+            <div class="checklist-note">Aplicar mismos plazos que sala</div>
+            <div class="checklist-item">
+              <input type="checkbox" id="cocinero-f5-0" class="checklist-input" data-item-id="cocinero-f5-0" onchange="onCheckboxChange(this)">
+              <label for="cocinero-f5-0">Contactar jefatura cocina</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="cocinero-f5-1" class="checklist-input" data-item-id="cocinero-f5-1" onchange="onCheckboxChange(this)">
+              <label for="cocinero-f5-1">Preguntar estado onboarding</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="cocinero-f5-2" class="checklist-input" data-item-id="cocinero-f5-2" onchange="onCheckboxChange(this)">
+              <label for="cocinero-f5-2">Evaluar etapa capacitación</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="cocinero-f5-3" class="checklist-input" data-item-id="cocinero-f5-3" onchange="onCheckboxChange(this)">
+              <label for="cocinero-f5-3">Verificar estándares BC</label>
+            </div>
+            <div class="checklist-item">
+              <input type="checkbox" id="cocinero-f5-4" class="checklist-input" data-item-id="cocinero-f5-4" onchange="onCheckboxChange(this)">
+              <label for="cocinero-f5-4">Registrar avances</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="modalOverlay" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <h2>Crear Nuevo Proceso</h2>
+      <form onsubmit="submitNewProceso(event)">
+        <div class="form-group">
+          <label for="candidato">Nombre Candidato</label>
+          <input type="text" id="candidato" name="candidato" required placeholder="Ej: Juan Pérez">
+        </div>
+        <div class="form-group">
+          <label for="cargo">Cargo</label>
+          <select id="cargo" name="cargo" required>
+            <option value="">Seleccionar cargo...</option>
+            <option value="Garzón/a">Garzón/a</option>
+            <option value="Jefe de Local">Jefe de Local</option>
+            <option value="Sub Jefe">Sub Jefe</option>
+            <option value="Jefe de Cocina">Jefe de Cocina</option>
+            <option value="Sous Chef">Sous Chef</option>
+            <option value="Cocinero/a">Cocinero/a</option>
+            <option value="Copero/a">Copero/a</option>
+            <option value="Entrenador/a">Entrenador/a</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="local">Local</label>
+          <select id="local" name="local" required>
+            <option value="">Seleccionar local...</option>
+            <option value="BC1">BC1</option>
+            <option value="BC2">BC2</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="notas">Notas (opcional)</label>
+          <textarea id="notas" name="notas" placeholder="Ej: Referencia de Felipe..."></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="modal-actions button btn-crear">Crear Proceso</button>
+          <button type="button" class="modal-actions button btn-cancelar" onclick="closeModal()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    Black Chicken · Documento interno · Uso exclusivo Recursos Humanos
+  </footer>
+
+  <script>
+    let activeProcesos = [];
+    let currentProcesoId = null;
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      loadProcesos();
+    });
+
+    // Load procesos from API
+    async function loadProcesos() {
+      try {
+        const res = await fetch('/api/procesos?status=active');
+        if (!res.ok) throw new Error('Failed to fetch procesos');
+        activeProcesos = await res.json();
+        renderActiveProcesses();
+      } catch (e) {
+        console.error('Error loading procesos:', e);
+        showToast('Error cargando procesos', true);
+        document.getElementById('activeProcesses').innerHTML = '<div class="empty-state">Error al cargar. Recarga la página.</div>';
+      }
+    }
+
+    // Render active processes bar
+    function renderActiveProcesses() {
+      const container = document.getElementById('activeProcesses');
+      if (activeProcesos.length === 0) {
+        container.innerHTML = '<div class="empty-state">No hay procesos activos. Inicia uno con el botón +</div>';
+        return;
+      }
+
+      container.innerHTML = activeProcesos.map(p => `
+        <div class="proceso-card" onclick="selectProceso('${p.id}', '${p.cargo}')">
+          <div class="proceso-name">${p.candidato}</div>
+          <div class="proceso-meta">${p.cargo}</div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: ${p.avance}%"></div>
+          </div>
+          <div style="font-size: 11px; color: #666; margin-top: 4px;">${p.avance}%</div>
+        </div>
+      `).join('');
+    }
+
+    // Select a proceso
+    function selectProceso(pageId, cargo) {
+      currentProcesoId = pageId;
+      const proceso = activeProcesos.find(p => p.id === pageId);
+
+      if (proceso && proceso.items_completados && proceso.items_completados.length > 0) {
+        // Uncheck all first
+        document.querySelectorAll('.checklist-input').forEach(cb => cb.checked = false);
+        // Check saved ones
+        proceso.items_completados.forEach(id => {
+          const cb = document.querySelector(`[data-item-id="${id}"]`);
+          if (cb) cb.checked = true;
+        });
+        updateAllProgressBars();
+      }
+
+      // Switch tab based on cargo
+      const cargoTab = {
+        'Garzón/a': 'garzones',
+        'Jefe de Local': 'jefatura',
+        'Sub Jefe': 'jefatura',
+        'Jefe de Cocina': 'cocineros',
+        'Sous Chef': 'cocineros',
+        'Cocinero/a': 'cocineros',
+        'Copero/a': 'garzones',
+        'Entrenador/a': 'garzones'
+      };
+      switchTab(cargoTab[cargo] || 'garzones');
+
+      // Highlight selected
+      document.querySelectorAll('.proceso-card').forEach(c => c.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+    }
+
+    // Switch tabs
+    function switchTab(tabName) {
+      // Hide all tabs
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+      // Show selected
+      document.getElementById(tabName).classList.add('active');
+      document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+    }
+
+    // Checkbox change handler
+    async function onCheckboxChange(checkbox) {
+      updateProgressBars();
+
+      if (!currentProcesoId) return;
+
+      const track = getCurrentTrack();
+      const allChecked = getCheckedItemIds(track);
+      const totalItems = getTotalItems(track);
+      const avance = totalItems > 0 ? Math.round((allChecked.length / totalItems) * 100) : 0;
+
+      // Debounce: save after 500ms
+      clearTimeout(window._saveTimeout);
+      window._saveTimeout = setTimeout(async () => {
+        try {
+          const res = await fetch(`/api/proceso?id=${currentProcesoId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              items_completados: JSON.stringify(allChecked),
+              avance: avance
+            })
+          });
+          if (!res.ok) throw new Error('Failed to save');
+          // Update local state
+          const proceso = activeProcesos.find(p => p.id === currentProcesoId);
+          if (proceso) {
+            proceso.items_completados = allChecked;
+            proceso.avance = avance;
+            renderActiveProcesses();
+          }
+        } catch (e) {
+          console.error('Error saving:', e);
+          showToast('Error al guardar cambios', true);
+        }
+      }, 500);
+    }
+
+    // Get current track
+    function getCurrentTrack() {
+      if (document.getElementById('garzones').classList.contains('active')) return 'garzon';
+      if (document.getElementById('jefatura').classList.contains('active')) return 'jefatura';
+      if (document.getElementById('cocineros').classList.contains('active')) return 'cocinero';
+      return 'garzon';
+    }
+
+    // Get checked item IDs
+    function getCheckedItemIds(track) {
+      const prefix = track === 'garzon' ? 'garzon' : track === 'jefatura' ? 'jefatura' : 'cocinero';
+      const checked = [];
+      document.querySelectorAll(`.checklist-input[data-item-id^="${prefix}"]`).forEach(cb => {
+        if (cb.checked) checked.push(cb.dataset.itemId);
+      });
+      return checked;
+    }
+
+    // Get total items for a track
+    function getTotalItems(track) {
+      const prefix = track === 'garzon' ? 'garzon' : track === 'jefatura' ? 'jefatura' : 'cocinero';
+      return document.querySelectorAll(`.checklist-input[data-item-id^="${prefix}"]`).length;
+    }
+
+    // Update progress bars
+    function updateProgressBars() {
+      ['garzon', 'jefatura', 'cocinero'].forEach(track => {
+        const checked = getCheckedItemIds(track).length;
+        const total = getTotalItems(track);
+        const pct = total > 0 ? Math.round((checked / total) * 100) : 0;
+        // Note: We'd update visual progress here if we had progress bars per track
+      });
+    }
+
+    function updateAllProgressBars() {
+      updateProgressBars();
+    }
+
+    // Modal
+    function openModal() {
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function closeModal(e) {
+      if (e && e.target !== document.getElementById('modalOverlay')) return;
+      document.getElementById('modalOverlay').classList.remove('active');
+      document.querySelector('form').reset();
+    }
+
+    // Submit new proceso
+    async function submitNewProceso(e) {
+      e.preventDefault();
+
+      const candidato = document.getElementById('candidato').value;
+      const cargo = document.getElementById('cargo').value;
+      const local = document.getElementById('local').value;
+      const notas = document.getElementById('notas').value;
+
+      try {
+        const res = await fetch('/api/procesos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ candidato, cargo, local, notas: notas || undefined })
+        });
+
+        if (!res.ok) throw new Error('Failed to create proceso');
+
+        const newProceso = await res.json();
+        activeProcesos.push(newProceso);
+        renderActiveProcesses();
+        closeModal();
+        showToast(`Proceso creado: ${candidato}`);
+      } catch (e) {
+        console.error('Error creating proceso:', e);
+        showToast('Error al crear proceso', true);
+      }
+    }
+
+    // Toast notification
+    function showToast(msg, isError = false) {
+      const toast = document.createElement('div');
+      toast.className = 'toast' + (isError ? ' error' : '');
+      toast.textContent = msg;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
