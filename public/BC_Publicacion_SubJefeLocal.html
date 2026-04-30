@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Oferta Laboral — Jefe/a de Local | Black Chicken</title>
+  <title>Oferta Laboral — Sub Jefe/a de Local | Black Chicken</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -70,6 +70,14 @@
     .benefit-card.deferred .benefit-name { color: #aaa; }
     .deferred-note { font-size: 11px; color: #d4af37; margin-top: 4px; font-weight: 600; }
 
+    .comp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .comp-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 24px 16px; text-align: center; }
+    .comp-card.main { border-color: #d4af37; background: linear-gradient(135deg, #1a1505, #1a1a1a); }
+    .comp-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #666; margin-bottom: 10px; }
+    .comp-value { font-size: 26px; font-weight: 900; color: #fff; }
+    .comp-card.main .comp-value { color: #d4af37; }
+    .comp-note { font-size: 12px; color: #777; margin-top: 6px; }
+
     .cta-block { background: linear-gradient(135deg, #1a1505 0%, #1a1a0a 100%); border: 1px solid #d4af37; border-radius: 16px; padding: 36px; text-align: center; margin-top: 48px; }
     .cta-title { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px; }
     .cta-sub { font-size: 15px; color: #888; margin-bottom: 24px; }
@@ -84,6 +92,7 @@
       .hero h1 { font-size: 28px; }
       .schedule-grid { grid-template-columns: 1fr; }
       .benefits-grid { grid-template-columns: repeat(2, 1fr); }
+      .comp-grid { grid-template-columns: 1fr; }
       .container { padding: 32px 20px; }
     }
   </style>
@@ -95,18 +104,19 @@
     <img src="./blackchicken_logo.png" alt="Black Chicken">
   </div>
   <div class="badge-hiring">✦ Buscamos Talento</div>
-  <h1>Jefe/a de <span>Local</span></h1>
+  <h1>Sub Jefe/a de <span>Local</span></h1>
   <p class="hero-sub">Cerro El Plomo, Las Condes · Santiago</p>
   <div class="hero-tags">
-    <span class="tag gold">👑 Liderazgo</span>
+    <span class="tag gold">⚡ Liderazgo Operacional</span>
     <span class="tag">📍 Las Condes</span>
     <span class="tag">🕛 Jornada Completa</span>
-    <span class="tag">📅 L–D con día libre rotativo</span>
+    <span class="tag">📅 Turnos Rotativos 5×2</span>
   </div>
 </div>
 
 <div class="container">
 
+  <!-- EL ROL -->
   <div class="section">
     <div class="section-header">
       <div class="section-icon">🎯</div>
@@ -115,11 +125,32 @@
     <div class="func-item" style="background: linear-gradient(135deg, #1a1505, #1a1a1a); border-color: #d4af37;">
       <div class="func-dot" style="background: #d4af37; width: 10px; height: 10px;"></div>
       <p class="func-text" style="color: #e8d080; line-height: 1.7;">
-        En Black Chicken buscamos a alguien que lidere con convicción, cuide al equipo y lleve al restaurante a su mejor versión todos los días. El Jefe/a de Local es la persona responsable de la operación completa — desde la apertura hasta el cierre, desde el equipo hasta los resultados.
+        En Black Chicken buscamos a alguien que sea el brazo derecho del Jefe de Local: capaz de liderar la operación completa del restaurante, mantener al equipo motivado y asegurar que cada turno cumpla con nuestros estándares de calidad y servicio. El Sub Jefe/a es clave para que todo funcione — desde la cocina hasta el salón, desde el inventario hasta la experiencia del cliente.
       </p>
     </div>
   </div>
 
+  <!-- SOBRE NOSOTROS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon">🍗</div>
+      <h2 class="section-title">Sobre Black Chicken</h2>
+    </div>
+    <div class="func-item">
+      <div class="func-dot"></div>
+      <p class="func-text">
+        Somos una propuesta gastronómica que reinterpreta la clásica rotisería con un enfoque moderno y gourmet. Nos especializamos en preparaciones en torno al pollo, inspiradas en sabores intensos y en la búsqueda del umami, combinando técnicas de alta cocina con procesos eficientes y estandarizados.
+      </p>
+    </div>
+    <div class="func-item" style="margin-top: 10px;">
+      <div class="func-dot"></div>
+      <p class="func-text">
+        Nacimos en Chile en 2020 como un emprendimiento familiar durante la pandemia, creciendo desde una cocina casera hasta consolidarnos con locales físicos en Las Condes, Santiago. Nuestra esencia está en la excelencia del producto, la atención cercana y el compromiso por entregar experiencias memorables.
+      </p>
+    </div>
+  </div>
+
+  <!-- JORNADA -->
   <div class="section">
     <div class="section-header">
       <div class="section-icon">🕐</div>
@@ -129,26 +160,27 @@
       <div class="schedule-card highlight">
         <p class="sc-label">Jornada</p>
         <p class="sc-value gold">Completa</p>
-        <p class="sc-sub">42 horas semanales con día libre rotativo</p>
+        <p class="sc-sub">42 horas semanales · Turnos rotativos 5×2</p>
       </div>
       <div class="schedule-card highlight">
         <p class="sc-label">Horario</p>
-        <p class="sc-value gold">Apertura – Cierre</p>
-        <p class="sc-sub">Turnos AM y PM rotativos según necesidad del local</p>
+        <p class="sc-value gold">12:00 – 21:45</p>
+        <p class="sc-sub">Turnos AM y PM según necesidad del local</p>
       </div>
       <div class="schedule-card">
         <p class="sc-label">Tipo de contrato</p>
-        <p class="sc-value">Indefinido</p>
-        <p class="sc-sub">Con período de prueba inicial de 3 meses</p>
+        <p class="sc-value">Plazo Fijo</p>
+        <p class="sc-sub">Con proyección a contrato indefinido según desempeño</p>
       </div>
       <div class="schedule-card">
         <p class="sc-label">Inicio</p>
         <p class="sc-value">Inmediato</p>
-        <p class="sc-sub">Incorporación según disponibilidad del candidato/a</p>
+        <p class="sc-sub">Onboarding estructurado para asegurar tu adaptación</p>
       </div>
     </div>
   </div>
 
+  <!-- RESPONSABILIDADES -->
   <div class="section">
     <div class="section-header">
       <div class="section-icon">📋</div>
@@ -157,60 +189,87 @@
     <div class="func-list">
       <div class="func-item">
         <div class="func-dot"></div>
-        <p class="func-text"><strong>Operación diaria</strong> — Supervisar el correcto funcionamiento del local en todos los turnos, asegurando estándares de calidad y servicio.</p>
+        <p class="func-text"><strong>Operación diaria</strong> — Liderar la operación del local supervisando cocina, salón, recepción y delivery, asegurando orden, limpieza y cumplimiento de protocolos.</p>
       </div>
       <div class="func-item">
         <div class="func-dot"></div>
-        <p class="func-text"><strong>Gestión de equipo</strong> — Liderar, capacitar, motivar y desarrollar a los colaboradores del local. Gestionar horarios y ausencias.</p>
+        <p class="func-text"><strong>Normativa y calidad</strong> — Asegurar el cumplimiento de normativas sanitarias y estándares de calidad en todos los procesos.</p>
       </div>
       <div class="func-item">
         <div class="func-dot"></div>
-        <p class="func-text"><strong>Control de costos e inventario</strong> — Gestionar materias primas, reducir merma y controlar el food cost del local.</p>
+        <p class="func-text"><strong>Administración</strong> — Gestionar inventarios, compras, control de stock, caja y documentación operativa del local.</p>
       </div>
       <div class="func-item">
         <div class="func-dot"></div>
-        <p class="func-text"><strong>Estándares operacionales</strong> — Implementar y supervisar los procedimientos y checklists del local. Velar por BPM y seguridad alimentaria.</p>
+        <p class="func-text"><strong>Gestión de equipo</strong> — Liderar, capacitar y acompañar al equipo, promoviendo un buen clima laboral y entregando feedback constante.</p>
       </div>
       <div class="func-item">
         <div class="func-dot"></div>
-        <p class="func-text"><strong>Resultados y métricas</strong> — Monitorear KPIs del local (ventas, ticket promedio, NPS) y reportar resultados a la dirección.</p>
-      </div>
-      <div class="func-item">
-        <div class="func-dot"></div>
-        <p class="func-text"><strong>Experiencia del cliente</strong> — Asegurar que cada visita sea memorable. Ser embajador/a de la cultura Black Chicken.</p>
+        <p class="func-text"><strong>Experiencia del cliente</strong> — Velar por la experiencia del cliente, resolviendo contingencias y asegurando un servicio ágil tanto en salón como en delivery.</p>
       </div>
     </div>
   </div>
 
+  <!-- REQUISITOS -->
   <div class="section">
     <div class="section-header">
       <div class="section-icon">✅</div>
-      <h2 class="section-title">¿Qué buscamos?</h2>
+      <h2 class="section-title">¿Qué Buscamos?</h2>
     </div>
     <div class="req-list">
       <div class="req-item">
         <div class="req-check">✓</div>
-        <p class="func-text">Experiencia mínima de 2 años liderando equipos en restaurantes, casinos u operaciones de food service.</p>
+        <p class="func-text">Experiencia como Jefe/a o Sub Jefe/a en restaurantes de alta gastronomía o cadenas de restaurantes.</p>
       </div>
       <div class="req-item">
         <div class="req-check">✓</div>
-        <p class="func-text">Habilidades de liderazgo demostradas — capacidad de motivar, dar feedback y resolver conflictos en el equipo.</p>
+        <p class="func-text">Experiencia previa en comida rápida o restaurantes de alto volumen.</p>
       </div>
       <div class="req-item">
         <div class="req-check">✓</div>
-        <p class="func-text">Manejo de costos operacionales: food cost, labor cost, inventarios y merma.</p>
+        <p class="func-text">Manejo de inventarios, compras y control de stock.</p>
       </div>
       <div class="req-item">
         <div class="req-check">✓</div>
-        <p class="func-text">Disponibilidad para trabajar jornada completa en turnos rotativos, incluyendo fines de semana.</p>
+        <p class="func-text">Experiencia en seguimiento de KPIs operacionales y generación de reportería.</p>
       </div>
       <div class="req-item">
         <div class="req-check">✓</div>
-        <p class="func-text">Orientación al cliente, buena presencia y habilidades de comunicación.</p>
+        <p class="func-text">Experiencia en procesos de apertura y cierre de turno.</p>
+      </div>
+      <div class="req-item">
+        <div class="req-check">✓</div>
+        <p class="func-text">RUT vigente y documentación al día para trabajar en Chile.</p>
       </div>
     </div>
   </div>
 
+  <!-- COMPENSACIÓN -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon">💰</div>
+      <h2 class="section-title">Compensación</h2>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card main">
+        <p class="comp-label">Renta Base</p>
+        <p class="comp-value">$900.000</p>
+        <p class="comp-note">Sueldo bruto mensual</p>
+      </div>
+      <div class="comp-card">
+        <p class="comp-label">Propina</p>
+        <p class="comp-value">~$120.000</p>
+        <p class="comp-note">Promedio mensual aproximado</p>
+      </div>
+      <div class="comp-card main">
+        <p class="comp-label">Bono KPI</p>
+        <p class="comp-value">$350.000</p>
+        <p class="comp-note">Hasta este monto según cumplimiento</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BENEFICIOS -->
   <div class="section">
     <div class="section-header">
       <div class="section-icon">🎁</div>
@@ -294,6 +353,7 @@
     </div>
   </div>
 
+  <!-- DESARROLLO -->
   <div class="section">
     <div class="section-header">
       <div class="section-icon">📈</div>
@@ -302,15 +362,16 @@
     <div class="func-item" style="background: linear-gradient(135deg, #1a1505, #1a1a1a); border-color: #d4af37;">
       <div class="func-dot" style="background: #d4af37; width: 10px; height: 10px;"></div>
       <p class="func-text" style="color: #e8d080; line-height: 1.7;">
-        En Black Chicken creemos en el crecimiento de nuestra gente. Como Jefe/a de Local tendrás un rol protagónico en la construcción de la marca y del equipo. Hay camino hacia roles de operaciones multi-local y participación directa en la expansión de la cadena.
+        En Black Chicken creemos en el crecimiento de nuestra gente. Como Sub Jefe/a de Local tendrás un proceso de onboarding estructurado y la oportunidad de crecer hacia Jefe/a de Local, participando directamente en la expansión de la cadena a nuevos locales.
       </p>
     </div>
   </div>
 
+  <!-- CTA -->
   <div class="cta-block">
-    <p class="cta-title">¿Te interesa liderar Black Chicken?</p>
+    <p class="cta-title">¿Te interesa ser parte de Black Chicken?</p>
     <p class="cta-sub">Envíanos tu CV o escríbenos directamente. Nos contactamos contigo en 48 horas.</p>
-    <a href="mailto:talentos@blackchicken.cl?subject=Postulación%20Jefe%20de%20Local" class="cta-email">
+    <a href="mailto:talentos@blackchicken.cl?subject=Postulaci%C3%B3n%20Sub%20Jefe%20de%20Local" class="cta-email">
       📩 talentos@blackchicken.cl
     </a>
     <p class="cta-note">Incluye una breve presentación y tu experiencia más relevante. Todas las postulaciones son tratadas con total confidencialidad.</p>
