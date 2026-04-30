@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tracker de Rotación · Black Chicken HR</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0f0f0f;color:#e8e8e8;min-height:100vh}
+.back-hub{position:fixed;top:16px;left:16px;z-index:9999;display:inline-flex;align-items:center;gap:6px;background:rgba(26,26,26,.92);border:1px solid #2a2a2a;border-radius:8px;padding:8px 14px;color:#999;font-size:12px;font-weight:600;text-decoration:none;backdrop-filter:blur(8px);transition:all .2s}
+.back-hub:hover{color:#d4af37;border-color:#d4af37}
+.container{max-width:900px;margin:0 auto;padding:48px 32px}
+h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
+.sub{font-size:13px;color:#666;margin-bottom:24px}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.kpi{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:20px;text-align:center}
+.kpi-val{font-size:32px;font-weight:900;line-height:1}
+.kpi-val.green{color:#50b050}.kpi-val.yellow{color:#e0c050}.kpi-val.red{color:#e05050}.kpi-val.gold{color:#d4af37}
+.kpi-label{font-size:11px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-top:6px}
+.kpi-sub{font-size:12px;color:#555;margin-top:4px}
+.section-title{font-size:14px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:#666;font-size:11px;text-transform:uppercase;letter-spacing:1px;padding:10px 12px;border-bottom:1px solid #2a2a2a;font-weight:600}
+td{padding:10px 12px;border-bottom:1px solid #1a1a1a;color:#ccc}
+tr:hover td{background:#1a1a1a}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase}
+.badge.vol{background:rgba(224,192,80,.15);color:#e0c050}
+.badge.inv{background:rgba(224,80,80,.15);color:#e05050}
+.badge.fin{background:rgba(80,176,80,.15);color:#50b050}
+.empty-msg{text-align:center;padding:48px;color:#555;font-size:14px;background:#1a1a1a;border:1px dashed #2a2a2a;border-radius:12px;margin-bottom:24px}
+.empty-msg strong{color:#888}
+.bench{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:20px;margin-bottom:24px}
+.bench-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:12px}
+.bench-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1f1f1f;font-size:13px}
+.bench-row:last-child{border:none}
+.bench-label{color:#888}
+.bench-val{color:#d4af37;font-weight:700}
+@media(max-width:640px){.kpi-row{grid-template-columns:repeat(2,1fr)}.container{padding:24px 16px}}
+</style>
+</head>
+<body>
+<a href="hub-index.html" class="back-hub"><span>←</span> Hub HR</a>
+<div class="container">
+<h1>Tracker de Rotación</h1>
+<p class="sub">Registro de desvinculaciones y KPIs de retención · Black Chicken HR</p>
+
+<div class="kpi-row">
+  <div class="kpi"><div class="kpi-val green">0</div><div class="kpi-label">Salidas este mes</div><div class="kpi-sub">Abril 2026</div></div>
+  <div class="kpi"><div class="kpi-val gold">0%</div><div class="kpi-label">Rotación mensual</div><div class="kpi-sub">Meta: &lt; 5%</div></div>
+  <div class="kpi"><div class="kpi-val gold">28</div><div class="kpi-label">Dotación actual</div><div class="kpi-sub">25 FT · 3 PT</div></div>
+  <div class="kpi"><div class="kpi-val gold">—</div><div class="kpi-label">Días promedio</div><div class="kpi-sub">Permanencia</div></div>
+</div>
+
+<!-- Benchmarks -->
+<div class="bench">
+  <div class="bench-title">📊 Benchmarks industria gastronómica Chile</div>
+  <div class="bench-row"><span class="bench-label">Rotación mensual promedio restaurantes</span><span class="bench-val">8-12%</span></div>
+  <div class="bench-row"><span class="bench-label">Rotación mensual "buena"</span><span class="bench-val">&lt; 5%</span></div>
+  <div class="bench-row"><span class="bench-label">Costo estimado reemplazo (1 persona)</span><span class="bench-val">$400k-$800k</span></div>
+  <div class="bench-row"><span class="bench-label">Tiempo promedio contratación</span><span class="bench-val">15-25 días</span></div>
+</div>
+
+<div class="section-title" style="margin-bottom:12px">📋 Registro de salidas 2026</div>
+
+<div class="empty-msg">
+  <strong>Sin desvinculaciones registradas</strong><br>
+  Cuando ocurra una salida, registrarla acá con: nombre, cargo, local, fecha, motivo y tiempo en BC.<br>
+  Esto permite calcular rotación real y costo acumulado.
+</div>
+
+<div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;overflow-x:auto">
+<table>
+  <thead><tr><th>Fecha</th><th>Nombre</th><th>Cargo</th><th>Local</th><th>Motivo</th><th>Tiempo en BC</th></tr></thead>
+  <tbody>
+    <tr><td colspan="6" style="text-align:center;color:#444;padding:20px;font-style:italic">— Registros se agregan conforme ocurran —</td></tr>
+  </tbody>
+</table>
+</div>
+
+</div>
+<footer style="text-align:center;padding:20px;color:#444;font-size:11px;border-top:1px solid #2a2a2a">Black Chicken HR · Tracker de Rotación · Datos sensibles — uso exclusivo interno</footer>
+</body>
+</html>

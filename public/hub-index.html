@@ -224,9 +224,9 @@
   <div class="container">
     <!-- Stats -->
     <div class="stats">
-      <div class="stat"><div class="stat-number">16</div><div>Documentos activos</div></div>
+      <div class="stat"><div class="stat-number">21</div><div>Documentos activos</div></div>
       <div class="stat"><div class="stat-number">10</div><div>Roles cubiertos</div></div>
-      <div class="stat"><div class="stat-number">6</div><div>Secciones</div></div>
+      <div class="stat"><div class="stat-number">7</div><div>Secciones</div></div>
     </div>
 
     <!-- Buscador -->
@@ -321,7 +321,85 @@
       </div>
     </div>
 
-    <!-- 2) Procesos Internos -->
+
+    <!-- 2) Herramientas HR -->
+    <div class="section" data-section="herramientas">
+      <div class="section-toggle" onclick="toggleSection(this)">
+        <span class="section-toggle-label">⚡ Herramientas HR · Gestión operativa</span>
+        <span class="section-chevron">▶</span>
+      </div>
+      <div class="section-body">
+        <div class="cards">
+          <a href="#" onclick="cartaGate('BC_HR_Dashboard.html');return false;" class="card carta-locked">
+            <div class="card-icon gold">📊</div>
+            <div class="card-body">
+              <div class="card-title">Dashboard de Dotación <span class="tag-new">NUEVO</span></div>
+              <div class="card-desc">Headcount por local, nómina bruta, vacantes abiertas, equipo completo con cargos y sueldos.</div>
+              <div class="card-tags">
+                <span class="tag gold">28 personas</span>
+                <span class="tag">2 locales</span>
+                <span class="tag tag-date">30-abr-2026</span>
+              </div>
+            </div>
+            <div class="card-arrow carta-lock-icon">🔒</div>
+          </a>
+          <a href="#" onclick="cartaGate('BC_HR_Calendario.html');return false;" class="card carta-locked">
+            <div class="card-icon blue">📅</div>
+            <div class="card-body">
+              <div class="card-title">Calendario HR <span class="tag-new">NUEVO</span></div>
+              <div class="card-desc">Feriados, vencimientos de contratos, cumpleaños del equipo, evaluaciones y pagos de beneficios.</div>
+              <div class="card-tags">
+                <span class="tag blue">Alertas</span>
+                <span class="tag">Semáforo</span>
+                <span class="tag tag-date">30-abr-2026</span>
+              </div>
+            </div>
+            <div class="card-arrow carta-lock-icon">🔒</div>
+          </a>
+          <a href="#" onclick="cartaGate('BC_HR_Rotacion.html');return false;" class="card carta-locked">
+            <div class="card-icon" style="background:rgba(224,80,80,.08);border:1px solid #e05050">📉</div>
+            <div class="card-body">
+              <div class="card-title">Tracker de Rotación <span class="tag-new">NUEVO</span></div>
+              <div class="card-desc">Registro de desvinculaciones, KPI de rotación mensual, benchmarks industria y costo por reemplazo.</div>
+              <div class="card-tags">
+                <span class="tag red">KPIs</span>
+                <span class="tag">Retención</span>
+                <span class="tag tag-date">30-abr-2026</span>
+              </div>
+            </div>
+            <div class="card-arrow carta-lock-icon">🔒</div>
+          </a>
+          <a href="#" onclick="cartaGate('BC_HR_Templates.html');return false;" class="card carta-locked">
+            <div class="card-icon green">📝</div>
+            <div class="card-body">
+              <div class="card-title">Biblioteca de Templates <span class="tag-new">NUEVO</span></div>
+              <div class="card-desc">Amonestaciones, felicitaciones, cambios de turno, certificados, entrega de uniforme y más.</div>
+              <div class="card-tags">
+                <span class="tag green">12 templates</span>
+                <span class="tag">Estandarizados</span>
+                <span class="tag tag-date">30-abr-2026</span>
+              </div>
+            </div>
+            <div class="card-arrow carta-lock-icon">🔒</div>
+          </a>
+          <a href="#" onclick="cartaGate('BC_HR_Offboarding.html');return false;" class="card carta-locked">
+            <div class="card-icon" style="background:rgba(224,192,80,.08);border:1px solid #e0c050">🚪</div>
+            <div class="card-body">
+              <div class="card-title">Checklist Offboarding <span class="tag-new">NUEVO</span></div>
+              <div class="card-desc">16 pasos de desvinculación: accesos, equipamiento, legal, finiquito, entrevista de salida.</div>
+              <div class="card-tags">
+                <span class="tag gold">Interactivo</span>
+                <span class="tag">16 pasos</span>
+                <span class="tag tag-date">30-abr-2026</span>
+              </div>
+            </div>
+            <div class="card-arrow carta-lock-icon">🔒</div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3) Procesos Internos -->
     <div class="section" data-section="procesos">
       <div class="section-toggle" onclick="toggleSection(this)">
         <span class="section-toggle-label">🧰 Procesos internos · Uso exclusivo RRHH</span>
@@ -689,7 +767,7 @@
     // Restore saved states on load
     (function() {
       var state = getSavedState();
-      var defaultOpen = { hrbrain: true, cartas: true };
+      var defaultOpen = { hrbrain: true, cartas: true, herramientas: true };
       document.querySelectorAll('.section').forEach(function(section) {
         var id = section.dataset.section;
         var toggle = section.querySelector('.section-toggle');

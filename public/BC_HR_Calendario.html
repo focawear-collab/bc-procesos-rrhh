@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendario HR · Black Chicken</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0f0f0f;color:#e8e8e8;min-height:100vh}
+.back-hub{position:fixed;top:16px;left:16px;z-index:9999;display:inline-flex;align-items:center;gap:6px;background:rgba(26,26,26,.92);border:1px solid #2a2a2a;border-radius:8px;padding:8px 14px;color:#999;font-size:12px;font-weight:600;text-decoration:none;backdrop-filter:blur(8px);transition:all .2s}
+.back-hub:hover{color:#d4af37;border-color:#d4af37}
+.container{max-width:900px;margin:0 auto;padding:48px 32px}
+h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
+.sub{font-size:13px;color:#666;margin-bottom:24px}
+.legend{display:flex;gap:16px;margin-bottom:20px;font-size:12px;color:#888;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px}
+.dot{width:10px;height:10px;border-radius:50%}
+.dot.red{background:#e05050}.dot.yellow{background:#e0c050}.dot.green{background:#50b050}.dot.blue{background:#5090e0}
+.month-section{margin-bottom:28px}
+.month-title{font-size:16px;font-weight:800;color:#d4af37;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #2a2a2a}
+.event-list{display:flex;flex-direction:column;gap:6px}
+.event{display:flex;align-items:center;gap:12px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:12px 16px;transition:border-color .2s}
+.event:hover{border-color:#3a3a3a}
+.event-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.event-dot.contract{background:#e0c050}.event-dot.birthday{background:#5090e0}.event-dot.eval{background:#50b050}.event-dot.holiday{background:#e05050}
+.event-date{font-size:12px;color:#666;width:70px;flex-shrink:0;font-weight:600}
+.event-text{font-size:13px;color:#ccc;flex:1}
+.event-text strong{color:#fff}
+.event-tag{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:700;text-transform:uppercase;white-space:nowrap}
+.event-tag.contract{background:rgba(224,192,80,.15);color:#e0c050}
+.event-tag.birthday{background:rgba(80,144,224,.15);color:#5090e0}
+.event-tag.eval{background:rgba(80,176,80,.15);color:#50b050}
+.event-tag.holiday{background:rgba(224,80,80,.15);color:#e05050}
+.empty-state{text-align:center;padding:40px;color:#555;font-size:14px;background:#1a1a1a;border:1px dashed #2a2a2a;border-radius:12px}
+.note{background:#1a1a1a;border:1px solid #d4af37;border-radius:10px;padding:16px;font-size:13px;color:#ccc;margin-bottom:24px;line-height:1.6}
+.note strong{color:#d4af37}
+@media(max-width:640px){.container{padding:24px 16px}.event{flex-wrap:wrap;gap:8px}.event-date{width:auto}}
+</style>
+</head>
+<body>
+<a href="hub-index.html" class="back-hub"><span>←</span> Hub HR</a>
+<div class="container">
+<h1>Calendario HR</h1>
+<p class="sub">Eventos, vencimientos y fechas clave · Black Chicken HR</p>
+
+<div class="note">
+  <strong>⚡ Para activar este calendario:</strong> Agregar las fechas de ingreso y cumpleaños de cada persona del equipo. Con eso se calculan automáticamente vencimientos de contratos a plazo fijo (90 días), renovaciones y antigüedad.
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="dot red"></div>Feriado / Cierre</div>
+  <div class="legend-item"><div class="dot yellow"></div>Contrato / Renovación</div>
+  <div class="legend-item"><div class="dot blue"></div>Cumpleaños</div>
+  <div class="legend-item"><div class="dot green"></div>Evaluación / Hito</div>
+</div>
+
+<!-- Mayo 2026 -->
+<div class="month-section">
+  <div class="month-title">Mayo 2026</div>
+  <div class="event-list">
+    <div class="event"><div class="event-dot holiday"></div><div class="event-date">01 May</div><div class="event-text"><strong>Día del Trabajo</strong> — Feriado legal</div><div class="event-tag holiday">Feriado</div></div>
+    <div class="event"><div class="event-dot eval"></div><div class="event-date">05 May</div><div class="event-text"><strong>Evaluación de desempeño</strong> — Ciclo Q1 (pendiente confirmar)</div><div class="event-tag eval">Evaluación</div></div>
+    <div class="event"><div class="event-dot holiday"></div><div class="event-date">21 May</div><div class="event-text"><strong>Día de las Glorias Navales</strong> — Feriado legal</div><div class="event-tag holiday">Feriado</div></div>
+  </div>
+</div>
+
+<!-- Junio 2026 -->
+<div class="month-section">
+  <div class="month-title">Junio 2026</div>
+  <div class="event-list">
+    <div class="event"><div class="event-dot holiday"></div><div class="event-date">29 Jun</div><div class="event-text"><strong>San Pedro y San Pablo</strong> — Feriado legal</div><div class="event-tag holiday">Feriado</div></div>
+  </div>
+</div>
+
+<!-- Julio 2026 -->
+<div class="month-section">
+  <div class="month-title">Julio 2026</div>
+  <div class="event-list">
+    <div class="event"><div class="event-dot holiday"></div><div class="event-date">16 Jul</div><div class="event-text"><strong>Día de la Virgen del Carmen</strong> — Feriado legal</div><div class="event-tag holiday">Feriado</div></div>
+  </div>
+</div>
+
+<!-- Septiembre 2026 -->
+<div class="month-section">
+  <div class="month-title">Septiembre 2026</div>
+  <div class="event-list">
+    <div class="event"><div class="event-dot eval"></div><div class="event-date">01 Sep</div><div class="event-text"><strong>Pago Aguinaldo Fiestas Patrias</strong> — Para equipo con contrato indefinido</div><div class="event-tag eval">Beneficio</div></div>
+    <div class="event"><div class="event-dot holiday"></div><div class="event-date">18 Sep</div><div class="event-text"><strong>Fiestas Patrias</strong> — Feriado legal</div><div class="event-tag holiday">Feriado</div></div>
+    <div class="event"><div class="event-dot holiday"></div><div class="event-date">19 Sep</div><div class="event-text"><strong>Día de las Glorias del Ejército</strong> — Feriado legal</div><div class="event-tag holiday">Feriado</div></div>
+  </div>
+</div>
+
+<!-- Diciembre 2026 -->
+<div class="month-section">
+  <div class="month-title">Diciembre 2026</div>
+  <div class="event-list">
+    <div class="event"><div class="event-dot eval"></div><div class="event-date">01 Dic</div><div class="event-text"><strong>Pago Aguinaldo Navidad</strong> — Para equipo con contrato indefinido</div><div class="event-tag eval">Beneficio</div></div>
+    <div class="event"><div class="event-dot holiday"></div><div class="event-date">25 Dic</div><div class="event-text"><strong>Navidad</strong> — Feriado legal</div><div class="event-tag holiday">Feriado</div></div>
+  </div>
+</div>
+
+</div>
+<footer style="text-align:center;padding:20px;color:#444;font-size:11px;border-top:1px solid #2a2a2a">Black Chicken HR · Calendario · Uso exclusivo interno</footer>
+</body>
+</html>

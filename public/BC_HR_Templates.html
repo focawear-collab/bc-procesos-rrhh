@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteca de Templates · Black Chicken HR</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0f0f0f;color:#e8e8e8;min-height:100vh}
+.back-hub{position:fixed;top:16px;left:16px;z-index:9999;display:inline-flex;align-items:center;gap:6px;background:rgba(26,26,26,.92);border:1px solid #2a2a2a;border-radius:8px;padding:8px 14px;color:#999;font-size:12px;font-weight:600;text-decoration:none;backdrop-filter:blur(8px);transition:all .2s}
+.back-hub:hover{color:#d4af37;border-color:#d4af37}
+.container{max-width:900px;margin:0 auto;padding:48px 32px}
+h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
+.sub{font-size:13px;color:#666;margin-bottom:24px}
+.cat{margin-bottom:28px}
+.cat-title{font-size:14px;font-weight:700;color:#d4af37;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #2a2a2a}
+.templates{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tmpl{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:16px;transition:border-color .2s;cursor:pointer;position:relative}
+.tmpl:hover{border-color:#d4af37}
+.tmpl-icon{font-size:24px;margin-bottom:8px}
+.tmpl-name{font-size:13px;font-weight:700;color:#fff;margin-bottom:4px}
+.tmpl-desc{font-size:12px;color:#666;line-height:1.4}
+.tmpl-status{position:absolute;top:12px;right:12px;font-size:9px;font-weight:800;padding:2px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.5px}
+.tmpl-status.ready{background:rgba(80,176,80,.2);color:#50b050}
+.tmpl-status.pending{background:rgba(224,192,80,.15);color:#e0c050}
+.note{background:#1a1a1a;border:1px solid #d4af37;border-radius:10px;padding:16px;font-size:13px;color:#ccc;margin-bottom:24px;line-height:1.6}
+.note strong{color:#d4af37}
+@media(max-width:640px){.templates{grid-template-columns:1fr}.container{padding:24px 16px}}
+</style>
+</head>
+<body>
+<a href="hub-index.html" class="back-hub"><span>←</span> Hub HR</a>
+<div class="container">
+<h1>Biblioteca de Templates</h1>
+<p class="sub">Documentos estándar para gestión de personas · Black Chicken HR</p>
+
+<div class="note"><strong>Uso:</strong> Cada template se genera con los datos del caso. Pídele a Claude que llene el template con el nombre, fecha y detalles específicos antes de imprimir o enviar.</div>
+
+<!-- Gestión disciplinaria -->
+<div class="cat">
+  <div class="cat-title">⚠️ Gestión disciplinaria</div>
+  <div class="templates">
+    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">📝</div><div class="tmpl-name">Amonestación verbal</div><div class="tmpl-desc">Registro de amonestación verbal con fecha, motivo y compromiso del trabajador.</div></div>
+    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">📋</div><div class="tmpl-name">Amonestación escrita</div><div class="tmpl-desc">Carta formal de amonestación con antecedentes, falta y consecuencias.</div></div>
+    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">🚫</div><div class="tmpl-name">Suspensión</div><div class="tmpl-desc">Notificación de suspensión temporal con período y condiciones de retorno.</div></div>
+  </div>
+</div>
+
+<!-- Reconocimiento -->
+<div class="cat">
+  <div class="cat-title">🏆 Reconocimiento</div>
+  <div class="templates">
+    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">⭐</div><div class="tmpl-name">Felicitación formal</div><div class="tmpl-desc">Carta de reconocimiento por desempeño destacado, logro o actitud ejemplar.</div></div>
+    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">📜</div><div class="tmpl-name">Certificado de capacitación</div><div class="tmpl-desc">Constancia de participación en capacitación interna con horas y contenido.</div></div>
+  </div>
+</div>
+
+<!-- Operaciones HR -->
+<div class="cat">
+  <div class="cat-title">📄 Operaciones HR</div>
+  <div class="templates">
+    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">🔄</div><div class="tmpl-name">Cambio de turno</div><div class="tmpl-desc">Solicitud formal de cambio de turno entre trabajadores con autorización de jefe.</div></div>
+    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">✈️</div><div class="tmpl-name">Solicitud de vacaciones</div><div class="tmpl-desc">Formulario de solicitud de feriado legal con fechas y aprobación.</div></div>
+    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">🏥</div><div class="tmpl-name">Constancia de empleo</div><div class="tmpl-desc">Carta dirigida a terceros certificando relación laboral, cargo y antigüedad.</div></div>
+    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">📋</div><div class="tmpl-name">Acta de entrega de uniforme</div><div class="tmpl-desc">Registro de entrega de equipamiento con detalle de prendas y firma.</div></div>
+  </div>
+</div>
+
+<!-- Desvinculación -->
+<div class="cat">
+  <div class="cat-title">🚪 Desvinculación</div>
+  <div class="templates">
+    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">📝</div><div class="tmpl-name">Carta de renuncia</div><div class="tmpl-desc">Template para renuncia voluntaria del trabajador con preaviso.</div></div>
+    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">📝</div><div class="tmpl-name">Carta de no renovación</div><div class="tmpl-desc">Notificación de no renovación de contrato a plazo fijo dentro de plazo legal.</div></div>
+    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">🤝</div><div class="tmpl-name">Entrevista de salida</div><div class="tmpl-desc">Pauta de entrevista de salida: motivos, feedback, sugerencias, recontratación.</div></div>
+  </div>
+</div>
+
+</div>
+<footer style="text-align:center;padding:20px;color:#444;font-size:11px;border-top:1px solid #2a2a2a">Black Chicken HR · Biblioteca de Templates · Uso exclusivo interno</footer>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist Offboarding · Black Chicken HR</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0f0f0f;color:#e8e8e8;min-height:100vh}
+.back-hub{position:fixed;top:16px;left:16px;z-index:9999;display:inline-flex;align-items:center;gap:6px;background:rgba(26,26,26,.92);border:1px solid #2a2a2a;border-radius:8px;padding:8px 14px;color:#999;font-size:12px;font-weight:600;text-decoration:none;backdrop-filter:blur(8px);transition:all .2s}
+.back-hub:hover{color:#d4af37;border-color:#d4af37}
+.container{max-width:800px;margin:0 auto;padding:48px 32px}
+h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
+.sub{font-size:13px;color:#666;margin-bottom:24px}
+.progress-bar{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:16px;margin-bottom:24px;display:flex;align-items:center;gap:16px}
+.progress-fill{height:8px;background:#2a2a2a;border-radius:4px;flex:1;overflow:hidden}
+.progress-fill-inner{height:100%;background:linear-gradient(90deg,#d4af37,#f0c940);border-radius:4px;transition:width .3s;width:0%}
+.progress-text{font-size:14px;font-weight:800;color:#d4af37;white-space:nowrap}
+.phase{margin-bottom:24px}
+.phase-title{font-size:14px;font-weight:700;color:#d4af37;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #2a2a2a}
+.check-list{display:flex;flex-direction:column;gap:6px}
+.check-item{display:flex;align-items:center;gap:12px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:14px 16px;cursor:pointer;transition:all .2s;user-select:none}
+.check-item:hover{border-color:#3a3a3a}
+.check-item.done{opacity:.5}
+.check-item.done .check-text{text-decoration:line-through;color:#555}
+.check-box{width:22px;height:22px;border:2px solid #3a3a3a;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;color:transparent;transition:all .2s}
+.check-item.done .check-box{background:#d4af37;border-color:#d4af37;color:#0f0f0f}
+.check-text{font-size:13px;color:#ccc;flex:1}
+.check-text strong{color:#fff}
+.check-resp{font-size:11px;color:#555;white-space:nowrap;text-transform:uppercase;letter-spacing:.5px}
+.reset-btn{display:block;margin:24px auto;background:none;border:1px solid #2a2a2a;border-radius:8px;padding:10px 24px;color:#666;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
+.reset-btn:hover{border-color:#e05050;color:#e05050}
+@media(max-width:640px){.container{padding:24px 16px}.check-resp{display:none}}
+</style>
+</head>
+<body>
+<a href="hub-index.html" class="back-hub"><span>←</span> Hub HR</a>
+<div class="container">
+<h1>Checklist de Offboarding</h1>
+<p class="sub">Proceso de desvinculación paso a paso · Black Chicken HR</p>
+
+<div class="progress-bar">
+  <div class="progress-fill"><div class="progress-fill-inner" id="pbar"></div></div>
+  <div class="progress-text" id="ptext">0 / 16</div>
+</div>
+
+<!-- Fase 1: Día de notificación -->
+<div class="phase">
+  <div class="phase-title">📋 Día de notificación</div>
+  <div class="check-list">
+    <div class="check-item" onclick="toggle(this)"><div class="check-box">✓</div><div class="check-text"><strong>Comunicar decisión</strong> — Reunión privada con jefe de local + RRHH</div><div class="check-resp">Jefe + RRHH</div></div>
+    <div class="check-item" onclick="toggle(this)"><div class="check-box">✓</div><div class="check-text"><strong>Definir último día</strong> — Acordar fecha efectiva de término</div><div class="check-resp">RRHH</div></div>
+    <div class="check-item" onclick="toggle(this)"><div class="check-box">✓</div><div class="check-text"><strong>Informar a Nelsi</strong> — Para gestión administrativa y finiquito</div><div class="check-resp">RRHH</div></div>
+  </div>
+</div>
+
+<!-- Fase 2: Accesos y sistemas -->
+<div class="phase">
+  <div class="phase-title">🔒 Accesos y sistemas</div>
+  <div class="check-list">
+    <div class="check-item" onclick="toggle(this)"><div class="check-box">✓</div><div class="check-text"><strong>Justo Hub</strong> — Desactivar usuario del POS</div><div class="check-resp">Nelsi</div></div>
+    <div class="check-item" onclick="toggle(this)"><div class="check-box">✓</div><div class="check-text"><strong>CheckRocket</strong> — Remover de la app de checklists</div><div class="check-resp">Nelsi</div></div>
+    <div class="check-item" onclick="toggle(this)"><div class="check-box">✓</div><div class="check-text"><strong>Grupos WhatsApp</strong> — Remover de grupos internos del local</div><div class="check-resp">Jefe Local</div></div>
+    <div class="check-item" onclick="toggle(this)"><div class="check-box">✓</div><div class="check-text"><strong>Llaves / códigos</strong> — Recuperar llaves de bodega o local si aplica</div><div class="check-resp">Jefe Local</div></div>
+  </div>
+</div>
+
+<!-- Fase 3: Equipamiento -->
+<div class="phase">
+  <div class="phase-title">👕 Equipamiento y activos</div>
+  <div class="check-list">
+    <div class="check-item" onclick="toggle(this)"><div class="check-box">✓</div><div class="check-text"><strong>Uniforme completo</strong> — Polera, delantal, gorro (cocina) devueltos</div><div class="check-resp">Jefe Local</div></div>
+    <div class="check-item" onclick="toggle(this)"><div class="check-box">✓</div><div class="check-text"><strong>Herramientas</strong> — Cuchillos, mandil, implementos personales de cocina</div><div class="check-resp">Jefe Cocina</div></div>
+    <div class="check-item" onclick="toggle(this)"><div class="check-box">✓</div><div class="check-text"><strong>Locker / casillero</strong> — Vaciar y entregar candado si corresponde</div><div class="check-resp">Jefe Local</div></div>
+  </div>
+</div>
+
+<!-- Fase 4: Legal y financiero -->
+<div class="phase">
+  <div class="phase-title">📄 Legal y financiero</div>
+  <div class="check-list">
+    <div class="check-item" onclick="toggle(this)"><div class="check-box">✓</div><div class="check-text"><strong>Calcular finiquito</strong> — Vacaciones pendientes, proporcional gratificación, indemnización si aplica</div><div class="check-resp">Nelsi + Finanzas</div></div>
+    <div class="check-item" onclick="toggle(this)"><div class="check-box">✓</div><div class="check-text"><strong>Firma finiquito</strong> — Ante notario o Inspección del Trabajo</div><div class="check-resp">RRHH</div></div>
+    <div class="check-item" onclick="toggle(this)"><div class="check-box">✓</div><div class="check-text"><strong>Pago finiquito</strong> — Transferencia dentro de plazo legal (10 días hábiles)</div><div class="check-resp">Finanzas</div></div>
+    <div class="check-item" onclick="toggle(this)"><div class="check-box">✓</div><div class="check-text"><strong>Certificado AFP/Salud</strong> — Entregar documentación para trámites del trabajador</div><div class="check-resp">Nelsi</div></div>
+  </div>
+</div>
+
+<!-- Fase 5: Cierre -->
+<div class="phase">
+  <div class="phase-title">✅ Cierre</div>
+  <div class="check-list">
+    <div class="check-item" onclick="toggle(this)"><div class="check-box">✓</div><div class="check-text"><strong>Entrevista de salida</strong> — 15 min: motivos, feedback, si recomendaría BC</div><div class="check-resp">RRHH</div></div>
+    <div class="check-item" onclick="toggle(this)"><div class="check-box">✓</div><div class="check-text"><strong>Registrar en Tracker de Rotación</strong> — Nombre, fecha, motivo, tiempo en BC</div><div class="check-resp">RRHH</div></div>
+  </div>
+</div>
+
+<button class="reset-btn" onclick="resetAll()">Reiniciar checklist</button>
+</div>
+
+<footer style="text-align:center;padding:20px;color:#444;font-size:11px;border-top:1px solid #2a2a2a">Black Chicken HR · Offboarding · Uso exclusivo interno</footer>
+
+<script>
+function toggle(el){
+  el.classList.toggle('done');
+  updateProgress();
+}
+function updateProgress(){
+  var items=document.querySelectorAll('.check-item');
+  var done=document.querySelectorAll('.check-item.done');
+  var pct=Math.round((done.length/items.length)*100);
+  document.getElementById('pbar').style.width=pct+'%';
+  document.getElementById('ptext').textContent=done.length+' / '+items.length;
+}
+function resetAll(){
+  document.querySelectorAll('.check-item.done').forEach(function(el){el.classList.remove('done')});
+  updateProgress();
+}
+</script>
+</body>
+</html>
