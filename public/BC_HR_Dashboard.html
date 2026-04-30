@@ -13,6 +13,9 @@ body{font-family:'Inter',sans-serif;background:#0f0f0f;color:#e8e8e8;min-height:
 .container{max-width:960px;margin:0 auto;padding:24px 32px}
 h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 .sub{font-size:13px;color:#666;margin-bottom:24px}
+.source-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600}
+.source-tag.live{background:rgba(80,176,80,.2);color:#50b050}
+.source-tag.static{background:rgba(224,192,80,.2);color:#e0c050}
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
 .kpi{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:20px;text-align:center}
 .kpi-val{font-size:32px;font-weight:900;color:#d4af37;line-height:1}
@@ -37,18 +40,11 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 .badge.ft{background:rgba(74,138,74,.2);color:#6ab86a}
 .badge.pt{background:rgba(74,106,138,.2);color:#7ab0e0}
 .badge.jef{background:rgba(212,175,55,.2);color:#d4af37}
-.alert-row{display:flex;flex-direction:column;gap:8px}
-.alert{display:flex;align-items:center;gap:12px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:12px 16px}
-.alert-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.alert-dot.red{background:#e05050}
-.alert-dot.yellow{background:#e0c050}
-.alert-dot.green{background:#50b050}
-.alert-text{font-size:13px;color:#ccc;flex:1}
-.alert-date{font-size:12px;color:#666;white-space:nowrap}
 .nomina-bar{display:flex;height:32px;border-radius:8px;overflow:hidden;margin-top:8px}
 .nomina-seg{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#0f0f0f}
 .nomina-legend{display:flex;gap:16px;margin-top:8px;font-size:12px;color:#888}
 .legend-dot{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:4px}
+.loading{text-align:center;padding:20px;color:#666;font-size:13px}
 @media(max-width:640px){.kpi-row{grid-template-columns:repeat(2,1fr)}.local-grid{grid-template-columns:1fr}.container{padding:16px}}
 </style>
 </head>
@@ -57,17 +53,15 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 
 <div class="container" style="padding-top:48px">
 <h1>Dashboard de Dotación</h1>
-<p class="sub">Datos de equipo · Black Chicken HR · Actualizado 30-abr-2026</p>
+<p class="sub">Datos de equipo · Black Chicken HR · <span id="dataSource" class="source-tag static">Datos estáticos</span></p>
 
-<!-- KPIs principales -->
 <div class="kpi-row">
-  <div class="kpi"><div class="kpi-val">28</div><div class="kpi-label">Headcount total</div><div class="kpi-sub">25 FT · 3 PT</div></div>
-  <div class="kpi"><div class="kpi-val">$19,3M</div><div class="kpi-label">Nómina bruta</div><div class="kpi-sub">BC1 $11,3M · BC2 $7M</div></div>
+  <div class="kpi"><div class="kpi-val" id="kpi-headcount">28</div><div class="kpi-label">Headcount total</div><div class="kpi-sub" id="kpi-ftpt">25 FT · 3 PT</div></div>
+  <div class="kpi"><div class="kpi-val" id="kpi-nomina">$19,3M</div><div class="kpi-label">Nómina bruta</div><div class="kpi-sub" id="kpi-nomina-sub">BC1 $11,3M · BC2 $7M</div></div>
   <div class="kpi"><div class="kpi-val">2</div><div class="kpi-label">Vacantes abiertas</div><div class="kpi-sub">Sub Jefe · Garzón FT</div></div>
   <div class="kpi"><div class="kpi-val">2</div><div class="kpi-label">Locales operando</div><div class="kpi-sub">BC3 en evaluación</div></div>
 </div>
 
-<!-- Por local -->
 <div class="section">
   <div class="section-title">📍 Por local</div>
   <div class="local-grid">
@@ -75,57 +69,47 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
       <div class="local-name">BC1 — Cerro El Plomo 5931</div>
       <div class="local-addr">L-D 12:00–21:45 · Delivery Uber ✅</div>
       <div class="local-stats">
-        <div class="ls"><div class="ls-val gold">15</div><div class="ls-label">Personas</div></div>
-        <div class="ls"><div class="ls-val">$11,3M</div><div class="ls-label">Nómina bruta</div></div>
-        <div class="ls"><div class="ls-val">4</div><div class="ls-label">Cocina</div></div>
-        <div class="ls"><div class="ls-val">4</div><div class="ls-label">Salón</div></div>
+        <div class="ls"><div class="ls-val gold" id="bc1-count">15</div><div class="ls-label">Personas</div></div>
+        <div class="ls"><div class="ls-val" id="bc1-nomina">$11,3M</div><div class="ls-label">Nómina bruta</div></div>
+        <div class="ls"><div class="ls-val" id="bc1-cocina">4</div><div class="ls-label">Cocina</div></div>
+        <div class="ls"><div class="ls-val" id="bc1-salon">4</div><div class="ls-label">Salón</div></div>
       </div>
     </div>
     <div class="local-card">
       <div class="local-name">BC2 — Cerro El Plomo 5630</div>
       <div class="local-addr">L-V 12:00–20:15 · Sin delivery</div>
       <div class="local-stats">
-        <div class="ls"><div class="ls-val gold">10</div><div class="ls-label">Personas</div></div>
-        <div class="ls"><div class="ls-val">$7M</div><div class="ls-label">Nómina bruta</div></div>
-        <div class="ls"><div class="ls-val">3</div><div class="ls-label">Cocina</div></div>
-        <div class="ls"><div class="ls-val">4</div><div class="ls-label">Salón</div></div>
+        <div class="ls"><div class="ls-val gold" id="bc2-count">10</div><div class="ls-label">Personas</div></div>
+        <div class="ls"><div class="ls-val" id="bc2-nomina">$7M</div><div class="ls-label">Nómina bruta</div></div>
+        <div class="ls"><div class="ls-val" id="bc2-cocina">3</div><div class="ls-label">Cocina</div></div>
+        <div class="ls"><div class="ls-val" id="bc2-salon">4</div><div class="ls-label">Salón</div></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Distribución nómina -->
 <div class="section">
   <div class="section-title">💰 Distribución nómina bruta</div>
-  <div class="nomina-bar">
-    <div class="nomina-seg" style="width:58.5%;background:#d4af37">BC1 · $11,3M</div>
-    <div class="nomina-seg" style="width:36.3%;background:#7ab0e0">BC2 · $7M</div>
-    <div class="nomina-seg" style="width:5.2%;background:#6ab86a">Adm</div>
-  </div>
-  <div class="nomina-legend">
-    <span><span class="legend-dot" style="background:#d4af37"></span>BC1 (58,5%)</span>
-    <span><span class="legend-dot" style="background:#7ab0e0"></span>BC2 (36,3%)</span>
-    <span><span class="legend-dot" style="background:#6ab86a"></span>Admin (5,2%)</span>
-  </div>
-</div>
-
-<!-- Alertas -->
-<div class="section">
-  <div class="section-title">⚠️ Alertas de contratos</div>
-  <div class="alert-row">
-    <div class="alert"><div class="alert-dot yellow"></div><div class="alert-text">Verificar contratos a plazo fijo próximos a vencer — actualizar fechas de ingreso para tracking automático</div><div class="alert-date">Pendiente</div></div>
-    <div class="alert"><div class="alert-dot green"></div><div class="alert-text">Vacante Sub Jefe — publicación activa en hub</div><div class="alert-date">Desde 30-abr</div></div>
-    <div class="alert"><div class="alert-dot green"></div><div class="alert-text">Dotación estable — sin desvinculaciones recientes reportadas</div><div class="alert-date">Abr 2026</div></div>
+  <div id="nomina-bar-container">
+    <div class="nomina-bar">
+      <div class="nomina-seg" style="width:58.5%;background:#d4af37">BC1 · $11,3M</div>
+      <div class="nomina-seg" style="width:36.3%;background:#7ab0e0">BC2 · $7M</div>
+      <div class="nomina-seg" style="width:5.2%;background:#6ab86a">Adm</div>
+    </div>
+    <div class="nomina-legend">
+      <span><span class="legend-dot" style="background:#d4af37"></span>BC1 (58,5%)</span>
+      <span><span class="legend-dot" style="background:#7ab0e0"></span>BC2 (36,3%)</span>
+      <span><span class="legend-dot" style="background:#6ab86a"></span>Admin (5,2%)</span>
+    </div>
   </div>
 </div>
 
-<!-- Equipo completo -->
 <div class="section">
   <div class="section-title">👥 Equipo completo</div>
   <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;overflow-x:auto">
-  <table class="team-table">
+  <table class="team-table" id="team-table">
     <thead><tr><th>Nombre</th><th>Cargo</th><th>Local</th><th>Jornada</th><th>Sueldo bruto</th></tr></thead>
-    <tbody>
+    <tbody id="team-tbody">
       <tr><td><strong>Nelsi Rodriguez</strong></td><td>Administradora</td><td>Ambos</td><td><span class="badge ft">Full</span></td><td>$1.000.000</td></tr>
       <tr style="border-top:2px solid #2a2a2a"><td colspan="5" style="color:#d4af37;font-weight:700;font-size:11px;letter-spacing:1px;padding:12px">BC1 — CERRO EL PLOMO 5931</td></tr>
       <tr><td><strong>Felipe Cofre</strong></td><td>Jefe de Local</td><td>BC1</td><td><span class="badge jef">Jefe</span></td><td>$1.100.000</td></tr>
@@ -163,5 +147,105 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 <footer style="text-align:center;padding:20px;color:#444;font-size:11px;border-top:1px solid #2a2a2a">
   Black Chicken HR · Dashboard de Dotación · Datos sensibles — uso exclusivo interno
 </footer>
+
+<script>
+(function(){
+  var API_URL = localStorage.getItem('bc_hr_api_url');
+  if (!API_URL) return; // mantiene datos estáticos
+
+  fetch(API_URL + '?tab=equipo')
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (!Array.isArray(data) || data.length === 0) return;
+
+      var activos = data.filter(function(p){ return (p.estado || 'Activo') === 'Activo'; });
+      var bc1 = activos.filter(function(p){ return p.local === 'BC1'; });
+      var bc2 = activos.filter(function(p){ return p.local === 'BC2'; });
+      var admin = activos.filter(function(p){ return p.local === 'Admin' || p.local === 'Ambos'; });
+      var ft = activos.filter(function(p){ return (p.jornada || '').indexOf('Part') === -1; });
+      var pt = activos.filter(function(p){ return (p.jornada || '').indexOf('Part') >= 0; });
+
+      // KPIs
+      document.getElementById('kpi-headcount').textContent = activos.length;
+      document.getElementById('kpi-ftpt').textContent = ft.length + ' FT · ' + pt.length + ' PT';
+
+      var totalNom = activos.reduce(function(s,p){ return s + (parseInt(p.sueldo_bruto) || 0); }, 0);
+      var bc1Nom = bc1.reduce(function(s,p){ return s + (parseInt(p.sueldo_bruto) || 0); }, 0);
+      var bc2Nom = bc2.reduce(function(s,p){ return s + (parseInt(p.sueldo_bruto) || 0); }, 0);
+      var admNom = admin.reduce(function(s,p){ return s + (parseInt(p.sueldo_bruto) || 0); }, 0);
+
+      function fmtM(n){ return '$' + (n/1000000).toFixed(1).replace('.',',') + 'M'; }
+
+      document.getElementById('kpi-nomina').textContent = fmtM(totalNom);
+      document.getElementById('kpi-nomina-sub').textContent = 'BC1 ' + fmtM(bc1Nom) + ' · BC2 ' + fmtM(bc2Nom);
+
+      document.getElementById('bc1-count').textContent = bc1.length;
+      document.getElementById('bc1-nomina').textContent = fmtM(bc1Nom);
+      document.getElementById('bc2-count').textContent = bc2.length;
+      document.getElementById('bc2-nomina').textContent = fmtM(bc2Nom);
+
+      // Cocina/Salón counts
+      var cocinaKeys = ['Cocinero','Copera','Jefe de Cocina','Sous Chef','Subjefe de Cocina'];
+      var salonKeys = ['Garzón','Garzona','Entrenador','Entrenadora','Jefe de Salón'];
+      document.getElementById('bc1-cocina').textContent = bc1.filter(function(p){ return cocinaKeys.some(function(k){ return (p.cargo||'').indexOf(k)>=0; }); }).length;
+      document.getElementById('bc1-salon').textContent = bc1.filter(function(p){ return salonKeys.some(function(k){ return (p.cargo||'').indexOf(k)>=0; }); }).length;
+      document.getElementById('bc2-cocina').textContent = bc2.filter(function(p){ return cocinaKeys.some(function(k){ return (p.cargo||'').indexOf(k)>=0; }); }).length;
+      document.getElementById('bc2-salon').textContent = bc2.filter(function(p){ return salonKeys.some(function(k){ return (p.cargo||'').indexOf(k)>=0; }); }).length;
+
+      // Nomina bar
+      if (totalNom > 0) {
+        var pbc1 = (bc1Nom/totalNom*100).toFixed(1);
+        var pbc2 = (bc2Nom/totalNom*100).toFixed(1);
+        var padm = (admNom/totalNom*100).toFixed(1);
+        document.getElementById('nomina-bar-container').innerHTML =
+          '<div class="nomina-bar">' +
+          '<div class="nomina-seg" style="width:'+pbc1+'%;background:#d4af37">BC1 · '+fmtM(bc1Nom)+'</div>' +
+          '<div class="nomina-seg" style="width:'+pbc2+'%;background:#7ab0e0">BC2 · '+fmtM(bc2Nom)+'</div>' +
+          '<div class="nomina-seg" style="width:'+padm+'%;background:#6ab86a">Adm</div>' +
+          '</div><div class="nomina-legend">' +
+          '<span><span class="legend-dot" style="background:#d4af37"></span>BC1 ('+pbc1.replace('.',',')+'%)</span>' +
+          '<span><span class="legend-dot" style="background:#7ab0e0"></span>BC2 ('+pbc2.replace('.',',')+'%)</span>' +
+          '<span><span class="legend-dot" style="background:#6ab86a"></span>Admin ('+padm.replace('.',',')+'%)</span>' +
+          '</div>';
+      }
+
+      // Team table
+      var tbody = document.getElementById('team-tbody');
+      var html = '';
+      // Admin first
+      admin.forEach(function(p){
+        html += buildRow(p, 'ft');
+      });
+      // BC1
+      html += '<tr style="border-top:2px solid #2a2a2a"><td colspan="5" style="color:#d4af37;font-weight:700;font-size:11px;letter-spacing:1px;padding:12px">BC1 — CERRO EL PLOMO 5931</td></tr>';
+      bc1.forEach(function(p){ html += buildRow(p, getBadge(p)); });
+      // BC2
+      html += '<tr style="border-top:2px solid #2a2a2a"><td colspan="5" style="color:#7ab0e0;font-weight:700;font-size:11px;letter-spacing:1px;padding:12px">BC2 — CERRO EL PLOMO 5630</td></tr>';
+      bc2.forEach(function(p){ html += buildRow(p, getBadge(p)); });
+      tbody.innerHTML = html;
+
+      // Source tag
+      document.getElementById('dataSource').textContent = 'Live · Google Sheet';
+      document.getElementById('dataSource').className = 'source-tag live';
+    })
+    .catch(function(e){ console.log('API error, using static data:', e); });
+
+  function getBadge(p){
+    var c = (p.cargo || '').toLowerCase();
+    if (c.indexOf('jefe') >= 0 || c.indexOf('sub') >= 0) return 'jef';
+    if ((p.jornada || '').indexOf('Part') >= 0) return 'pt';
+    return 'ft';
+  }
+
+  function buildRow(p, badge){
+    var isJefe = badge === 'jef';
+    var badgeLabel = badge === 'jef' ? 'Jefe' : badge === 'pt' ? 'PT 20h' : 'Full';
+    var sueldo = parseInt(p.sueldo_bruto) || 0;
+    var sueldoFmt = '$' + sueldo.toLocaleString('es-CL');
+    var name = isJefe ? '<strong>' + p.nombre + '</strong>' : p.nombre;
+    return '<tr><td>' + name + '</td><td>' + (p.cargo||'') + '</td><td>' + (p.local||'') + '</td><td><span class="badge ' + badge + '">' + badgeLabel + '</span></td><td>' + sueldoFmt + '</td></tr>';
+  }
+})();
+</script>
 </body>
 </html>

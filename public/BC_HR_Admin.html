@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin HR — Black Chicken</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0f0f0f;color:#d4d4d4;min-height:100vh;padding:20px}
+.back-hub{position:fixed;top:16px;left:16px;z-index:9999;display:inline-flex;align-items:center;gap:6px;background:rgba(26,26,26,.92);border:1px solid #2a2a2a;border-radius:8px;padding:8px 14px;color:#999;font-size:12px;font-weight:600;text-decoration:none;backdrop-filter:blur(8px);transition:all .2s}
+.back-hub:hover{color:#d4af37;border-color:#d4af37}
+.container{max-width:700px;margin:0 auto;padding-top:40px}
+h1{color:#fff;font-size:22px;font-weight:800;text-align:center;margin-bottom:4px}
+.subtitle{text-align:center;color:#666;font-size:12px;margin-bottom:24px}
+.config-bar{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.config-bar label{color:#888;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.config-bar input{flex:1;min-width:200px;background:#0f0f0f;border:1px solid #333;border-radius:6px;padding:8px 12px;color:#d4d4d4;font-size:12px;font-family:monospace}
+.config-bar button{background:#d4af37;color:#0f0f0f;border:none;border-radius:6px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer}
+.config-bar .status{font-size:11px;margin-left:auto}
+.status.ok{color:#4ade80}
+.status.err{color:#f87171}
+.status.wait{color:#888}
+
+.tabs{display:flex;gap:4px;margin-bottom:16px}
+.tab{flex:1;text-align:center;padding:10px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;color:#888;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.5px}
+.tab.active{background:linear-gradient(135deg,#d4af37,#f0c940);color:#0f0f0f;border-color:transparent}
+
+.form-panel{display:none;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:20px}
+.form-panel.active{display:block}
+.form-title{color:#fff;font-size:15px;font-weight:700;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #2a2a2a}
+.form-row{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.field{flex:1;min-width:140px}
+.field label{display:block;color:#888;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.field input,.field select,.field textarea{width:100%;background:#0f0f0f;border:1px solid #333;border-radius:6px;padding:8px 10px;color:#d4d4d4;font-size:13px;font-family:'Inter',sans-serif}
+.field textarea{resize:vertical;min-height:60px}
+.field select{appearance:none;cursor:pointer}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#d4af37}
+
+.btn-submit{display:block;width:100%;margin-top:16px;padding:12px;background:linear-gradient(135deg,#d4af37,#f0c940);color:#0f0f0f;border:none;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;transition:opacity .2s}
+.btn-submit:hover{opacity:.9}
+.btn-submit:disabled{opacity:.4;cursor:not-allowed}
+
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid #4ade80;color:#4ade80;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;display:none;z-index:9999}
+.toast.error{border-color:#f87171;color:#f87171}
+
+.recent{margin-top:20px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:16px}
+.recent h3{color:#fff;font-size:13px;font-weight:700;margin-bottom:10px}
+.recent-item{padding:8px 0;border-bottom:1px solid #1f1f1f;font-size:12px;color:#999}
+.recent-item:last-child{border:none}
+.recent-item strong{color:#d4d4d4}
+
+@media(max-width:640px){
+  .form-row{flex-direction:column}
+  .field{min-width:100%}
+  .config-bar{flex-direction:column;align-items:stretch}
+  .config-bar input{min-width:100%}
+  .config-bar .status{margin-left:0;margin-top:4px}
+}
+</style>
+</head>
+<body>
+
+<a href="hub-index.html" class="back-hub"><span>←</span> Hub HR</a>
+
+<div class="container">
+  <h1>⚙️ Admin HR</h1>
+  <p class="subtitle">Panel de administración · Agrega y gestiona datos del equipo</p>
+
+  <!-- API Config -->
+  <div class="config-bar">
+    <label>API URL</label>
+    <input type="text" id="apiUrl" placeholder="https://script.google.com/macros/s/.../exec">
+    <button onclick="saveApi()">Guardar</button>
+    <span id="apiStatus" class="status wait">Sin configurar</span>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('equipo')">+ Miembro</div>
+    <div class="tab" onclick="switchTab('salida')">+ Salida</div>
+    <div class="tab" onclick="switchTab('evento')">+ Evento</div>
+  </div>
+
+  <!-- Form: Agregar Miembro -->
+  <div id="panel-equipo" class="form-panel active">
+    <div class="form-title">Agregar miembro al equipo</div>
+    <div class="form-row">
+      <div class="field"><label>Nombre completo *</label><input type="text" id="eq_nombre" required></div>
+      <div class="field"><label>Cargo *</label><input type="text" id="eq_cargo" placeholder="Ej: Cocinero"></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Local *</label>
+        <select id="eq_local"><option value="BC1">BC1</option><option value="BC2">BC2</option><option value="Admin">Admin</option></select>
+      </div>
+      <div class="field"><label>Jornada</label>
+        <select id="eq_jornada"><option value="Full time">Full time</option><option value="Part time (20hrs)">Part time (20hrs)</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Sueldo bruto (CLP)</label><input type="number" id="eq_sueldo" placeholder="650000"></div>
+      <div class="field"><label>Tipo contrato</label>
+        <select id="eq_contrato"><option value="Indefinido">Indefinido</option><option value="Plazo fijo">Plazo fijo</option><option value="Honorarios">Honorarios</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Fecha ingreso</label><input type="date" id="eq_ingreso"></div>
+      <div class="field"><label>Cumpleaños</label><input type="date" id="eq_cumple"></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Email</label><input type="email" id="eq_email" placeholder="nombre@blackchicken.cl"></div>
+      <div class="field"><label>Teléfono</label><input type="tel" id="eq_tel" placeholder="+56 9 1234 5678"></div>
+    </div>
+    <button class="btn-submit" onclick="submitEquipo()">Agregar al equipo</button>
+  </div>
+
+  <!-- Form: Registrar Salida -->
+  <div id="panel-salida" class="form-panel">
+    <div class="form-title">Registrar salida de personal</div>
+    <div class="form-row">
+      <div class="field"><label>Nombre *</label><input type="text" id="sal_nombre" placeholder="Nombre exacto como está en el Sheet"></div>
+      <div class="field"><label>Cargo</label><input type="text" id="sal_cargo"></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Local</label>
+        <select id="sal_local"><option value="BC1">BC1</option><option value="BC2">BC2</option><option value="Admin">Admin</option></select>
+      </div>
+      <div class="field"><label>Fecha salida *</label><input type="date" id="sal_fecha"></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Tipo</label>
+        <select id="sal_tipo"><option value="Voluntaria">Voluntaria</option><option value="Desvinculación">Desvinculación</option><option value="Fin contrato">Fin contrato</option><option value="Mutuo acuerdo">Mutuo acuerdo</option></select>
+      </div>
+      <div class="field"><label>Tiempo en BC</label><input type="text" id="sal_tiempo" placeholder="Ej: 8 meses"></div>
+    </div>
+    <div class="form-row">
+      <div class="field" style="flex:2"><label>Motivo</label><textarea id="sal_motivo" placeholder="Razón de la salida"></textarea></div>
+    </div>
+    <div class="form-row">
+      <div class="field" style="flex:2"><label>Comentarios</label><textarea id="sal_comentarios" placeholder="Notas adicionales (opcional)"></textarea></div>
+    </div>
+    <button class="btn-submit" onclick="submitSalida()">Registrar salida</button>
+  </div>
+
+  <!-- Form: Agregar Evento -->
+  <div id="panel-evento" class="form-panel">
+    <div class="form-title">Agregar evento al calendario</div>
+    <div class="form-row">
+      <div class="field"><label>Fecha *</label><input type="date" id="ev_fecha"></div>
+      <div class="field"><label>Tipo *</label>
+        <select id="ev_tipo"><option value="contrato">Vencimiento contrato</option><option value="cumpleanos">Cumpleaños</option><option value="evaluacion">Evaluación</option><option value="capacitacion">Capacitación</option><option value="feriado">Feriado</option><option value="otro">Otro</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field" style="flex:2"><label>Título *</label><input type="text" id="ev_titulo" placeholder="Ej: Cumpleaños Felipe Cofre"></div>
+    </div>
+    <div class="form-row">
+      <div class="field" style="flex:2"><label>Descripción</label><textarea id="ev_desc" placeholder="Detalles del evento (opcional)"></textarea></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>¿Recurrente?</label>
+        <select id="ev_recurrente"><option value="No">No</option><option value="Anual">Anual</option><option value="Mensual">Mensual</option></select>
+      </div>
+    </div>
+    <button class="btn-submit" onclick="submitEvento()">Agregar evento</button>
+  </div>
+
+  <!-- Recent activity -->
+  <div class="recent" id="recentBox" style="display:none">
+    <h3>Actividad reciente</h3>
+    <div id="recentList"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var API_URL = '';
+var recentActions = [];
+
+// Init
+(function(){
+  var saved = localStorage.getItem('bc_hr_api_url');
+  if (saved) {
+    API_URL = saved;
+    document.getElementById('apiUrl').value = saved;
+    testApi();
+  }
+  var hist = localStorage.getItem('bc_hr_recent');
+  if (hist) { recentActions = JSON.parse(hist); renderRecent(); }
+})();
+
+function saveApi() {
+  var url = document.getElementById('apiUrl').value.trim();
+  if (!url) return;
+  API_URL = url;
+  localStorage.setItem('bc_hr_api_url', url);
+  testApi();
+}
+
+function testApi() {
+  var el = document.getElementById('apiStatus');
+  el.textContent = 'Probando...';
+  el.className = 'status wait';
+  fetch(API_URL + '?tab=equipo')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (Array.isArray(d)) {
+        el.textContent = '✓ Conectado (' + d.length + ' miembros)';
+        el.className = 'status ok';
+      } else if (d.error) {
+        el.textContent = '✗ ' + d.error;
+        el.className = 'status err';
+      }
+    })
+    .catch(function(e){
+      el.textContent = '✗ Error de conexión';
+      el.className = 'status err';
+    });
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.form-panel').forEach(function(p){ p.classList.remove('active'); });
+  event.target.classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+}
+
+function showToast(msg, isError) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '');
+  t.style.display = 'block';
+  setTimeout(function(){ t.style.display = 'none'; }, 3000);
+}
+
+function postData(action, data, successMsg) {
+  if (!API_URL) { showToast('Configura la API URL primero', true); return; }
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: action, data: data }),
+    mode: 'no-cors'
+  })
+  .then(function(){
+    showToast(successMsg);
+    addRecent(successMsg + ': ' + (data.nombre || data.titulo || ''));
+    testApi();
+  })
+  .catch(function(e){
+    showToast('Error: ' + e.message, true);
+  });
+}
+
+function addRecent(msg) {
+  var now = new Date().toLocaleString('es-CL');
+  recentActions.unshift({ time: now, msg: msg });
+  if (recentActions.length > 10) recentActions = recentActions.slice(0, 10);
+  localStorage.setItem('bc_hr_recent', JSON.stringify(recentActions));
+  renderRecent();
+}
+
+function renderRecent() {
+  if (recentActions.length === 0) return;
+  document.getElementById('recentBox').style.display = 'block';
+  document.getElementById('recentList').innerHTML = recentActions.map(function(a){
+    return '<div class="recent-item"><strong>' + a.time + '</strong> — ' + a.msg + '</div>';
+  }).join('');
+}
+
+function submitEquipo() {
+  var nombre = document.getElementById('eq_nombre').value.trim();
+  var cargo = document.getElementById('eq_cargo').value.trim();
+  if (!nombre || !cargo) { showToast('Nombre y cargo son obligatorios', true); return; }
+  postData('add_equipo', {
+    nombre: nombre,
+    cargo: cargo,
+    local: document.getElementById('eq_local').value,
+    jornada: document.getElementById('eq_jornada').value,
+    sueldo_bruto: parseInt(document.getElementById('eq_sueldo').value) || 0,
+    fecha_ingreso: document.getElementById('eq_ingreso').value,
+    cumpleanos: document.getElementById('eq_cumple').value,
+    tipo_contrato: document.getElementById('eq_contrato').value,
+    estado: 'Activo',
+    email: document.getElementById('eq_email').value,
+    telefono: document.getElementById('eq_tel').value
+  }, 'Miembro agregado');
+  document.getElementById('eq_nombre').value = '';
+  document.getElementById('eq_cargo').value = '';
+  document.getElementById('eq_sueldo').value = '';
+  document.getElementById('eq_ingreso').value = '';
+  document.getElementById('eq_cumple').value = '';
+  document.getElementById('eq_email').value = '';
+  document.getElementById('eq_tel').value = '';
+}
+
+function submitSalida() {
+  var nombre = document.getElementById('sal_nombre').value.trim();
+  var fecha = document.getElementById('sal_fecha').value;
+  if (!nombre || !fecha) { showToast('Nombre y fecha son obligatorios', true); return; }
+  postData('add_salida', {
+    nombre: nombre,
+    cargo: document.getElementById('sal_cargo').value,
+    local: document.getElementById('sal_local').value,
+    fecha_salida: fecha,
+    motivo: document.getElementById('sal_motivo').value,
+    tipo: document.getElementById('sal_tipo').value,
+    tiempo_en_bc: document.getElementById('sal_tiempo').value,
+    comentarios: document.getElementById('sal_comentarios').value
+  }, 'Salida registrada');
+  document.getElementById('sal_nombre').value = '';
+  document.getElementById('sal_cargo').value = '';
+  document.getElementById('sal_fecha').value = '';
+  document.getElementById('sal_motivo').value = '';
+  document.getElementById('sal_tiempo').value = '';
+  document.getElementById('sal_comentarios').value = '';
+}
+
+function submitEvento() {
+  var fecha = document.getElementById('ev_fecha').value;
+  var titulo = document.getElementById('ev_titulo').value.trim();
+  if (!fecha || !titulo) { showToast('Fecha y título son obligatorios', true); return; }
+  postData('add_evento', {
+    fecha: fecha,
+    titulo: titulo,
+    tipo: document.getElementById('ev_tipo').value,
+    descripcion: document.getElementById('ev_desc').value,
+    recurrente: document.getElementById('ev_recurrente').value
+  }, 'Evento agregado');
+  document.getElementById('ev_titulo').value = '';
+  document.getElementById('ev_desc').value = '';
+  document.getElementById('ev_fecha').value = '';
+}
+</script>
+</body>
+</html>

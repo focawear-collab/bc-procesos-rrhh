@@ -13,6 +13,9 @@ body{font-family:'Inter',sans-serif;background:#0f0f0f;color:#e8e8e8;min-height:
 .container{max-width:900px;margin:0 auto;padding:48px 32px}
 h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 .sub{font-size:13px;color:#666;margin-bottom:24px}
+.source-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600}
+.source-tag.live{background:rgba(80,176,80,.2);color:#50b050}
+.source-tag.static{background:rgba(224,192,80,.2);color:#e0c050}
 .legend{display:flex;gap:16px;margin-bottom:20px;font-size:12px;color:#888;flex-wrap:wrap}
 .legend-item{display:flex;align-items:center;gap:6px}
 .dot{width:10px;height:10px;border-radius:50%}
@@ -23,16 +26,15 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 .event{display:flex;align-items:center;gap:12px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:12px 16px;transition:border-color .2s}
 .event:hover{border-color:#3a3a3a}
 .event-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.event-dot.contract{background:#e0c050}.event-dot.birthday{background:#5090e0}.event-dot.eval{background:#50b050}.event-dot.holiday{background:#e05050}
 .event-date{font-size:12px;color:#666;width:70px;flex-shrink:0;font-weight:600}
 .event-text{font-size:13px;color:#ccc;flex:1}
 .event-text strong{color:#fff}
 .event-tag{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:700;text-transform:uppercase;white-space:nowrap}
-.event-tag.contract{background:rgba(224,192,80,.15);color:#e0c050}
-.event-tag.birthday{background:rgba(80,144,224,.15);color:#5090e0}
-.event-tag.eval{background:rgba(80,176,80,.15);color:#50b050}
-.event-tag.holiday{background:rgba(224,80,80,.15);color:#e05050}
-.empty-state{text-align:center;padding:40px;color:#555;font-size:14px;background:#1a1a1a;border:1px dashed #2a2a2a;border-radius:12px}
+.event-tag.contrato{background:rgba(224,192,80,.15);color:#e0c050}
+.event-tag.cumpleanos{background:rgba(80,144,224,.15);color:#5090e0}
+.event-tag.evaluacion,.event-tag.capacitacion{background:rgba(80,176,80,.15);color:#50b050}
+.event-tag.feriado{background:rgba(224,80,80,.15);color:#e05050}
+.event-tag.otro{background:rgba(150,150,150,.15);color:#999}
 .note{background:#1a1a1a;border:1px solid #d4af37;border-radius:10px;padding:16px;font-size:13px;color:#ccc;margin-bottom:24px;line-height:1.6}
 .note strong{color:#d4af37}
 @media(max-width:640px){.container{padding:24px 16px}.event{flex-wrap:wrap;gap:8px}.event-date{width:auto}}
@@ -42,11 +44,7 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 <a href="hub-index.html" class="back-hub"><span>←</span> Hub HR</a>
 <div class="container">
 <h1>Calendario HR</h1>
-<p class="sub">Eventos, vencimientos y fechas clave · Black Chicken HR</p>
-
-<div class="note">
-  <strong>⚡ Para activar este calendario:</strong> Agregar las fechas de ingreso y cumpleaños de cada persona del equipo. Con eso se calculan automáticamente vencimientos de contratos a plazo fijo (90 días), renovaciones y antigüedad.
-</div>
+<p class="sub">Eventos, vencimientos y fechas clave · <span id="dataSource" class="source-tag static">Datos estáticos</span></p>
 
 <div class="legend">
   <div class="legend-item"><div class="dot red"></div>Feriado / Cierre</div>
@@ -55,52 +53,118 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
   <div class="legend-item"><div class="dot green"></div>Evaluación / Hito</div>
 </div>
 
-<!-- Mayo 2026 -->
-<div class="month-section">
-  <div class="month-title">Mayo 2026</div>
-  <div class="event-list">
-    <div class="event"><div class="event-dot holiday"></div><div class="event-date">01 May</div><div class="event-text"><strong>Día del Trabajo</strong> — Feriado legal</div><div class="event-tag holiday">Feriado</div></div>
-    <div class="event"><div class="event-dot eval"></div><div class="event-date">05 May</div><div class="event-text"><strong>Evaluación de desempeño</strong> — Ciclo Q1 (pendiente confirmar)</div><div class="event-tag eval">Evaluación</div></div>
-    <div class="event"><div class="event-dot holiday"></div><div class="event-date">21 May</div><div class="event-text"><strong>Día de las Glorias Navales</strong> — Feriado legal</div><div class="event-tag holiday">Feriado</div></div>
-  </div>
+<div id="calendar-content">
+<!-- Feriados fijos (siempre se muestran) -->
 </div>
-
-<!-- Junio 2026 -->
-<div class="month-section">
-  <div class="month-title">Junio 2026</div>
-  <div class="event-list">
-    <div class="event"><div class="event-dot holiday"></div><div class="event-date">29 Jun</div><div class="event-text"><strong>San Pedro y San Pablo</strong> — Feriado legal</div><div class="event-tag holiday">Feriado</div></div>
-  </div>
-</div>
-
-<!-- Julio 2026 -->
-<div class="month-section">
-  <div class="month-title">Julio 2026</div>
-  <div class="event-list">
-    <div class="event"><div class="event-dot holiday"></div><div class="event-date">16 Jul</div><div class="event-text"><strong>Día de la Virgen del Carmen</strong> — Feriado legal</div><div class="event-tag holiday">Feriado</div></div>
-  </div>
-</div>
-
-<!-- Septiembre 2026 -->
-<div class="month-section">
-  <div class="month-title">Septiembre 2026</div>
-  <div class="event-list">
-    <div class="event"><div class="event-dot eval"></div><div class="event-date">01 Sep</div><div class="event-text"><strong>Pago Aguinaldo Fiestas Patrias</strong> — Para equipo con contrato indefinido</div><div class="event-tag eval">Beneficio</div></div>
-    <div class="event"><div class="event-dot holiday"></div><div class="event-date">18 Sep</div><div class="event-text"><strong>Fiestas Patrias</strong> — Feriado legal</div><div class="event-tag holiday">Feriado</div></div>
-    <div class="event"><div class="event-dot holiday"></div><div class="event-date">19 Sep</div><div class="event-text"><strong>Día de las Glorias del Ejército</strong> — Feriado legal</div><div class="event-tag holiday">Feriado</div></div>
-  </div>
-</div>
-
-<!-- Diciembre 2026 -->
-<div class="month-section">
-  <div class="month-title">Diciembre 2026</div>
-  <div class="event-list">
-    <div class="event"><div class="event-dot eval"></div><div class="event-date">01 Dic</div><div class="event-text"><strong>Pago Aguinaldo Navidad</strong> — Para equipo con contrato indefinido</div><div class="event-tag eval">Beneficio</div></div>
-    <div class="event"><div class="event-dot holiday"></div><div class="event-date">25 Dic</div><div class="event-text"><strong>Navidad</strong> — Feriado legal</div><div class="event-tag holiday">Feriado</div></div>
-  </div>
-</div>
-
 </div>
 <footer style="text-align:center;padding:20px;color:#444;font-size:11px;border-top:1px solid #2a2a2a">Black Chicken HR · Calendario · Uso exclusivo interno</footer>
+
+<script>
+var MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+// Feriados Chile 2026 hardcoded
+var feriados = [
+  {fecha:'2026-01-01',titulo:'Año Nuevo',tipo:'feriado'},
+  {fecha:'2026-05-01',titulo:'Día del Trabajo',tipo:'feriado'},
+  {fecha:'2026-05-21',titulo:'Glorias Navales',tipo:'feriado'},
+  {fecha:'2026-06-29',titulo:'San Pedro y San Pablo',tipo:'feriado'},
+  {fecha:'2026-07-16',titulo:'Virgen del Carmen',tipo:'feriado'},
+  {fecha:'2026-08-15',titulo:'Asunción de la Virgen',tipo:'feriado'},
+  {fecha:'2026-09-18',titulo:'Fiestas Patrias',tipo:'feriado'},
+  {fecha:'2026-09-19',titulo:'Glorias del Ejército',tipo:'feriado'},
+  {fecha:'2026-10-12',titulo:'Encuentro de Dos Mundos',tipo:'feriado'},
+  {fecha:'2026-10-31',titulo:'Día de las Iglesias Evangélicas',tipo:'feriado'},
+  {fecha:'2026-11-01',titulo:'Día de Todos los Santos',tipo:'feriado'},
+  {fecha:'2026-12-08',titulo:'Inmaculada Concepción',tipo:'feriado'},
+  {fecha:'2026-12-25',titulo:'Navidad',tipo:'feriado'},
+  {fecha:'2026-09-01',titulo:'Pago Aguinaldo Fiestas Patrias',tipo:'evaluacion',desc:'Para equipo con contrato indefinido'},
+  {fecha:'2026-12-01',titulo:'Pago Aguinaldo Navidad',tipo:'evaluacion',desc:'Para equipo con contrato indefinido'}
+];
+
+var dotColors = {feriado:'#e05050',contrato:'#e0c050',cumpleanos:'#5090e0',evaluacion:'#50b050',capacitacion:'#50b050',otro:'#999'};
+
+function renderCalendar(events) {
+  // Agrupar por mes
+  var byMonth = {};
+  events.forEach(function(ev){
+    var d = new Date(ev.fecha + 'T12:00:00');
+    if (isNaN(d)) return;
+    var key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+    if (!byMonth[key]) byMonth[key] = [];
+    byMonth[key].push(ev);
+  });
+
+  // Filtrar solo meses futuros o actuales
+  var now = new Date();
+  var currentKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+
+  var keys = Object.keys(byMonth).sort();
+  var html = '';
+
+  keys.forEach(function(key){
+    if (key < currentKey) return; // skip pasados
+    var items = byMonth[key].sort(function(a,b){ return a.fecha.localeCompare(b.fecha); });
+    var parts = key.split('-');
+    var monthName = MESES[parseInt(parts[1])-1] + ' ' + parts[0];
+
+    html += '<div class="month-section"><div class="month-title">' + monthName + '</div><div class="event-list">';
+    items.forEach(function(ev){
+      var d = new Date(ev.fecha + 'T12:00:00');
+      var dayStr = String(d.getDate()).padStart(2,'0') + ' ' + MESES[d.getMonth()].substring(0,3);
+      var tipo = ev.tipo || 'otro';
+      var dotColor = dotColors[tipo] || '#999';
+      var desc = ev.descripcion || ev.desc || '';
+      var descHtml = desc ? ' — ' + desc : '';
+      html += '<div class="event"><div class="event-dot" style="background:' + dotColor + '"></div><div class="event-date">' + dayStr + '</div><div class="event-text"><strong>' + ev.titulo + '</strong>' + descHtml + '</div><div class="event-tag ' + tipo + '">' + tipo.replace('cumpleanos','Cumpleaños').replace('evaluacion','Evaluación').replace('capacitacion','Capacitación').replace('feriado','Feriado').replace('contrato','Contrato').replace('otro','Otro') + '</div></div>';
+    });
+    html += '</div></div>';
+  });
+
+  if (!html) html = '<div style="text-align:center;padding:40px;color:#555">No hay eventos próximos</div>';
+  document.getElementById('calendar-content').innerHTML = html;
+}
+
+// Start with feriados
+var allEvents = feriados.slice();
+
+// Try API
+var API_URL = localStorage.getItem('bc_hr_api_url');
+if (API_URL) {
+  Promise.all([
+    fetch(API_URL + '?tab=eventos').then(function(r){ return r.json(); }),
+    fetch(API_URL + '?tab=equipo').then(function(r){ return r.json(); })
+  ]).then(function(results){
+    var eventos = results[0];
+    var equipo = results[1];
+
+    // Agregar eventos del sheet
+    if (Array.isArray(eventos)) {
+      eventos.forEach(function(ev){ allEvents.push(ev); });
+    }
+
+    // Generar cumpleaños del equipo
+    if (Array.isArray(equipo)) {
+      equipo.forEach(function(p){
+        if (p.cumpleanos && (p.estado || 'Activo') === 'Activo') {
+          var parts = p.cumpleanos.split('-');
+          if (parts.length >= 2) {
+            var cumple2026 = '2026-' + parts[1] + '-' + parts[2];
+            allEvents.push({fecha: cumple2026, titulo: 'Cumpleaños ' + p.nombre, tipo: 'cumpleanos', descripcion: p.cargo + ' · ' + p.local});
+          }
+        }
+      });
+    }
+
+    document.getElementById('dataSource').textContent = 'Live · Google Sheet';
+    document.getElementById('dataSource').className = 'source-tag live';
+    renderCalendar(allEvents);
+  }).catch(function(e){
+    console.log('API error, using static:', e);
+    renderCalendar(allEvents);
+  });
+} else {
+  renderCalendar(allEvents);
+}
+</script>
 </body>
 </html>

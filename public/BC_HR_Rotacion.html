@@ -13,6 +13,9 @@ body{font-family:'Inter',sans-serif;background:#0f0f0f;color:#e8e8e8;min-height:
 .container{max-width:900px;margin:0 auto;padding:48px 32px}
 h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 .sub{font-size:13px;color:#666;margin-bottom:24px}
+.source-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600}
+.source-tag.live{background:rgba(80,176,80,.2);color:#50b050}
+.source-tag.static{background:rgba(224,192,80,.2);color:#e0c050}
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
 .kpi{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:20px;text-align:center}
 .kpi-val{font-size:32px;font-weight:900;line-height:1}
@@ -20,14 +23,16 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 .kpi-label{font-size:11px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-top:6px}
 .kpi-sub{font-size:12px;color:#555;margin-top:4px}
 .section-title{font-size:14px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
+.table-wrap{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;overflow-x:auto;margin-bottom:24px}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th{text-align:left;color:#666;font-size:11px;text-transform:uppercase;letter-spacing:1px;padding:10px 12px;border-bottom:1px solid #2a2a2a;font-weight:600}
 td{padding:10px 12px;border-bottom:1px solid #1a1a1a;color:#ccc}
-tr:hover td{background:#1a1a1a}
+tr:hover td{background:rgba(255,255,255,.02)}
 .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase}
 .badge.vol{background:rgba(224,192,80,.15);color:#e0c050}
 .badge.inv{background:rgba(224,80,80,.15);color:#e05050}
 .badge.fin{background:rgba(80,176,80,.15);color:#50b050}
+.badge.mut{background:rgba(80,144,224,.15);color:#5090e0}
 .empty-msg{text-align:center;padding:48px;color:#555;font-size:14px;background:#1a1a1a;border:1px dashed #2a2a2a;border-radius:12px;margin-bottom:24px}
 .empty-msg strong{color:#888}
 .bench{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:20px;margin-bottom:24px}
@@ -43,16 +48,15 @@ tr:hover td{background:#1a1a1a}
 <a href="hub-index.html" class="back-hub"><span>←</span> Hub HR</a>
 <div class="container">
 <h1>Tracker de Rotación</h1>
-<p class="sub">Registro de desvinculaciones y KPIs de retención · Black Chicken HR</p>
+<p class="sub">Registro de desvinculaciones y KPIs de retención · <span id="dataSource" class="source-tag static">Datos estáticos</span></p>
 
 <div class="kpi-row">
-  <div class="kpi"><div class="kpi-val green">0</div><div class="kpi-label">Salidas este mes</div><div class="kpi-sub">Abril 2026</div></div>
-  <div class="kpi"><div class="kpi-val gold">0%</div><div class="kpi-label">Rotación mensual</div><div class="kpi-sub">Meta: &lt; 5%</div></div>
-  <div class="kpi"><div class="kpi-val gold">28</div><div class="kpi-label">Dotación actual</div><div class="kpi-sub">25 FT · 3 PT</div></div>
-  <div class="kpi"><div class="kpi-val gold">—</div><div class="kpi-label">Días promedio</div><div class="kpi-sub">Permanencia</div></div>
+  <div class="kpi"><div class="kpi-val green" id="kpi-salidas">0</div><div class="kpi-label">Salidas este mes</div><div class="kpi-sub" id="kpi-mes">Abril 2026</div></div>
+  <div class="kpi"><div class="kpi-val gold" id="kpi-rotacion">0%</div><div class="kpi-label">Rotación mensual</div><div class="kpi-sub">Meta: &lt; 5%</div></div>
+  <div class="kpi"><div class="kpi-val gold" id="kpi-dotacion">28</div><div class="kpi-label">Dotación actual</div><div class="kpi-sub" id="kpi-dot-sub">25 FT · 3 PT</div></div>
+  <div class="kpi"><div class="kpi-val gold" id="kpi-ytd">0</div><div class="kpi-label">Salidas YTD</div><div class="kpi-sub">Acumulado 2026</div></div>
 </div>
 
-<!-- Benchmarks -->
 <div class="bench">
   <div class="bench-title">📊 Benchmarks industria gastronómica Chile</div>
   <div class="bench-row"><span class="bench-label">Rotación mensual promedio restaurantes</span><span class="bench-val">8-12%</span></div>
@@ -63,22 +67,83 @@ tr:hover td{background:#1a1a1a}
 
 <div class="section-title" style="margin-bottom:12px">📋 Registro de salidas 2026</div>
 
-<div class="empty-msg">
-  <strong>Sin desvinculaciones registradas</strong><br>
-  Cuando ocurra una salida, registrarla acá con: nombre, cargo, local, fecha, motivo y tiempo en BC.<br>
-  Esto permite calcular rotación real y costo acumulado.
-</div>
-
-<div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;overflow-x:auto">
-<table>
-  <thead><tr><th>Fecha</th><th>Nombre</th><th>Cargo</th><th>Local</th><th>Motivo</th><th>Tiempo en BC</th></tr></thead>
-  <tbody>
-    <tr><td colspan="6" style="text-align:center;color:#444;padding:20px;font-style:italic">— Registros se agregan conforme ocurran —</td></tr>
-  </tbody>
-</table>
+<div id="salidas-content">
+  <div class="empty-msg">
+    <strong>Sin desvinculaciones registradas</strong><br>
+    Cuando ocurra una salida, registrarla desde el panel Admin HR.<br>
+    Esto permite calcular rotación real y costo acumulado.
+  </div>
 </div>
 
 </div>
 <footer style="text-align:center;padding:20px;color:#444;font-size:11px;border-top:1px solid #2a2a2a">Black Chicken HR · Tracker de Rotación · Datos sensibles — uso exclusivo interno</footer>
+
+<script>
+(function(){
+  var MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var now = new Date();
+  var mesActual = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  document.getElementById('kpi-mes').textContent = MESES[now.getMonth()] + ' ' + now.getFullYear();
+
+  var API_URL = localStorage.getItem('bc_hr_api_url');
+  if (!API_URL) return;
+
+  Promise.all([
+    fetch(API_URL + '?tab=salidas').then(function(r){ return r.json(); }),
+    fetch(API_URL + '?tab=equipo').then(function(r){ return r.json(); })
+  ]).then(function(results){
+    var salidas = results[0];
+    var equipo = results[1];
+
+    if (!Array.isArray(salidas)) salidas = [];
+    if (!Array.isArray(equipo)) equipo = [];
+
+    var activos = equipo.filter(function(p){ return (p.estado || 'Activo') === 'Activo'; });
+    var ft = activos.filter(function(p){ return (p.jornada||'').indexOf('Part') === -1; });
+    var pt = activos.filter(function(p){ return (p.jornada||'').indexOf('Part') >= 0; });
+
+    document.getElementById('kpi-dotacion').textContent = activos.length;
+    document.getElementById('kpi-dot-sub').textContent = ft.length + ' FT · ' + pt.length + ' PT';
+
+    // Salidas este mes
+    var salidasMes = salidas.filter(function(s){ return (s.fecha_salida || '').substring(0,7) === mesActual; });
+    var salidasYTD = salidas.filter(function(s){ return (s.fecha_salida || '').substring(0,4) === String(now.getFullYear()); });
+
+    document.getElementById('kpi-salidas').textContent = salidasMes.length;
+    document.getElementById('kpi-ytd').textContent = salidasYTD.length;
+
+    // Color de salidas
+    var el = document.getElementById('kpi-salidas');
+    if (salidasMes.length === 0) el.className = 'kpi-val green';
+    else if (salidasMes.length <= 2) el.className = 'kpi-val yellow';
+    else el.className = 'kpi-val red';
+
+    // Rotación
+    var dotTotal = activos.length + salidasMes.length;
+    var rotPct = dotTotal > 0 ? (salidasMes.length / dotTotal * 100).toFixed(1) : '0';
+    var rotEl = document.getElementById('kpi-rotacion');
+    rotEl.textContent = rotPct + '%';
+    if (parseFloat(rotPct) === 0) rotEl.className = 'kpi-val green';
+    else if (parseFloat(rotPct) < 5) rotEl.className = 'kpi-val yellow';
+    else rotEl.className = 'kpi-val red';
+
+    // Tabla de salidas
+    if (salidas.length > 0) {
+      var badgeMap = {'Voluntaria':'vol','Desvinculación':'inv','Fin contrato':'fin','Mutuo acuerdo':'mut'};
+      var html = '<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Nombre</th><th>Cargo</th><th>Local</th><th>Tipo</th><th>Motivo</th><th>Tiempo en BC</th></tr></thead><tbody>';
+      salidas.sort(function(a,b){ return (b.fecha_salida||'').localeCompare(a.fecha_salida||''); });
+      salidas.forEach(function(s){
+        var badge = badgeMap[s.tipo] || 'vol';
+        html += '<tr><td>' + (s.fecha_salida||'') + '</td><td><strong>' + (s.nombre||'') + '</strong></td><td>' + (s.cargo||'') + '</td><td>' + (s.local||'') + '</td><td><span class="badge ' + badge + '">' + (s.tipo||'') + '</span></td><td>' + (s.motivo||'—') + '</td><td>' + (s.tiempo_en_bc||'—') + '</td></tr>';
+      });
+      html += '</tbody></table></div>';
+      document.getElementById('salidas-content').innerHTML = html;
+    }
+
+    document.getElementById('dataSource').textContent = 'Live · Google Sheet';
+    document.getElementById('dataSource').className = 'source-tag live';
+  }).catch(function(e){ console.log('API error, using static:', e); });
+})();
+</script>
 </body>
 </html>
