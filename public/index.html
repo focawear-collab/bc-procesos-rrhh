@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Proceso De Reclutamiento Y Onboarding</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="design-tokens.css">
   <style>
     * {
       margin: 0;
@@ -206,6 +207,71 @@
       color: #fff;
       border-bottom-color: #d4af37;
     }
+
+    /* Save bar */
+    .save-bar {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 14px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .save-bar.no-proceso {
+      border-color: #2a2a2a;
+      justify-content: center;
+    }
+
+    .save-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .save-bar-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #d4af37;
+      flex-shrink: 0;
+    }
+
+    .save-bar-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .save-bar-pct {
+      font-size: 12px;
+      color: #d4af37;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .save-bar-hint {
+      font-size: 13px;
+      color: #555;
+    }
+
+    .save-bar-status {
+      font-size: 12px;
+      font-weight: 600;
+      flex-shrink: 0;
+      transition: all 0.3s;
+    }
+
+    .save-bar-status.saving { color: #888; }
+    .save-bar-status.saved  { color: #4caf50; }
+    .save-bar-status.error  { color: #f44336; }
 
     .tab-content {
       display: none;
@@ -736,6 +802,7 @@
     <div class="container">
       <div class="header-content">
         <a href="hub-index.html" class="back-link">← Volver al Hub</a>
+        <img src="blackchicken_logo.png" alt="Black Chicken" style="height:48px;margin-bottom:16px;display:block;">
         <h1>Proceso De Reclutamiento Y Onboarding</h1>
         <p class="subtitle">Checklist operativo por área · Uso exclusivo RRHH · Black Chicken</p>
       </div>
@@ -760,6 +827,11 @@
       <button class="tab-btn" onclick="switchTab('garzones')">Garzones</button>
       <button class="tab-btn" onclick="switchTab('jefatura')">Jefatura</button>
       <button class="tab-btn" onclick="switchTab('cocineros')">Cocineros</button>
+    </div>
+
+    <!-- Save bar -->
+    <div id="save-bar" class="save-bar no-proceso">
+      <span class="save-bar-hint">↑ Selecciona un proceso del panel superior para registrar avance en Notion</span>
     </div>
 
     <!-- TAB: ORGANIGRAMA -->
@@ -793,20 +865,20 @@
           <div class="org-title">Nivel 2 — Jefaturas por Local</div>
           <div class="org-grid">
             <div class="org-column green">
-              <div class="org-column-title">🍗 BC1 — Green</div>
+              <div class="org-column-title">🍗 BC1</div>
               <div class="org-column-items">
                 <div class="org-person">Felipe Cofre — Jefe Local</div>
-                <div class="org-person">Tomas Fuentes — Sub Jefe</div>
+                <div class="org-person">Stefanie Ocando — Sub Jefe</div>
                 <div class="org-person">Felipe Cornejo — Jefe Cocina</div>
                 <div class="org-person">Jonathan Lobos — Sous Chef</div>
-                <div class="org-person">Rossy Martinez — Entrenadora</div>
+                <div class="org-person">Ender Chacin — Entrenador</div>
               </div>
             </div>
             <div class="org-column purple">
-              <div class="org-column-title">🍗 BC2 — Purple</div>
+              <div class="org-column-title">🍗 BC2</div>
               <div class="org-column-items">
                 <div class="org-person">Saner Guillen — Jefe Local</div>
-                <div class="org-person">Jennifer/Vanessa Ramonez — Jefe Cocina</div>
+                <div class="org-person">Vanessa Ramonez — Jefe Cocina</div>
                 <div class="org-person">Maria Angel — Jefe Salón</div>
               </div>
             </div>
@@ -1354,9 +1426,9 @@
   </div>
 
   <!-- Modal -->
-  <div id="modalOverlay" class="modal-overlay" onclick="closeModal(event)">
+  <div id="modalOverlay" class="modal-overlay" onclick="closeModal(event)" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal" onclick="event.stopPropagation()">
-      <h2>Crear Nuevo Proceso</h2>
+      <h2 id="modal-title">Crear Nuevo Proceso</h2>
       <form onsubmit="submitNewProceso(event)">
         <div class="form-group">
           <label for="candidato">Nombre Candidato</label>
@@ -1475,6 +1547,8 @@
       // Highlight selected
       document.querySelectorAll('.proceso-card').forEach(c => c.classList.remove('active'));
       event.currentTarget.classList.add('active');
+
+      updateSaveBar();
     }
 
     // Switch tabs
@@ -1488,42 +1562,80 @@
       document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
     }
 
-    // Checkbox change handler
-    async function onCheckboxChange(checkbox) {
-      updateProgressBars();
+    // Update save bar UI (without triggering save)
+    function updateSaveBar(status) {
+      const bar = document.getElementById('save-bar');
+      if (!currentProcesoId) {
+        bar.className = 'save-bar no-proceso';
+        bar.innerHTML = `<span class="save-bar-hint">↑ Selecciona un proceso del panel superior para registrar avance en Notion</span>`;
+        return;
+      }
+      const proceso = activeProcesos.find(p => p.id === currentProcesoId);
+      const track = getCurrentTrack();
+      const allChecked = getCheckedItemIds(track);
+      const totalItems = getTotalItems(track);
+      const avance = totalItems > 0 ? Math.round((allChecked.length / totalItems) * 100) : 0;
 
+      const statusMap = {
+        saving: `<span class="save-bar-status saving">⏳ Guardando...</span>`,
+        saved:  `<span class="save-bar-status saved">✅ Guardado en Notion</span>`,
+        error:  `<span class="save-bar-status error">❌ Error al guardar</span>`,
+        idle:   `<span class="save-bar-status saved">● Notion sync activo</span>`
+      };
+
+      bar.className = 'save-bar';
+      bar.innerHTML = `
+        <div class="save-bar-left">
+          <div class="save-bar-dot"></div>
+          <span class="save-bar-name">${proceso ? proceso.candidato : ''}</span>
+        </div>
+        <span class="save-bar-pct">${avance}% completado</span>
+        ${statusMap[status || 'idle']}
+      `;
+    }
+
+    // Auto-save to Notion (debounced)
+    async function autoSaveProceso() {
       if (!currentProcesoId) return;
+      updateSaveBar('saving');
 
       const track = getCurrentTrack();
       const allChecked = getCheckedItemIds(track);
       const totalItems = getTotalItems(track);
       const avance = totalItems > 0 ? Math.round((allChecked.length / totalItems) * 100) : 0;
 
-      // Debounce: save after 500ms
-      clearTimeout(window._saveTimeout);
-      window._saveTimeout = setTimeout(async () => {
-        try {
-          const res = await fetch(`/api/proceso?id=${currentProcesoId}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              items_completados: JSON.stringify(allChecked),
-              avance: avance
-            })
-          });
-          if (!res.ok) throw new Error('Failed to save');
-          // Update local state
-          const proceso = activeProcesos.find(p => p.id === currentProcesoId);
-          if (proceso) {
-            proceso.items_completados = allChecked;
-            proceso.avance = avance;
-            renderActiveProcesses();
-          }
-        } catch (e) {
-          console.error('Error saving:', e);
-          showToast('Error al guardar cambios', true);
+      try {
+        const res = await fetch(`/api/proceso?id=${currentProcesoId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            items_completados: JSON.stringify(allChecked),
+            avance: avance
+          })
+        });
+        if (!res.ok) throw new Error('Failed');
+        const proceso = activeProcesos.find(p => p.id === currentProcesoId);
+        if (proceso) {
+          proceso.items_completados = allChecked;
+          proceso.avance = avance;
+          renderActiveProcesses();
         }
-      }, 500);
+        updateSaveBar('saved');
+        // Reset to idle after 3s
+        setTimeout(() => updateSaveBar('idle'), 3000);
+      } catch (e) {
+        console.error('Save error:', e);
+        updateSaveBar('error');
+      }
+    }
+
+    // Checkbox change handler — updates UI and auto-saves with debounce
+    function onCheckboxChange(checkbox) {
+      updateProgressBars();
+      updateSaveBar();
+      if (!currentProcesoId) return;
+      clearTimeout(window._saveTimeout);
+      window._saveTimeout = setTimeout(autoSaveProceso, 1500);
     }
 
     // Get current track

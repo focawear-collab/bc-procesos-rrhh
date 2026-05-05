@@ -4,6 +4,11 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
+function stripHtml(str) {
+  if (typeof str !== 'string') return str;
+  return str.replace(/<[^>]*>/g, '');
+}
+
 export default async function handler(req, res) {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -28,7 +33,14 @@ export default async function handler(req, res) {
   if (req.method === 'PATCH') {
     try {
       const { id } = req.query;
-      const { fase, estado, avance, items_completados, notas } = req.body;
+      const body = req.body || {};
+      const fase = stripHtml(body.fase);
+      const estado = stripHtml(body.estado);
+      const avance = body.avance;
+      const items_completados = Array.isArray(body.items_completados)
+        ? body.items_completados.map(item => typeof item === 'string' ? stripHtml(item) : item)
+        : body.items_completados;
+      const notas = stripHtml(body.notas);
 
       if (!id) {
         res.status(400).json({ error: 'Missing query param: id' });
