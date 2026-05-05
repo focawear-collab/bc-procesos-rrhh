@@ -138,6 +138,40 @@
       background: #2a2a2a;
     }
 
+    .proceso-card-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .btn-edit, .btn-delete {
+      background: none;
+      border: 1px solid #3a3a3a;
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-edit {
+      color: #d4af37;
+    }
+
+    .btn-edit:hover {
+      background: rgba(212, 175, 55, 0.15);
+      border-color: #d4af37;
+    }
+
+    .btn-delete {
+      color: #e08080;
+    }
+
+    .btn-delete:hover {
+      background: rgba(224, 128, 128, 0.15);
+      border-color: #e08080;
+    }
+
     .proceso-card.active {
       border-color: #d4af37;
       background: rgba(212, 175, 55, 0.1);
@@ -1429,7 +1463,8 @@
   <div id="modalOverlay" class="modal-overlay" onclick="closeModal(event)" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal" onclick="event.stopPropagation()">
       <h2 id="modal-title">Crear Nuevo Proceso</h2>
-      <form onsubmit="submitNewProceso(event)">
+      <form onsubmit="submitProceso(event)">
+        <input type="hidden" id="editProcesoId" value="">
         <div class="form-group">
           <label for="candidato">Nombre Candidato</label>
           <input type="text" id="candidato" name="candidato" required placeholder="Ej: Juan Pérez">
@@ -1461,7 +1496,7 @@
           <textarea id="notas" name="notas" placeholder="Ej: Referencia de Felipe..."></textarea>
         </div>
         <div class="modal-actions">
-          <button type="submit" class="modal-actions button btn-crear">Crear Proceso</button>
+          <button type="submit" id="modal-submit-btn" class="modal-actions button btn-crear">Crear Proceso</button>
           <button type="button" class="modal-actions button btn-cancelar" onclick="closeModal()">Cancelar</button>
         </div>
       </form>
@@ -1506,11 +1541,15 @@
       container.innerHTML = activeProcesos.map(p => `
         <div class="proceso-card" onclick="selectProceso('${p.id}', '${p.cargo}')">
           <div class="proceso-name">${p.candidato}</div>
-          <div class="proceso-meta">${p.cargo}</div>
+          <div class="proceso-meta">${p.cargo} · ${p.local || ''}</div>
           <div class="progress-bar">
             <div class="progress-fill" style="width: ${p.avance}%"></div>
           </div>
           <div style="font-size: 11px; color: #666; margin-top: 4px;">${p.avance}%</div>
+          <div class="proceso-card-actions">
+            <button class="btn-edit" onclick="event.stopPropagation(); openEditModal('${p.id}')">Editar</button>
+            <button class="btn-delete" onclick="event.stopPropagation(); finalizarProceso('${p.id}', '${p.candidato}')">Finalizar</button>
+          </div>
         </div>
       `).join('');
     }
@@ -1678,6 +1717,23 @@
 
     // Modal
     function openModal() {
+      document.getElementById('editProcesoId').value = '';
+      document.getElementById('modal-title').textContent = 'Crear Nuevo Proceso';
+      document.getElementById('modal-submit-btn').textContent = 'Crear Proceso';
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function openEditModal(procesoId) {
+      const proceso = activeProcesos.find(p => p.id === procesoId);
+      if (!proceso) return;
+
+      document.getElementById('editProcesoId').value = procesoId;
+      document.getElementById('modal-title').textContent = 'Editar Proceso';
+      document.getElementById('modal-submit-btn').textContent = 'Guardar Cambios';
+      document.getElementById('candidato').value = proceso.candidato;
+      document.getElementById('cargo').value = proceso.cargo;
+      document.getElementById('local').value = proceso.local;
+      document.getElementById('notas').value = proceso.notas || '';
       document.getElementById('modalOverlay').classList.add('active');
     }
 
@@ -1685,34 +1741,79 @@
       if (e && e.target !== document.getElementById('modalOverlay')) return;
       document.getElementById('modalOverlay').classList.remove('active');
       document.querySelector('form').reset();
+      document.getElementById('editProcesoId').value = '';
     }
 
-    // Submit new proceso
-    async function submitNewProceso(e) {
+    // Submit proceso (create or edit)
+    async function submitProceso(e) {
       e.preventDefault();
 
+      const editId = document.getElementById('editProcesoId').value;
       const candidato = document.getElementById('candidato').value;
       const cargo = document.getElementById('cargo').value;
       const local = document.getElementById('local').value;
       const notas = document.getElementById('notas').value;
 
+      if (editId) {
+        // EDIT mode
+        try {
+          const res = await fetch(`/api/proceso?id=${editId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ candidato, cargo, local, notas: notas || '' })
+          });
+          if (!res.ok) throw new Error('Failed to update proceso');
+          const updated = await res.json();
+          const idx = activeProcesos.findIndex(p => p.id === editId);
+          if (idx !== -1) activeProcesos[idx] = updated;
+          renderActiveProcesses();
+          closeModal();
+          showToast(`Proceso actualizado: ${candidato}`);
+        } catch (e) {
+          console.error('Error updating proceso:', e);
+          showToast('Error al actualizar proceso', true);
+        }
+      } else {
+        // CREATE mode
+        try {
+          const res = await fetch('/api/procesos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ candidato, cargo, local, notas: notas || undefined })
+          });
+          if (!res.ok) throw new Error('Failed to create proceso');
+          const newProceso = await res.json();
+          activeProcesos.push(newProceso);
+          renderActiveProcesses();
+          closeModal();
+          showToast(`Proceso creado: ${candidato}`);
+        } catch (e) {
+          console.error('Error creating proceso:', e);
+          showToast('Error al crear proceso', true);
+        }
+      }
+    }
+
+    // Finalizar (marcar como Listo)
+    async function finalizarProceso(procesoId, nombre) {
+      if (!confirm(`¿Finalizar el proceso de ${nombre}? Se marcará como "Listo" en Notion.`)) return;
       try {
-        const res = await fetch('/api/procesos', {
-          method: 'POST',
+        const res = await fetch(`/api/proceso?id=${procesoId}`, {
+          method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ candidato, cargo, local, notas: notas || undefined })
+          body: JSON.stringify({ estado: 'Listo' })
         });
-
-        if (!res.ok) throw new Error('Failed to create proceso');
-
-        const newProceso = await res.json();
-        activeProcesos.push(newProceso);
+        if (!res.ok) throw new Error('Failed');
+        activeProcesos = activeProcesos.filter(p => p.id !== procesoId);
+        if (currentProcesoId === procesoId) {
+          currentProcesoId = null;
+          updateSaveBar();
+        }
         renderActiveProcesses();
-        closeModal();
-        showToast(`Proceso creado: ${candidato}`);
+        showToast(`Proceso finalizado: ${nombre}`);
       } catch (e) {
-        console.error('Error creating proceso:', e);
-        showToast('Error al crear proceso', true);
+        console.error('Error finalizando:', e);
+        showToast('Error al finalizar proceso', true);
       }
     }
 
