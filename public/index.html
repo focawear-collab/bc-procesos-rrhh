@@ -420,7 +420,7 @@ const FilterBar = ({track, setTrack, query, setQuery, local, setLocal, showDisca
 );
 
 /* Candidate card (kanban) */
-const KanbanCard = ({proc, active, onClick, onDragStart}) => {
+const KanbanCard = ({proc, active, onClick, onDragStart, onEdit, onFinalize}) => {
   const { done, total, pct } = progressByPhase(proc, proc.fase);
   return (
     <div
@@ -459,12 +459,18 @@ const KanbanCard = ({proc, active, onClick, onDragStart}) => {
         <div style={{height:3, background:'#0a0a0a', borderRadius:2, overflow:'hidden'}}>
           <div style={{height:'100%', width:`${pct}%`, background: pct===100 ? 'var(--bc1)' : 'var(--gold)', transition:'width 0.3s'}} />
         </div>
+      {(onEdit || onFinalize) && (
+        <div style={{display:"flex", gap:6, marginTop:8}}>
+          {onEdit && <button onClick={(e)=>{e.stopPropagation(); onEdit(proc);}} style={{flex:1, padding:"5px 8px", background:"rgba(212,175,55,0.1)", border:"1px solid var(--gold)", color:"var(--gold)", borderRadius:6, fontSize:10, fontWeight:600, cursor:"pointer"}}>Editar</button>}
+          {onFinalize && <button onClick={(e)=>{e.stopPropagation(); onFinalize(proc);}} style={{flex:1, padding:"5px 8px", background:"rgba(106,184,106,0.1)", border:"1px solid var(--bc1)", color:"var(--bc1)", borderRadius:6, fontSize:10, fontWeight:600, cursor:"pointer"}}>Finalizar</button>}
+        </div>
+      )}
       </div>
     </div>
   );
 };
 
-const KanbanBoard = ({procesos, onOpen, activeId, onMove}) => {
+const KanbanBoard = ({procesos, onOpen, activeId, onMove, onEdit, onFinalize}) => {
   const [dragOver, setDragOver] = React.useState(null);
   return (
     <div style={{padding:'20px 40px', display:'grid', gridTemplateColumns:'repeat(5, 1fr)', gap:12, alignItems:'start'}}>
@@ -500,7 +506,7 @@ const KanbanBoard = ({procesos, onOpen, activeId, onMove}) => {
                 </div>
               )}
               {col.map(p => (
-                <KanbanCard key={p.id} proc={p} active={activeId===p.id} onClick={onOpen} />
+                <KanbanCard key={p.id} proc={p} active={activeId===p.id} onClick={onOpen} onEdit={onEdit} onFinalize={onFinalize} />
               ))}
             </div>
           </div>
@@ -793,6 +799,39 @@ const DiscardModal = ({proc, onClose, onConfirm}) => {
 };
 
 /* New Proceso Modal */
+const EditProcesoModal = ({proc, open, onClose, onSave}) => {
+  const [form, setForm] = React.useState({candidato:"",cargo:"Garzón/a",local:"BC1",notas:""});
+  React.useEffect(()=>{ if(proc) setForm({candidato:proc.candidato||"",cargo:proc.cargo||"Garzón/a",local:proc.local||"BC1",notas:proc.notas||""}); },[proc?.id]);
+  if(!open||!proc) return null;
+  return (
+    <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.7)",zIndex:100,display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(6px)"}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:"var(--bg-2)",border:"1px solid var(--border)",borderRadius:14,padding:28,width:"min(440px, 92vw)"}}>
+        <div className="serif" style={{fontSize:22,color:"#fff",fontWeight:600,marginBottom:4}}>Editar proceso</div>
+        <div style={{fontSize:12,color:"var(--text-3)",marginBottom:22}}>Actualiza datos de {proc.candidato}</div>
+        <form onSubmit={(e)=>{e.preventDefault();onSave(form);onClose();}} style={{display:"grid",gap:14}}>
+          {[
+            {k:"candidato",label:"Nombre candidato",type:"input",placeholder:"Ej: Juan Pérez"},
+            {k:"cargo",label:"Cargo",type:"select",opts:["Garzón/a","Jefe de Local","Sub Jefe","Jefe de Cocina","Sous Chef","Cocinero/a","Copero/a","Entrenador/a"]},
+            {k:"local",label:"Local",type:"select",opts:["BC1","BC2"]},
+            {k:"notas",label:"Notas (opcional)",type:"textarea",placeholder:"Referencias, disponibilidad, comentarios…"},
+          ].map(f=>(
+            <label key={f.k}>
+              <div style={{fontSize:10,color:"var(--text-3)",letterSpacing:"1.2px",fontWeight:700,textTransform:"uppercase",marginBottom:5}}>{f.label}</div>
+              {f.type==="input" && <input autoFocus={f.k==="candidato"} value={form[f.k]} onChange={e=>setForm({...form,[f.k]:e.target.value})} placeholder={f.placeholder} style={inputS} />}
+              {f.type==="select" && <select value={form[f.k]} onChange={e=>setForm({...form,[f.k]:e.target.value})} style={inputS}>{f.opts.map(o=><option key={o} value={o}>{o}</option>)}</select>}
+              {f.type==="textarea" && <textarea value={form[f.k]} onChange={e=>setForm({...form,[f.k]:e.target.value})} placeholder={f.placeholder} style={{...inputS,minHeight:72,resize:"vertical"}} />}
+            </label>
+          ))}
+          <div style={{display:"flex",gap:10,marginTop:8}}>
+            <button type="button" onClick={onClose} style={{flex:1,padding:11,background:"var(--card-3)",color:"var(--text)",borderRadius:8,fontWeight:600,fontSize:12,letterSpacing:"1px",textTransform:"uppercase"}}>Cancelar</button>
+            <button type="submit" style={{flex:2,padding:11,background:"var(--gold)",color:"#0a0a0a",borderRadius:8,fontWeight:700,fontSize:12,letterSpacing:"1px",textTransform:"uppercase"}}>Guardar cambios</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 const NewProcesoModal = ({open, onClose, onCreate}) => {
   const [form, setForm] = React.useState({ candidato:'', cargo:'Garzón/a', local:'BC1', notas:'' });
   if (!open) return null;
@@ -1127,6 +1166,7 @@ function App(){
   const [local, setLocal] = React.useState('all');
   const [query, setQuery] = React.useState('');
   const [showNew, setShowNew] = React.useState(false);
+  const [editTarget, setEditTarget] = React.useState(null);
   const [view, setView] = React.useState('pipeline');
   const [showMetrics, setShowMetrics] = React.useState(false);
   const [showDiscarded, setShowDiscarded] = React.useState(false);
@@ -1245,6 +1285,25 @@ function App(){
       setActiveProc(id);
     }
   };
+  const editProc = async (procId, form) => {
+    const trackMap = {"Garzón/a":"garzones","Copero/a":"garzones","Entrenador/a":"garzones",
+      "Jefe de Local":"jefatura","Sub Jefe":"jefatura",
+      "Jefe de Cocina":"cocineros","Sous Chef":"cocineros","Cocinero/a":"cocineros"};
+    setProcesos(prev => prev.map(p => {
+      if (p.id !== procId) return p;
+      if (p.notionId) apiPatch(p.notionId, {candidato:form.candidato, cargo:form.cargo, local:form.local, notas:form.notas});
+      return {...p, candidato:form.candidato, cargo:form.cargo, local:form.local, notas:form.notas, track:trackMap[form.cargo]||"garzones"};
+    }));
+    setEditTarget(null);
+  };
+  const finalizeProc = (proc) => {
+    if (!confirm("¿Finalizar el proceso de "+proc.candidato+"? Se marcará como Listo.")) return;
+    setProcesos(prev => prev.map(p => {
+      if (p.id !== proc.id) return p;
+      if (p.notionId) apiPatch(p.notionId, {estado:"Listo", avance:100});
+      return {...p, fase:"F5", avance:100};
+    }));
+  };
 
   return (
     <div className={tweaks.density==='compact' ? 'compact' : ''}>
@@ -1276,7 +1335,7 @@ function App(){
       )}
 
       {view==='pipeline' && (tweaks.layout==='kanban'
-        ? <KanbanBoard procesos={filtered} onOpen={(p)=>setActiveProc(p.id)} activeId={activeProc} onMove={advancePhase} />
+        ? <KanbanBoard procesos={filtered} onOpen={(p)=>setActiveProc(p.id)} activeId={activeProc} onMove={advancePhase} onEdit={(p)=>setEditTarget(p.id)} onFinalize={finalizeProc} />
         : <ListView procesos={filtered} onOpen={(p)=>setActiveProc(p.id)} activeId={activeProc} />
       )}
 
@@ -1294,6 +1353,7 @@ function App(){
         <DiscardModal proc={procesos.find(p=>p.id===discardTarget)} onClose={()=>setDiscardTarget(null)}
           onConfirm={(motivo)=>discardProc(discardTarget, motivo)} />
       )}
+      <EditProcesoModal proc={procesos.find(p=>p.id===editTarget)} open={!!editTarget} onClose={()=>setEditTarget(null)} onSave={(form)=>editProc(editTarget,form)} />
       <NewProcesoModal open={showNew} onClose={()=>setShowNew(false)} onCreate={createProc} />
       <TweaksPanel tweaks={tweaks} update={updateTweaks} visible={editMode} />
     </div>
