@@ -4,6 +4,11 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
+function stripHtml(str) {
+  if (typeof str !== 'string') return str;
+  return str.replace(/<[^>]*>/g, '');
+}
+
 export default async function handler(req, res) {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -59,7 +64,11 @@ export default async function handler(req, res) {
   // POST: Create new proceso
   else if (req.method === 'POST') {
     try {
-      const { candidato, cargo, local, notas } = req.body;
+      const body = req.body || {};
+      const candidato = stripHtml(body.candidato);
+      const cargo = stripHtml(body.cargo);
+      const local = stripHtml(body.local);
+      const notas = stripHtml(body.notas);
 
       if (!candidato || !cargo || !local) {
         res.status(400).json({ error: 'Missing required fields: candidato, cargo, local' });

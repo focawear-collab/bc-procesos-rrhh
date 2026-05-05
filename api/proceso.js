@@ -4,6 +4,12 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
+
+function stripHtml(str) {
+  if (typeof str !== 'string') return str;
+  return str.replace(/<[^>]*>/g, '');
+}
+
 export default async function handler(req, res) {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -28,7 +34,15 @@ export default async function handler(req, res) {
   if (req.method === 'PATCH') {
     try {
       const { id } = req.query;
-      const { fase, estado, avance, items_completados, notas } = req.body;
+      const body = req.body || {};
+      const fase = stripHtml(body.fase);
+      const estado = stripHtml(body.estado);
+      const avance = body.avance;
+      const items_completados = body.items_completados;
+      const notas = stripHtml(body.notas);
+      const candidato = stripHtml(body.candidato);
+      const cargo = stripHtml(body.cargo);
+      const local = stripHtml(body.local);
 
       if (!id) {
         res.status(400).json({ error: 'Missing query param: id' });
@@ -39,12 +53,16 @@ export default async function handler(req, res) {
         properties: {}
       };
 
+      if (candidato) updatePayload.properties['Candidato'] = { title: [{ text: { content: candidato } }] };
+      if (cargo) updatePayload.properties['Cargo'] = { select: { name: cargo } };
+      if (local) updatePayload.properties['Local'] = { select: { name: local } };
       if (fase) updatePayload.properties['Fase'] = { select: { name: fase } };
       if (estado) updatePayload.properties['Estado'] = { status: { name: estado } };
       if (avance !== undefined) updatePayload.properties['Avance %'] = { number: avance };
       if (items_completados !== undefined) {
-        const serialized = Array.isArray(items_completados)
-          ? JSON.stringify(items_completados)
+        const sanitized = Array.isArray(items_completados) ? items_completados.map(i => typeof i === 'string' ? stripHtml(i) : i) : items_completados;
+        const serialized = Array.isArray(sanitized)
+          ? JSON.stringify(sanitized)
           : items_completados;
         updatePayload.properties['Items Completados'] = {
           rich_text: [{ text: { content: serialized } }]

@@ -1,0 +1,11 @@
+:root {
+  --bg: #0f0f0f;
+  --surface: #1a1a1a;
+  --surface-hover: #242424;
+  --border: #2a2a2a;
+  --accent: #D4A843;
+  --accent-hover: #E5B954;
+  --text: #ffffff;
+  --text-muted: #888888;
+  --font-body: 'Inter', system-ui, sans-serif;
+}

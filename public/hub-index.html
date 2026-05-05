@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hub de HR · Black Chicken</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="design-tokens.css">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -231,19 +232,19 @@
 
     <!-- Buscador -->
     <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input id="hub-search" class="search-input" type="text" placeholder="Buscar documento, rol, cargo…" autocomplete="off" spellcheck="false">
-      <button class="search-clear" id="search-clear" title="Limpiar">✕</button>
+      <span class="search-icon" aria-hidden="true">🔍</span>
+      <input id="hub-search" class="search-input" type="text" placeholder="Buscar documento, rol, cargo…" autocomplete="off" spellcheck="false" aria-label="Buscar documentos, roles o cargos">
+      <button class="search-clear" id="search-clear" title="Limpiar" aria-label="Limpiar búsqueda">✕</button>
     </div>
     <div class="search-empty" id="search-empty">Sin resultados para "<span id="search-term"></span>"</div>
 
     <!-- 1) HR Brain -->
     <div class="section" data-section="hrbrain">
-      <div class="section-toggle" onclick="toggleSection(this)">
+      <div class="section-toggle" onclick="toggleSection(this)" role="button" tabindex="0" aria-expanded="false" aria-controls="section-body-hrbrain">
         <span class="section-toggle-label">🧠 HR Brain · Base de conocimiento RRHH</span>
-        <span class="section-chevron">▶</span>
+        <span class="section-chevron" aria-hidden="true">▶</span>
       </div>
-      <div class="section-body">
+      <div class="section-body" id="section-body-hrbrain">
         <div class="cards">
           <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/1jmth3C-kd5syl_5OLYtmYkFNVx3dD4gr');return false;" class="card hrbrain-locked">
             <div class="card-icon" style="background:rgba(212,175,55,0.15);color:#d4af37;font-size:22px;">🗂️</div>
@@ -324,11 +325,11 @@
 
     <!-- 2) Herramientas HR -->
     <div class="section" data-section="herramientas">
-      <div class="section-toggle" onclick="toggleSection(this)">
+      <div class="section-toggle" onclick="toggleSection(this)" role="button" tabindex="0" aria-expanded="false" aria-controls="section-body-herramientas">
         <span class="section-toggle-label">⚡ Herramientas HR · Gestión operativa</span>
-        <span class="section-chevron">▶</span>
+        <span class="section-chevron" aria-hidden="true">▶</span>
       </div>
-      <div class="section-body">
+      <div class="section-body" id="section-body-herramientas">
         <div class="cards">
           <a href="#" onclick="cartaGate('BC_HR_Dashboard.html');return false;" class="card carta-locked">
             <div class="card-icon gold">📊</div>
@@ -414,11 +415,11 @@
 
     <!-- 3) Procesos Internos -->
     <div class="section" data-section="procesos">
-      <div class="section-toggle" onclick="toggleSection(this)">
+      <div class="section-toggle" onclick="toggleSection(this)" role="button" tabindex="0" aria-expanded="false" aria-controls="section-body-procesos">
         <span class="section-toggle-label">🧰 Procesos internos · Uso exclusivo RRHH</span>
-        <span class="section-chevron">▶</span>
+        <span class="section-chevron" aria-hidden="true">▶</span>
       </div>
-      <div class="section-body">
+      <div class="section-body" id="section-body-procesos">
         <div class="cards">
           <a href="index.html" class="card">
             <div class="card-icon green">📋</div>
@@ -451,11 +452,11 @@
 
     <!-- 3) Plataformas Digitales -->
     <div class="section" data-section="plataformas">
-      <div class="section-toggle" onclick="toggleSection(this)">
+      <div class="section-toggle" onclick="toggleSection(this)" role="button" tabindex="0" aria-expanded="false" aria-controls="section-body-plataformas">
         <span class="section-toggle-label">🖥️ Plataformas digitales · Acceso en línea</span>
-        <span class="section-chevron">▶</span>
+        <span class="section-chevron" aria-hidden="true">▶</span>
       </div>
-      <div class="section-body">
+      <div class="section-body" id="section-body-plataformas">
         <div class="cards">
           <a href="https://bc-onboarding-bice.vercel.app" target="_blank" class="card">
             <div class="card-icon green">🚀</div>
@@ -502,11 +503,11 @@
 
     <!-- 4) Descriptores de Cargo -->
     <div class="section" data-section="descriptores">
-      <div class="section-toggle" onclick="toggleSection(this)">
+      <div class="section-toggle" onclick="toggleSection(this)" role="button" tabindex="0" aria-expanded="false" aria-controls="section-body-descriptores">
         <span class="section-toggle-label">📑 Descriptores de cargo · Perfiles formales</span>
-        <span class="section-chevron">▶</span>
+        <span class="section-chevron" aria-hidden="true">▶</span>
       </div>
-      <div class="section-body">
+      <div class="section-body" id="section-body-descriptores">
         <div class="cards">
           <a href="BC_Descriptor_Entrenadora.html" class="card">
             <div class="card-icon gold">🎓</div>
@@ -540,11 +541,11 @@
 
     <!-- 5) Publicaciones públicas -->
     <div class="section" data-section="publicaciones">
-      <div class="section-toggle" onclick="toggleSection(this)">
+      <div class="section-toggle" onclick="toggleSection(this)" role="button" tabindex="0" aria-expanded="false" aria-controls="section-body-publicaciones">
         <span class="section-toggle-label">📢 Publicaciones públicas</span>
-        <span class="section-chevron">▶</span>
+        <span class="section-chevron" aria-hidden="true">▶</span>
       </div>
-      <div class="section-body">
+      <div class="section-body" id="section-body-publicaciones">
         <div class="cards">
           <a href="BC_Publicacion_JefeLocal.html" class="card">
             <div class="card-icon purple">👑</div>
@@ -594,11 +595,11 @@
 
     <!-- 6) Cartas de oferta -->
     <div class="section" data-section="cartas">
-      <div class="section-toggle" onclick="toggleSection(this)">
+      <div class="section-toggle" onclick="toggleSection(this)" role="button" tabindex="0" aria-expanded="false" aria-controls="section-body-cartas">
         <span class="section-toggle-label">📄 Cartas de oferta · Privadas — post entrevista</span>
-        <span class="section-chevron">▶</span>
+        <span class="section-chevron" aria-hidden="true">▶</span>
       </div>
-      <div class="section-body">
+      <div class="section-body" id="section-body-cartas">
         <div class="cards">
           <a href="#" onclick="cartaGate('BC_CartaOferta_JefeLocal.html');return false;" class="card carta-locked">
             <div class="card-icon purple">👑</div>
@@ -711,10 +712,10 @@
   </footer>
 
   <!-- Modal clave Cartas de Oferta -->
-  <div id="carta-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;align-items:center;justify-content:center;font-family:'Inter',sans-serif;">
+  <div id="carta-modal" role="dialog" aria-modal="true" aria-labelledby="carta-modal-title" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;align-items:center;justify-content:center;font-family:'Inter',sans-serif;">
     <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:40px;max-width:380px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.7);">
       <img src="./blackchicken_logo.png" alt="BC" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(212,175,55,.3));margin-bottom:18px;">
-      <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#d4af37;font-weight:700;margin-bottom:6px;">Acceso restringido</p>
+      <p id="carta-modal-title" style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#d4af37;font-weight:700;margin-bottom:6px;">Acceso restringido</p>
       <p style="font-size:13px;color:#666;margin-bottom:22px;">Documentos confidenciales · Solo RRHH</p>
       <input id="carta-input" type="password" placeholder="Código de acceso" autocomplete="off"
         style="width:100%;padding:12px 16px;background:#0f0f0f;border:1px solid #2a2a2a;border-radius:8px;color:#fff;font-size:15px;text-align:center;outline:none;font-family:'Inter',sans-serif;margin-bottom:12px;">
@@ -728,10 +729,10 @@
   </div>
 
   <!-- Modal clave HR Brain -->
-  <div id="hrbrain-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;align-items:center;justify-content:center;font-family:'Inter',sans-serif;">
+  <div id="hrbrain-modal" role="dialog" aria-modal="true" aria-labelledby="hrbrain-modal-title" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;align-items:center;justify-content:center;font-family:'Inter',sans-serif;">
     <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:40px;max-width:380px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.7);">
       <img src="./blackchicken_logo.png" alt="BC" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(212,175,55,.3));margin-bottom:18px;">
-      <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#d4af37;font-weight:700;margin-bottom:6px;">Acceso restringido</p>
+      <p id="hrbrain-modal-title" style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#d4af37;font-weight:700;margin-bottom:6px;">Acceso restringido</p>
       <p style="font-size:13px;color:#666;margin-bottom:22px;">🧠 HR Brain · Solo uso interno RRHH</p>
       <input id="hrbrain-input" type="password" placeholder="Código de acceso" autocomplete="off"
         style="width:100%;padding:12px 16px;background:#0f0f0f;border:1px solid #2a2a2a;border-radius:8px;color:#fff;font-size:15px;text-align:center;outline:none;font-family:'Inter',sans-serif;margin-bottom:12px;">
@@ -767,6 +768,7 @@
         toggle.classList.remove('open');
         body.classList.remove('open');
       }
+      toggle.setAttribute('aria-expanded', String(newState));
 
       // Persist state
       var sectionId = toggle.parentElement.dataset.section;
@@ -794,7 +796,7 @@
 
     /* ── Modales Cartas de Oferta ── */
     (function() {
-      var KEY = 'bc_cartas_auth', PASS = 'TalentosBC';
+      var KEY = 'bc_cartas_auth';
       var pendingUrl = null;
 
       if (sessionStorage.getItem(KEY) === 'ok') unlockCartas();
@@ -814,17 +816,38 @@
       };
       function attempt() {
         var v = document.getElementById('carta-input').value;
-        if (v === PASS) {
-          sessionStorage.setItem(KEY, 'ok');
-          document.getElementById('carta-modal').style.display = 'none';
-          unlockCartas();
-          if (pendingUrl) window.location.href = pendingUrl;
-        } else {
-          var err = document.getElementById('carta-err');
-          var inp = document.getElementById('carta-input');
-          err.style.display = 'block'; inp.style.borderColor = '#e05050'; inp.value = '';
-          setTimeout(function(){ err.style.display='none'; inp.style.borderColor='#2a2a2a'; }, 2000);
-        }
+        var btn = document.getElementById('carta-btn');
+        btn.disabled = true;
+        btn.textContent = 'Verificando...';
+        fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ module: 'cartas', password: v })
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+          btn.disabled = false;
+          btn.textContent = 'Acceder';
+          if (data.ok) {
+            sessionStorage.setItem(KEY, 'ok');
+            document.getElementById('carta-modal').style.display = 'none';
+            unlockCartas();
+            if (pendingUrl) window.location.href = pendingUrl;
+          } else {
+            showCartaError();
+          }
+        })
+        .catch(function() {
+          btn.disabled = false;
+          btn.textContent = 'Acceder';
+          showCartaError();
+        });
+      }
+      function showCartaError() {
+        var err = document.getElementById('carta-err');
+        var inp = document.getElementById('carta-input');
+        err.style.display = 'block'; inp.style.borderColor = '#e05050'; inp.value = '';
+        setTimeout(function(){ err.style.display='none'; inp.style.borderColor='#2a2a2a'; }, 2000);
       }
       function unlockCartas() {
         document.querySelectorAll('.carta-locked').forEach(function(el) {
@@ -840,7 +863,7 @@
 
     /* ── Modal HR Brain ── */
     (function() {
-      var KEY = 'bc_hrbrain_auth', PASS = 'TalentosBC.2026';
+      var KEY = 'bc_hrbrain_auth';
       var pendingUrl = null;
 
       if (sessionStorage.getItem(KEY) === 'ok') unlockHrBrain();
@@ -860,17 +883,38 @@
       };
       function attempt() {
         var v = document.getElementById('hrbrain-input').value;
-        if (v === PASS) {
-          sessionStorage.setItem(KEY, 'ok');
-          document.getElementById('hrbrain-modal').style.display = 'none';
-          unlockHrBrain();
-          if (pendingUrl) { window.open(pendingUrl, '_blank'); pendingUrl = null; }
-        } else {
-          var err = document.getElementById('hrbrain-err');
-          var inp = document.getElementById('hrbrain-input');
-          err.style.display = 'block'; inp.style.borderColor = '#e05050'; inp.value = '';
-          setTimeout(function(){ err.style.display='none'; inp.style.borderColor='#2a2a2a'; }, 2000);
-        }
+        var btn = document.getElementById('hrbrain-btn');
+        btn.disabled = true;
+        btn.textContent = 'Verificando...';
+        fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ module: 'hrbrain', password: v })
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+          btn.disabled = false;
+          btn.textContent = 'Acceder';
+          if (data.ok) {
+            sessionStorage.setItem(KEY, 'ok');
+            document.getElementById('hrbrain-modal').style.display = 'none';
+            unlockHrBrain();
+            if (pendingUrl) { window.open(pendingUrl, '_blank'); pendingUrl = null; }
+          } else {
+            showHrBrainError();
+          }
+        })
+        .catch(function() {
+          btn.disabled = false;
+          btn.textContent = 'Acceder';
+          showHrBrainError();
+        });
+      }
+      function showHrBrainError() {
+        var err = document.getElementById('hrbrain-err');
+        var inp = document.getElementById('hrbrain-input');
+        err.style.display = 'block'; inp.style.borderColor = '#e05050'; inp.value = '';
+        setTimeout(function(){ err.style.display='none'; inp.style.borderColor='#2a2a2a'; }, 2000);
       }
       function unlockHrBrain() {
         document.querySelectorAll('.hrbrain-locked').forEach(function(el) {
@@ -942,6 +986,49 @@
         if (e.key === '/' && document.activeElement.tagName !== 'INPUT') { e.preventDefault(); input.focus(); }
       });
     })();
+
+    /* ── Keyboard support for section toggles ── */
+    document.querySelectorAll('.section-toggle').forEach(function(toggle) {
+      toggle.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleSection(toggle);
+        }
+      });
+    });
+
+    /* ── Global error handler ── */
+    window.onerror = function(message, source, lineno, colno, error) {
+      try {
+        fetch('/api/log', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: message,
+            source: source,
+            lineno: lineno,
+            colno: colno,
+            stack: error && error.stack ? error.stack : '',
+            url: window.location.href,
+            timestamp: new Date().toISOString()
+          })
+        }).catch(function() {});
+      } catch(e) {}
+    };
+    window.addEventListener('unhandledrejection', function(event) {
+      try {
+        fetch('/api/log', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: 'Unhandled Promise Rejection: ' + (event.reason && event.reason.message ? event.reason.message : String(event.reason)),
+            stack: event.reason && event.reason.stack ? event.reason.stack : '',
+            url: window.location.href,
+            timestamp: new Date().toISOString()
+          })
+        }).catch(function() {});
+      } catch(e) {}
+    });
   </script>
 </body>
 </html>
