@@ -51,13 +51,6 @@ export default async function handler(req, res) {
         properties: {}
       };
 
-      const candidato = stripHtml(body.candidato);
-      const cargo_edit = stripHtml(body.cargo);
-      const local_edit = stripHtml(body.local);
-
-      if (candidato) updatePayload.properties['Candidato'] = { title: [{ text: { content: candidato } }] };
-      if (cargo_edit) updatePayload.properties['Cargo'] = { select: { name: cargo_edit } };
-      if (local_edit) updatePayload.properties['Local'] = { select: { name: local_edit } };
       if (fase) updatePayload.properties['Fase'] = { select: { name: fase } };
       if (estado) updatePayload.properties['Estado'] = { status: { name: estado } };
       if (avance !== undefined) updatePayload.properties['Avance %'] = { number: avance };
