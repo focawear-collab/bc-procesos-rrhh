@@ -208,6 +208,59 @@
       [data-section="hrbrain"] .card-tags { gap: 4px; }
       [data-section="hrbrain"] .tag { font-size: 9px; padding: 2px 6px; }
     }
+
+    /* ── Favorites ── */
+    .fav-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      opacity: 0.3;
+      transition: opacity 0.2s, transform 0.2s;
+      z-index: 2;
+      padding: 2px;
+      line-height: 1;
+    }
+    .fav-btn:hover { opacity: 0.7; transform: scale(1.2); }
+    .fav-btn.active { opacity: 1; }
+    .card { position: relative; }
+
+    .fav-section {
+      margin-bottom: 20px;
+    }
+    .fav-section .fav-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .fav-section .fav-header span {
+      font-size: 14px;
+      font-weight: 600;
+      color: #c8a95e;
+    }
+    .fav-section .fav-header small {
+      font-size: 11px;
+      color: #666;
+    }
+    .fav-section .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 10px;
+    }
+    .fav-section .fav-empty {
+      font-size: 12px;
+      color: #555;
+      padding: 12px 0;
+    }
+    .fav-clone .card-arrow { display: none; }
+    .fav-clone .fav-btn { display: none; }
+
   </style>
 </head>
 <body>
@@ -239,6 +292,18 @@
     <div class="search-empty" id="search-empty">Sin resultados para "<span id="search-term"></span>"</div>
 
     <!-- 1) HR Brain -->
+
+    <!-- Favorites / Acceso Rápido -->
+    <div class="fav-section" id="fav-section">
+      <div class="fav-header">
+        <span>⭐ Acceso Rápido</span>
+        <small id="fav-count"></small>
+      </div>
+      <div class="cards" id="fav-cards">
+        <div class="fav-empty" id="fav-empty">Agrega favoritos tocando la ☆ en cualquier item</div>
+      </div>
+    </div>
+
     <div class="section" data-section="hrbrain">
       <div class="section-toggle" onclick="toggleSection(this)" role="button" tabindex="0" aria-expanded="false" aria-controls="section-body-hrbrain">
         <span class="section-toggle-label">🧠 HR Brain · Base de conocimiento RRHH</span>
@@ -746,6 +811,59 @@
   </div>
 
   <script>
+
+    /* ── Favorites ── */
+    .fav-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      opacity: 0.3;
+      transition: opacity 0.2s, transform 0.2s;
+      z-index: 2;
+      padding: 2px;
+      line-height: 1;
+    }
+    .fav-btn:hover { opacity: 0.7; transform: scale(1.2); }
+    .fav-btn.active { opacity: 1; }
+    .card { position: relative; }
+
+    .fav-section {
+      margin-bottom: 20px;
+    }
+    .fav-section .fav-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .fav-section .fav-header span {
+      font-size: 14px;
+      font-weight: 600;
+      color: #c8a95e;
+    }
+    .fav-section .fav-header small {
+      font-size: 11px;
+      color: #666;
+    }
+    .fav-section .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 10px;
+    }
+    .fav-section .fav-empty {
+      font-size: 12px;
+      color: #555;
+      padding: 12px 0;
+    }
+    .fav-clone .card-arrow { display: none; }
+    .fav-clone .fav-btn { display: none; }
+
     /* ── Collapsible sections ── */
     var STORAGE_KEY = 'bc_hub_open_sections';
 
@@ -1029,6 +1147,128 @@
         }).catch(function() {});
       } catch(e) {}
     });
+
+    /* ── Favorites system ── */
+    (function() {
+      var FAV_KEY = 'bc_hub_favorites';
+
+      function getFavs() {
+        try { return JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); } catch(e) { return []; }
+      }
+      function saveFavs(favs) {
+        try { localStorage.setItem(FAV_KEY, JSON.stringify(favs)); } catch(e) {}
+      }
+
+      function getCardId(card) {
+        // Use card title as unique ID
+        var title = card.querySelector('.card-title');
+        if (!title) return null;
+        return title.textContent.replace(/\s+/g, ' ').trim();
+      }
+
+      function isFav(cardId) {
+        return getFavs().indexOf(cardId) !== -1;
+      }
+
+      function toggleFav(cardId) {
+        var favs = getFavs();
+        var idx = favs.indexOf(cardId);
+        if (idx === -1) {
+          favs.push(cardId);
+        } else {
+          favs.splice(idx, 1);
+        }
+        saveFavs(favs);
+        renderFavButtons();
+        renderFavSection();
+      }
+
+      // Add star buttons to all cards
+      function renderFavButtons() {
+        var favs = getFavs();
+        document.querySelectorAll('.section .card').forEach(function(card) {
+          var cardId = getCardId(card);
+          if (!cardId) return;
+
+          var btn = card.querySelector('.fav-btn');
+          if (!btn) {
+            btn = document.createElement('button');
+            btn.className = 'fav-btn';
+            btn.setAttribute('aria-label', 'Marcar como favorito');
+            btn.addEventListener('click', function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+              toggleFav(cardId);
+            });
+            card.appendChild(btn);
+          }
+
+          var isActive = favs.indexOf(cardId) !== -1;
+          btn.textContent = isActive ? '★' : '☆';
+          btn.classList.toggle('active', isActive);
+          btn.style.color = isActive ? '#c8a95e' : '#666';
+        });
+      }
+
+      // Render favorites section
+      function renderFavSection() {
+        var favs = getFavs();
+        var container = document.getElementById('fav-cards');
+        var emptyMsg = document.getElementById('fav-empty');
+        var countEl = document.getElementById('fav-count');
+
+        // Clear old clones
+        container.querySelectorAll('.fav-clone').forEach(function(el) { el.remove(); });
+
+        if (favs.length === 0) {
+          emptyMsg.style.display = 'block';
+          countEl.textContent = '';
+          return;
+        }
+
+        emptyMsg.style.display = 'none';
+        countEl.textContent = favs.length + (favs.length === 1 ? ' favorito' : ' favoritos');
+
+        favs.forEach(function(cardId) {
+          // Find the original card
+          var original = null;
+          document.querySelectorAll('.section .card').forEach(function(card) {
+            if (getCardId(card) === cardId) original = card;
+          });
+          if (!original) return;
+
+          var clone = original.cloneNode(true);
+          clone.className = original.className + ' fav-clone';
+
+          // Copy the onclick from original
+          var origHref = original.getAttribute('href');
+          var origOnclick = original.getAttribute('onclick');
+          if (origHref) clone.setAttribute('href', origHref);
+          if (origOnclick) clone.setAttribute('onclick', origOnclick);
+
+          // Add remove-from-favs button
+          var removeBtn = document.createElement('button');
+          removeBtn.className = 'fav-btn active';
+          removeBtn.textContent = '★';
+          removeBtn.style.color = '#c8a95e';
+          removeBtn.style.opacity = '1';
+          removeBtn.style.display = 'block';
+          removeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleFav(cardId);
+          });
+          clone.appendChild(removeBtn);
+
+          container.appendChild(clone);
+        });
+      }
+
+      // Initialize
+      renderFavButtons();
+      renderFavSection();
+    })();
+
   </script>
 </body>
 </html>
