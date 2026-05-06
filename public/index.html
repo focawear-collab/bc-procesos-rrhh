@@ -1266,7 +1266,17 @@ function App(){
       return { ...p, descartado:false, motivoDescarte:undefined, fechaDescarte:undefined };
     }));
   };
-  const deleteProc = (procId) => { setProcesos(prev => prev.filter(p => p.id!==procId)); setActiveProc(null); };
+  const deleteProc = async (procId) => {
+    try {
+      const res = await fetch(`/api/proceso?id=${procId}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to delete');
+      setProcesos(prev => prev.filter(p => p.id!==procId));
+      setActiveProc(null);
+    } catch (e) {
+      console.error('Error borrando proceso:', e);
+      alert('Error al borrar el proceso. Intenta de nuevo.');
+    }
+  };
   const createProc = async (form) => {
     const trackMap = { 'Garzón/a':'garzones','Copero/a':'garzones','Entrenador/a':'garzones',
       'Jefe de Local':'jefatura','Sub Jefe':'jefatura',

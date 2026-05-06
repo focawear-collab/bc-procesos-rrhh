@@ -1,6 +1,6 @@
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
@@ -92,6 +92,34 @@ export default async function handler(req, res) {
       res.status(200).json(updated);
     } catch (error) {
       console.error('Error updating proceso:', error);
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.status(500).json({ error: error.message });
+    }
+  }
+  // DELETE: Archive proceso in Notion
+  else if (req.method === 'DELETE') {
+    try {
+      const { id } = req.query;
+      if (!id) {
+        res.status(400).json({ error: 'Missing query param: id' });
+        return;
+      }
+
+      const response = await fetch(`https://api.notion.com/v1/pages/${id}`, {
+        method: 'PATCH',
+        headers: headers,
+        body: JSON.stringify({ archived: true })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Notion API error: ${JSON.stringify(errorData)}`);
+      }
+
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.status(200).json({ success: true, id });
+    } catch (error) {
+      console.error('Error deleting proceso:', error);
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.status(500).json({ error: error.message });
     }
