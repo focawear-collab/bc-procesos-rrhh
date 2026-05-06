@@ -637,9 +637,18 @@
     var tabs = document.querySelectorAll('.intent-tab');
     var panels = document.querySelectorAll('.panel');
 
+    function clearGlobalSearch() {
+      var mainInput = document.getElementById('hub-search');
+      if (mainInput) mainInput.value = '';
+      document.querySelectorAll('.doc-row.hidden, .person-card.hidden').forEach(function(el) {
+        el.classList.remove('hidden');
+      });
+    }
+
     function switchTab(id) {
       tabs.forEach(function(t) { t.classList.toggle('active', t.dataset.tab === id); });
       panels.forEach(function(p) { p.classList.toggle('active', p.id === 'panel-' + id); });
+      clearGlobalSearch();
       try { localStorage.setItem(ACTIVE_TAB_KEY, id); } catch(e) {}
     }
 
