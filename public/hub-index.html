@@ -680,10 +680,11 @@
       });
     }
 
+    var _searchSwitching = false;
     function switchTab(id) {
       tabs.forEach(function(t) { t.classList.toggle('active', t.dataset.tab === id); });
       panels.forEach(function(p) { p.classList.toggle('active', p.id === 'panel-' + id); });
-      clearGlobalSearch();
+      if (!_searchSwitching) clearGlobalSearch();
       try { localStorage.setItem(ACTIVE_TAB_KEY, id); } catch(e) {}
     }
 
@@ -896,7 +897,11 @@
         Object.keys(found).forEach(function(k) {
           if (found[k] > max) { max = found[k]; best = k; }
         });
-        if (best && max > 0) switchTab(best);
+        if (best && max > 0) {
+          _searchSwitching = true;
+          switchTab(best);
+          _searchSwitching = false;
+        }
       });
 
       // Clear search on empty
