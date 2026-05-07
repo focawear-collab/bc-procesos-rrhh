@@ -325,14 +325,15 @@
       <div class="intent-tab" data-tab="publicaciones"><i class="ti ti-speakerphone" style="font-size:14px"></i> Publicaciones <span class="tab-count" id="count-pub">10</span></div>
     </div>
 
+    <!-- GLOBAL SEARCH (always visible) -->
+    <div class="search-box" id="search-wrap">
+      <i class="ti ti-search"></i>
+      <input id="hub-search" type="text" placeholder="Buscar persona, documento, proceso…" autocomplete="off" spellcheck="false">
+      <kbd>⌘K</kbd>
+    </div>
+
     <!-- ═══ PANEL: INICIO ═══ -->
     <div class="panel active" id="panel-inicio">
-      <div class="search-box" id="search-wrap">
-        <i class="ti ti-search"></i>
-        <input id="hub-search" type="text" placeholder="Buscar persona, documento, proceso…" autocomplete="off" spellcheck="false">
-        <kbd>⌘K</kbd>
-      </div>
-
       <div class="section-title">Acciones rápidas</div>
       <div class="action-grid">
         <a class="action-card" href="index.html">
@@ -867,19 +868,32 @@
     ═══════════════════════════════════════════ */
     (function() {
       var mainInput = document.getElementById('hub-search');
-      var mainEmpty = document.querySelector('.search-empty');
 
-      // Global search: searches ALL panels, switches to relevant tab
+      // Normalize: lowercase + strip accents
+      function norm(s) { return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+
+      // Debounce timer for auto-switch (only switch after user stops typing)
+      var _switchTimer = null;
+
+      // Global search: searches ALL panels, auto-switches to best tab
       mainInput.addEventListener('input', function() {
-        var q = this.value.trim().toLowerCase();
-        if (!q) return; // No-op on empty, keep current view
+        var q = norm(this.value.trim());
+
+        // Clear: unhide everything and go to inicio
+        if (!q) {
+          clearTimeout(_switchTimer);
+          document.querySelectorAll('.doc-row.hidden, .person-card.hidden').forEach(function(el) {
+            el.classList.remove('hidden');
+          });
+          return;
+        }
 
         // Search across all doc-rows and person-cards
         var allRows = document.querySelectorAll('.doc-row, .person-card');
         var found = { personas: 0, procesos: 0, documentos: 0, publicaciones: 0 };
 
         allRows.forEach(function(row) {
-          var text = (row.dataset.search || row.textContent).toLowerCase();
+          var text = norm(row.dataset.search || row.textContent);
           var match = text.includes(q);
           row.classList.toggle('hidden', !match);
 
@@ -892,34 +906,29 @@
           }
         });
 
-        // Auto-switch to tab with most matches
-        var best = null; var max = 0;
-        Object.keys(found).forEach(function(k) {
-          if (found[k] > max) { max = found[k]; best = k; }
-        });
-        if (best && max > 0) {
-          _searchSwitching = true;
-          switchTab(best);
-          _searchSwitching = false;
-        }
-      });
-
-      // Clear search on empty
-      mainInput.addEventListener('input', function() {
-        if (!this.value.trim()) {
-          document.querySelectorAll('.doc-row.hidden, .person-card.hidden').forEach(function(el) {
-            el.classList.remove('hidden');
+        // Auto-switch to tab with most matches (debounced 300ms)
+        clearTimeout(_switchTimer);
+        _switchTimer = setTimeout(function() {
+          var best = null; var max = 0;
+          Object.keys(found).forEach(function(k) {
+            if (found[k] > max) { max = found[k]; best = k; }
           });
-        }
+          if (best && max > 0) {
+            _searchSwitching = true;
+            switchTab(best);
+            _searchSwitching = false;
+            mainInput.focus();
+          }
+        }, 300);
       });
 
       // Personas search
       var persSearch = document.getElementById('personas-search');
       if (persSearch) {
         persSearch.addEventListener('input', function() {
-          var q = this.value.trim().toLowerCase();
+          var q = norm(this.value.trim());
           document.querySelectorAll('#person-grid .person-card').forEach(function(card) {
-            var text = (card.dataset.search || card.textContent).toLowerCase();
+            var text = norm(card.dataset.search || card.textContent);
             card.classList.toggle('hidden', q && !text.includes(q));
           });
         });
@@ -929,9 +938,9 @@
       var docsSearch = document.getElementById('docs-search');
       if (docsSearch) {
         docsSearch.addEventListener('input', function() {
-          var q = this.value.trim().toLowerCase();
+          var q = norm(this.value.trim());
           document.querySelectorAll('#panel-documentos .doc-row').forEach(function(row) {
-            var text = (row.dataset.search || row.textContent).toLowerCase();
+            var text = norm(row.dataset.search || row.textContent);
             row.classList.toggle('hidden', q && !text.includes(q));
           });
         });
@@ -941,7 +950,6 @@
       document.addEventListener('keydown', function(e) {
         if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
           e.preventDefault();
-          switchTab('inicio');
           mainInput.focus();
         }
         if (e.key === 'Escape') {
