@@ -872,15 +872,23 @@
       // Normalize: lowercase + strip accents
       function norm(s) { return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
 
+      // Multi-word match: every word in query must appear in text
+      function matchAll(text, words) {
+        for (var i = 0; i < words.length; i++) {
+          if (!text.includes(words[i])) return false;
+        }
+        return true;
+      }
+
       // Debounce timer for auto-switch (only switch after user stops typing)
       var _switchTimer = null;
 
       // Global search: searches ALL panels, auto-switches to best tab
       mainInput.addEventListener('input', function() {
-        var q = norm(this.value.trim());
+        var raw = norm(this.value.trim());
 
-        // Clear: unhide everything and go to inicio
-        if (!q) {
+        // Clear: unhide everything
+        if (!raw) {
           clearTimeout(_switchTimer);
           document.querySelectorAll('.doc-row.hidden, .person-card.hidden').forEach(function(el) {
             el.classList.remove('hidden');
@@ -888,13 +896,15 @@
           return;
         }
 
+        var words = raw.split(/\s+/).filter(Boolean);
+
         // Search across all doc-rows and person-cards
         var allRows = document.querySelectorAll('.doc-row, .person-card');
         var found = { personas: 0, procesos: 0, documentos: 0, publicaciones: 0 };
 
         allRows.forEach(function(row) {
           var text = norm(row.dataset.search || row.textContent);
-          var match = text.includes(q);
+          var match = matchAll(text, words);
           row.classList.toggle('hidden', !match);
 
           if (match) {
@@ -926,10 +936,11 @@
       var persSearch = document.getElementById('personas-search');
       if (persSearch) {
         persSearch.addEventListener('input', function() {
-          var q = norm(this.value.trim());
+          var raw = norm(this.value.trim());
+          var words = raw ? raw.split(/\s+/).filter(Boolean) : [];
           document.querySelectorAll('#person-grid .person-card').forEach(function(card) {
             var text = norm(card.dataset.search || card.textContent);
-            card.classList.toggle('hidden', q && !text.includes(q));
+            card.classList.toggle('hidden', words.length > 0 && !matchAll(text, words));
           });
         });
       }
@@ -938,10 +949,11 @@
       var docsSearch = document.getElementById('docs-search');
       if (docsSearch) {
         docsSearch.addEventListener('input', function() {
-          var q = norm(this.value.trim());
+          var raw = norm(this.value.trim());
+          var words = raw ? raw.split(/\s+/).filter(Boolean) : [];
           document.querySelectorAll('#panel-documentos .doc-row').forEach(function(row) {
             var text = norm(row.dataset.search || row.textContent);
-            row.classList.toggle('hidden', q && !text.includes(q));
+            row.classList.toggle('hidden', words.length > 0 && !matchAll(text, words));
           });
         });
       }
