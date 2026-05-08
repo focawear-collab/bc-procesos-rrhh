@@ -331,6 +331,7 @@ const AppHeader = ({procesos, onNew, showMetrics, onToggleMetrics}) => {
       <div style={{position:'absolute', top:-80, right:-60, width:320, height:320, borderRadius:'50%', background:'radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 65%)', pointerEvents:'none'}} />
       <div style={{display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:24, position:'relative', zIndex:1}}>
         <div>
+          <a href="hub-index.html" style={{display:'inline-block',color:'var(--gold)',textDecoration:'none',fontSize:12,marginBottom:8,opacity:0.8,transition:'opacity 0.2s'}} onMouseEnter={e=>e.currentTarget.style.opacity='1'} onMouseLeave={e=>e.currentTarget.style.opacity='0.8'}>← Volver al Hub</a>
           <div style={{display:'flex', alignItems:'center', gap:10, marginBottom:4}}>
             <div style={{width:24, height:24, borderRadius:5, background:'var(--gold)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14}}>🍗</div>
             <span style={{fontSize:11, letterSpacing:'2px', color:'var(--gold)', fontWeight:700, textTransform:'uppercase'}}>Black Chicken · RRHH</span>
