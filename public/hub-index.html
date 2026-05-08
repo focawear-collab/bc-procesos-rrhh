@@ -1,28 +1,36 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f0f0f">
   <title>Hub de HR · Black Chicken</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    :root {
+    /* ════════════════════════════════════════════════════════════
+       DESIGN TOKENS — Friction Hunter v3
+       (consolidated motion / typography / touch / surfaces)
+    ════════════════════════════════════════════════════════════ */
+    :root,
+    :root[data-theme="dark"] {
       --bg: #0f0f0f;
       --bg-card: #161616;
       --bg-elevated: #1a1a1a;
       --bg-hover: #222222;
+      --bg-skeleton: #1a1a1a;
+      --shimmer-from: #1a1a1a;
+      --shimmer-to: #2a2a2a;
       --border: #2a2a2a;
       --border-light: #333;
       --gold: #d4af37;
+      --gold-soft: #f0c940;
       --gold-dim: rgba(212,175,55,0.15);
       --gold-glow: rgba(212,175,55,0.08);
       --text: #e8e8e8;
-      --text-secondary: #999;
-      --text-muted: #666;
-      --text-dim: #555;
+      --text-secondary: #a8a8a8;
+      --text-muted: #999;
+      --text-dim: #666;
       --green: #5cb85c;
       --green-bg: rgba(92,184,92,0.12);
       --blue: #5b9bd5;
@@ -33,9 +41,56 @@
       --red-bg: rgba(224,80,80,0.12);
       --purple: #9b6dcc;
       --purple-bg: rgba(155,109,204,0.12);
+      --overlay: rgba(0,0,0,0.85);
+    }
+    :root[data-theme="light"] {
+      --bg: #fafaf7;
+      --bg-card: #ffffff;
+      --bg-elevated: #ffffff;
+      --bg-hover: #f3f1ec;
+      --bg-skeleton: #eeece6;
+      --shimmer-from: #eeece6;
+      --shimmer-to: #d8d4c8;
+      --border: #e5e2d8;
+      --border-light: #cfcbbf;
+      --gold: #a8861f;
+      --gold-soft: #c79f30;
+      --gold-dim: rgba(168,134,31,0.16);
+      --gold-glow: rgba(168,134,31,0.08);
+      --text: #1d1d1d;
+      --text-secondary: #4a4a4a;
+      --text-muted: #6b6b6b;
+      --text-dim: #8a8a8a;
+      --green: #2f7d32;
+      --green-bg: rgba(47,125,50,0.12);
+      --blue: #1f6fb8;
+      --blue-bg: rgba(31,111,184,0.12);
+      --amber: #b87515;
+      --amber-bg: rgba(184,117,21,0.14);
+      --red: #b73e3e;
+      --red-bg: rgba(183,62,62,0.12);
+      --purple: #6f4ba0;
+      --purple-bg: rgba(111,75,160,0.12);
+      --overlay: rgba(20,18,12,0.55);
+    }
+
+    :root {
       --radius: 10px;
       --radius-sm: 6px;
+      --radius-lg: 14px;
+      --motion-fast: 150ms;
+      --motion-base: 200ms;
+      --motion-slow: 300ms;
+      --easing: cubic-bezier(0.4, 0, 0.2, 1);
+      --touch-min: 44px;
+      --font-micro: 11px;
+      --font-meta: 12px;
+      --font-body: 13px;
+      --font-title: 15px;
+      --safe-x: max(16px, env(safe-area-inset-left));
     }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -43,11 +98,26 @@
       color: var(--text);
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+      border-radius: 4px;
     }
 
     .hub { max-width: 820px; margin: 0 auto; }
 
-    /* ─── TOP NAV ─── */
     .top-nav {
       display: flex; align-items: center; justify-content: space-between;
       padding: 14px 24px;
@@ -55,38 +125,50 @@
       position: sticky; top: 0; z-index: 100;
       background: var(--bg);
       backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
     .logo-area { display: flex; align-items: center; gap: 10px; }
     .logo-area img { width: 32px; height: 32px; object-fit: contain; filter: drop-shadow(0 1px 4px rgba(212,175,55,.3)); }
-    .app-name { font-size: 14px; font-weight: 600; color: #fff; }
-    .app-version { font-size: 10px; color: var(--gold); opacity: 0.6; margin-left: 6px; letter-spacing: 0.3px; }
+    .app-name { font-size: 14px; font-weight: 600; color: var(--text); }
+    .app-version { font-size: 10px; color: var(--gold); opacity: 0.7; margin-left: 6px; letter-spacing: 0.3px; }
 
-    /* ─── TODAY STRIP ─── */
+    .top-actions { display: flex; gap: 4px; }
+    .icon-btn {
+      width: 36px; height: 36px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: transparent; border: 1px solid transparent;
+      border-radius: var(--radius-sm); color: var(--text-muted);
+      cursor: pointer; transition: all var(--motion-fast) var(--easing);
+      font-size: 16px;
+    }
+    .icon-btn:hover { background: var(--bg-hover); color: var(--text); }
+    .icon-btn .ti { font-size: 18px; }
+
     .today-strip {
-      background: linear-gradient(180deg, #141410 0%, var(--bg) 100%);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 6%, var(--bg)) 0%, var(--bg) 100%);
       padding: 14px 24px;
       border-bottom: 1px solid var(--border);
     }
-    .today-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 600; }
+    .today-label { font-size: var(--font-micro); color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 600; }
     .today-items { display: flex; gap: 8px; flex-wrap: wrap; }
     .today-chip {
-      display: flex; align-items: center; gap: 6px;
+      display: inline-flex; align-items: center; gap: 6px;
+      min-height: 32px;
       padding: 6px 12px; border-radius: 20px;
       border: 1px solid var(--border);
       background: var(--bg-card);
-      font-size: 12px; color: var(--text-secondary);
-      cursor: pointer; transition: all 0.15s;
-      text-decoration: none;
+      font-size: var(--font-meta); color: var(--text-secondary);
+      cursor: pointer; transition: all var(--motion-fast) var(--easing);
+      text-decoration: none; font-family: inherit;
     }
-    .today-chip:hover { background: var(--bg-hover); border-color: var(--border-light); }
+    .today-chip:hover { background: var(--bg-hover); border-color: var(--border-light); transform: translateY(-1px); }
+    .today-chip:active { transform: translateY(0); }
     .today-chip .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-    .dot-warn { background: var(--amber); }
+    .dot-warn { background: var(--amber); box-shadow: 0 0 8px var(--amber-bg); }
     .dot-info { background: var(--blue); }
     .dot-ok { background: var(--green); }
-    .dot-new { background: var(--gold); }
-    .today-loading { font-size: 11px; color: var(--text-dim); padding: 4px 0; }
+    .dot-new { background: var(--gold); box-shadow: 0 0 8px var(--gold-dim); }
 
-    /* ─── INTENT TABS ─── */
     .intent-nav {
       display: flex; border-bottom: 1px solid var(--border);
       overflow-x: auto; scrollbar-width: none;
@@ -96,1040 +178,1434 @@
     }
     .intent-nav::-webkit-scrollbar { display: none; }
     .intent-tab {
+      min-height: var(--touch-min);
       padding: 12px 16px;
-      font-size: 12px; font-weight: 500; color: var(--text-muted);
+      font-size: var(--font-meta); font-weight: 500; color: var(--text-muted);
+      border: none;
       border-bottom: 2px solid transparent;
+      background: transparent;
       cursor: pointer; white-space: nowrap;
-      transition: color 0.15s;
-      display: flex; align-items: center; gap: 6px;
-      user-select: none;
+      transition: color var(--motion-fast) var(--easing), border-color var(--motion-fast) var(--easing);
+      display: inline-flex; align-items: center; gap: 6px;
+      user-select: none; font-family: inherit;
     }
     .intent-tab:hover { color: var(--text-secondary); }
-    .intent-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+    .intent-tab[aria-selected="true"] { color: var(--gold); border-bottom-color: var(--gold); }
+    .intent-tab .ti { font-size: 14px; }
     .tab-count {
-      font-size: 9px; background: var(--bg-elevated);
-      border-radius: 10px; padding: 1px 6px;
+      font-size: 10px; background: var(--bg-elevated);
+      border-radius: 10px; padding: 2px 7px;
       color: var(--text-muted); font-weight: 600;
+      border: 1px solid var(--border);
     }
-    .intent-tab.active .tab-count { background: var(--gold-dim); color: var(--gold); }
+    .intent-tab[aria-selected="true"] .tab-count { background: var(--gold-dim); color: var(--gold); border-color: transparent; }
 
-    /* ─── PANELS ─── */
     .panel { display: none; padding: 20px 24px; }
-    .panel.active { display: block; }
+    .panel.active { display: block; animation: panel-in var(--motion-base) var(--easing); }
+    @keyframes panel-in {
+      from { opacity: 0; transform: translateY(2px); }
+      to { opacity: 1; transform: none; }
+    }
 
-    /* ─── SEARCH ─── */
-    .search-box {
-      display: flex; align-items: center; gap: 8px;
+    .search-trigger {
+      display: flex; align-items: center; gap: 10px; width: 100%;
+      min-height: var(--touch-min);
       border: 1px solid var(--border); border-radius: var(--radius);
       padding: 10px 14px; margin-bottom: 20px;
-      background: var(--bg-card); transition: border-color 0.2s;
+      background: var(--bg-card); color: var(--text-muted);
+      cursor: pointer; transition: border-color var(--motion-fast) var(--easing), background var(--motion-fast) var(--easing);
+      font-family: inherit; font-size: var(--font-body); text-align: left;
+    }
+    .search-trigger:hover { border-color: var(--border-light); background: var(--bg-hover); }
+    .search-trigger .ti { font-size: 16px; color: var(--text-dim); flex-shrink: 0; }
+    .search-trigger span { flex: 1; }
+    .search-trigger kbd {
+      font-size: 10px; color: var(--text-dim);
+      border: 1px solid var(--border); border-radius: 4px;
+      padding: 2px 6px; font-family: inherit; background: var(--bg-elevated);
+      letter-spacing: 0.5px;
+    }
+
+    .search-box {
+      display: flex; align-items: center; gap: 8px;
+      min-height: var(--touch-min);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 10px 14px; margin-bottom: 20px;
+      background: var(--bg-card); transition: border-color var(--motion-base) var(--easing);
     }
     .search-box:focus-within { border-color: var(--gold); }
     .search-box i { font-size: 16px; color: var(--text-dim); flex-shrink: 0; }
     .search-box input {
       border: none; background: transparent; outline: none;
-      font-size: 13px; color: var(--text); flex: 1;
-      font-family: 'Inter', sans-serif;
+      font-size: var(--font-body); color: var(--text); flex: 1;
+      font-family: inherit; min-height: 24px;
     }
     .search-box input::placeholder { color: var(--text-dim); }
-    .search-box kbd {
-      font-size: 10px; color: var(--text-dim);
-      border: 1px solid var(--border); border-radius: 4px;
-      padding: 1px 5px; font-family: 'Inter', sans-serif;
-    }
-    .search-empty { text-align: center; padding: 24px; color: var(--text-dim); font-size: 13px; display: none; }
-    .highlight { background: rgba(212,175,55,0.25); color: #f0c940; border-radius: 2px; padding: 0 1px; }
 
-    /* ─── SECTION TITLE ─── */
     .section-title {
-      font-size: 10px; font-weight: 700; color: var(--text-dim);
+      font-size: var(--font-micro); font-weight: 700; color: var(--text-muted);
       text-transform: uppercase; letter-spacing: 1.2px;
       margin: 24px 0 12px; padding-bottom: 8px;
       border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 8px;
     }
     .section-title:first-child { margin-top: 0; }
+    .section-title .ti { font-size: 14px; color: var(--gold); }
 
-    /* ─── ACTION GRID ─── */
     .action-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      display: grid; grid-template-columns: repeat(3, 1fr);
       gap: 8px; margin-bottom: 4px;
     }
     @media (max-width: 640px) { .action-grid { grid-template-columns: repeat(2, 1fr); } }
     .action-card {
       border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 16px 14px; cursor: pointer;
-      transition: all 0.15s; background: var(--bg-card);
+      padding: 16px 14px;
+      min-height: var(--touch-min);
+      cursor: pointer;
+      transition: all var(--motion-fast) var(--easing);
+      background: var(--bg-card);
       text-decoration: none; color: inherit; display: block;
     }
-    .action-card:hover { background: var(--bg-hover); border-color: var(--border-light); }
+    .action-card:hover { background: var(--bg-hover); border-color: var(--border-light); transform: translateY(-1px); }
+    .action-card:active { transform: translateY(0); }
     .action-icon {
       width: 34px; height: 34px; border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
       margin-bottom: 10px; font-size: 16px;
     }
-    .ac-green { background: var(--green-bg); color: var(--green); border: 1px solid rgba(92,184,92,0.2); }
-    .ac-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(224,160,48,0.2); }
-    .ac-blue  { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(91,155,213,0.2); }
-    .ac-purple { background: var(--purple-bg); color: var(--purple); border: 1px solid rgba(155,109,204,0.2); }
-    .ac-gold  { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(212,175,55,0.2); }
-    .ac-red   { background: var(--red-bg); color: var(--red); border: 1px solid rgba(224,80,80,0.2); }
-    .action-title { font-size: 12px; font-weight: 600; color: #fff; line-height: 1.3; }
-    .action-sub { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+    .ac-green  { background: var(--green-bg); color: var(--green); border: 1px solid color-mix(in srgb, var(--green) 25%, transparent); }
+    .ac-amber  { background: var(--amber-bg); color: var(--amber); border: 1px solid color-mix(in srgb, var(--amber) 25%, transparent); }
+    .ac-blue   { background: var(--blue-bg); color: var(--blue); border: 1px solid color-mix(in srgb, var(--blue) 25%, transparent); }
+    .ac-purple { background: var(--purple-bg); color: var(--purple); border: 1px solid color-mix(in srgb, var(--purple) 25%, transparent); }
+    .ac-gold   { background: var(--gold-dim); color: var(--gold); border: 1px solid color-mix(in srgb, var(--gold) 25%, transparent); }
+    .ac-red    { background: var(--red-bg); color: var(--red); border: 1px solid color-mix(in srgb, var(--red) 25%, transparent); }
 
-    /* ─── TASK LIST ─── */
+    .action-title { font-size: var(--font-meta); font-weight: 600; color: var(--text); line-height: 1.3; }
+    .action-sub { font-size: var(--font-micro); color: var(--text-muted); margin-top: 3px; }
+
     .task-list { display: flex; flex-direction: column; gap: 6px; }
     .task-item {
-      display: flex; align-items: flex-start; gap: 10px;
+      display: flex; align-items: center; gap: 10px;
       padding: 12px 14px; border: 1px solid var(--border);
       border-radius: var(--radius-sm); background: var(--bg-card);
-      transition: background 0.12s;
+      transition: background var(--motion-fast) var(--easing);
+      cursor: pointer; text-decoration: none; color: inherit;
     }
     .task-item:hover { background: var(--bg-hover); }
-    .task-check {
-      width: 16px; height: 16px; border-radius: 4px;
-      border: 1.5px solid var(--border-light); flex-shrink: 0;
-      margin-top: 2px; cursor: pointer; display: flex;
-      align-items: center; justify-content: center;
-      transition: all 0.15s;
+    .task-item.glow { animation: glow-pulse 1.2s var(--easing); }
+    @keyframes glow-pulse {
+      0%   { box-shadow: 0 0 0 0 var(--gold-glow); }
+      30%  { box-shadow: 0 0 0 6px var(--gold-glow); }
+      100% { box-shadow: 0 0 0 0 transparent; }
     }
-    .task-check:hover { border-color: var(--gold); }
-    .task-check.done { background: var(--green); border-color: var(--green); }
     .task-body { flex: 1; min-width: 0; }
-    .task-title { font-size: 13px; color: var(--text); }
-    .task-subtitle { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .task-title { font-size: var(--font-body); color: var(--text); }
+    .task-subtitle { font-size: var(--font-micro); color: var(--text-muted); margin-top: 2px; }
     .task-badge {
-      font-size: 9px; padding: 2px 8px; border-radius: 10px;
-      font-weight: 700; flex-shrink: 0; align-self: center;
-      letter-spacing: 0.3px; text-transform: uppercase;
+      font-size: var(--font-micro); padding: 3px 9px; border-radius: 10px;
+      font-weight: 700; flex-shrink: 0;
+      letter-spacing: 0.4px; text-transform: uppercase;
     }
-    .badge-urgent { background: var(--red-bg); color: var(--red); }
+    .badge-urgent  { background: var(--red-bg); color: var(--red); }
     .badge-pending { background: var(--amber-bg); color: var(--amber); }
-    .badge-ok { background: var(--green-bg); color: var(--green); }
-    .badge-new { background: var(--gold-dim); color: var(--gold); }
+    .badge-ok      { background: var(--green-bg); color: var(--green); }
+    .badge-new     { background: var(--gold-dim); color: var(--gold); }
 
-    /* ─── STAT ROW ─── */
-    .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; }
-    @media (max-width: 640px) { .stat-row { grid-template-columns: repeat(2, 1fr); } }
+    .stat-row {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+      margin-bottom: 20px;
+    }
     .stat-card {
       background: var(--bg-card); border: 1px solid var(--border);
       border-radius: var(--radius-sm); padding: 12px 14px;
     }
-    .stat-label { font-size: 10px; color: var(--text-dim); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
-    .stat-val { font-size: 22px; font-weight: 700; color: var(--gold); }
-    .stat-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+    .stat-card.alert { border-color: color-mix(in srgb, var(--amber) 40%, var(--border)); }
+    .stat-label { font-size: var(--font-micro); color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    .stat-val { font-size: 22px; font-weight: 700; color: var(--gold); line-height: 1.1; }
+    .stat-card.alert .stat-val { color: var(--amber); }
+    .stat-sub { font-size: var(--font-micro); color: var(--text-muted); margin-top: 2px; }
 
-    /* ─── DOC ROW ─── */
     .doc-list { display: flex; flex-direction: column; gap: 2px; }
     .doc-row {
       display: flex; align-items: center; gap: 12px;
       padding: 10px 12px; border-radius: var(--radius-sm);
-      cursor: pointer; transition: background 0.12s;
+      min-height: var(--touch-min);
+      cursor: pointer; transition: background var(--motion-fast) var(--easing);
       text-decoration: none; color: inherit;
     }
     .doc-row:hover { background: var(--bg-hover); }
-    .doc-row.hidden, .person-card.hidden { display: none; }
+    .doc-row.hidden, .person-card.hidden, .pub-row.hidden { display: none !important; }
     .doc-icon {
       width: 32px; height: 32px; border-radius: 6px;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0; font-size: 14px;
     }
     .doc-info { flex: 1; min-width: 0; }
-    .doc-name { font-size: 13px; color: #fff; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .doc-meta { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+    .doc-name {
+      font-size: var(--font-body); color: var(--text); font-weight: 500;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .doc-meta { font-size: var(--font-micro); color: var(--text-muted); margin-top: 2px; }
     .doc-tags { display: flex; gap: 4px; flex-shrink: 0; }
-    .doc-arrow { color: var(--text-dim); font-size: 13px; flex-shrink: 0; }
+    .doc-arrow { color: var(--text-dim); font-size: 14px; flex-shrink: 0; }
+
+    .lock-icon {
+      font-size: 12px; opacity: 0.55; color: var(--text-muted);
+      display: inline-flex; align-items: center;
+      transition: opacity var(--motion-fast) var(--easing);
+    }
+    .gated-item:hover .lock-icon { opacity: 0.85; }
 
     .tag {
-      font-size: 9px; padding: 2px 7px; border-radius: 10px;
-      font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;
+      font-size: var(--font-micro); padding: 3px 8px; border-radius: 10px;
+      font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
     }
     .tag-green { background: var(--green-bg); color: var(--green); }
-    .tag-blue { background: var(--blue-bg); color: var(--blue); }
+    .tag-blue  { background: var(--blue-bg); color: var(--blue); }
     .tag-amber { background: var(--amber-bg); color: var(--amber); }
-    .tag-gold { background: var(--gold-dim); color: var(--gold); }
-    .tag-red { background: var(--red-bg); color: var(--red); }
-    .tag-gray { background: rgba(255,255,255,0.06); color: var(--text-muted); }
-    .tag-new {
-      background: linear-gradient(90deg, #d4af37, #f0c940);
+    .tag-gold  { background: var(--gold-dim); color: var(--gold); }
+    .tag-red   { background: var(--red-bg); color: var(--red); }
+    .tag-gray  { background: color-mix(in srgb, var(--text) 6%, transparent); color: var(--text-muted); }
+    .tag-new   {
+      background: linear-gradient(90deg, var(--gold), var(--gold-soft));
       color: #0f0f0f; font-weight: 800; letter-spacing: 0.8px;
     }
 
-    /* ─── PERSON GRID ─── */
     .person-grid {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
       gap: 8px;
     }
     .person-card {
       border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 14px; cursor: default; background: var(--bg-card);
-      transition: background 0.15s;
+      padding: 14px; cursor: pointer; background: var(--bg-card);
+      transition: background var(--motion-fast) var(--easing), transform var(--motion-fast) var(--easing);
+      text-decoration: none; color: inherit; display: block;
     }
-    .person-card:hover { background: var(--bg-hover); }
+    .person-card:hover { background: var(--bg-hover); transform: translateY(-1px); }
+    .person-card.glow {
+      animation: glow-pulse 1.4s var(--easing);
+      border-color: var(--gold);
+    }
     .person-av {
       width: 36px; height: 36px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 700; margin-bottom: 8px;
+      font-size: var(--font-meta); font-weight: 700; margin-bottom: 8px;
     }
-    .person-name { font-size: 12px; font-weight: 600; color: #fff; }
-    .person-role { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .person-name { font-size: var(--font-meta); font-weight: 600; color: var(--text); }
+    .person-role { font-size: var(--font-micro); color: var(--text-muted); margin-top: 2px; }
     .person-status { display: flex; align-items: center; gap: 5px; margin-top: 8px; }
-    .status-dot { width: 5px; height: 5px; border-radius: 50%; }
-    .person-status span:last-child { font-size: 10px; color: var(--text-muted); }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .person-status span:last-child { font-size: var(--font-micro); color: var(--text-muted); }
 
-    /* ─── FOOTER ─── */
+    .empty-state {
+      text-align: center; padding: 32px 16px;
+      color: var(--text-muted);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      background: color-mix(in srgb, var(--bg-card) 60%, transparent);
+    }
+    .empty-state .ti { font-size: 28px; color: var(--text-dim); margin-bottom: 8px; display: block; }
+    .empty-state h4 { font-size: var(--font-body); color: var(--text-secondary); font-weight: 600; margin-bottom: 4px; }
+    .empty-state p { font-size: var(--font-micro); margin-bottom: 12px; }
+    .empty-state button {
+      background: var(--gold-dim); color: var(--gold);
+      border: 1px solid color-mix(in srgb, var(--gold) 30%, transparent);
+      padding: 8px 14px; border-radius: var(--radius-sm);
+      font-family: inherit; font-size: var(--font-meta); font-weight: 600;
+      cursor: pointer; transition: background var(--motion-fast) var(--easing);
+    }
+    .empty-state button:hover { background: color-mix(in srgb, var(--gold) 22%, transparent); }
+
+    .skeleton {
+      background: linear-gradient(90deg, var(--shimmer-from) 0%, var(--shimmer-to) 50%, var(--shimmer-from) 100%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s var(--easing) infinite;
+      border-radius: var(--radius-sm);
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .sk-chip { height: 28px; width: 130px; border-radius: 20px; }
+    .sk-chip-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .sk-task { height: 56px; border-radius: var(--radius-sm); margin-bottom: 6px; }
+    .sk-person { height: 96px; border-radius: var(--radius); }
+    .sk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
+
     footer {
       text-align: center; padding: 24px; color: var(--text-dim);
-      font-size: 11px; margin-top: 32px; border-top: 1px solid var(--border);
+      font-size: var(--font-micro); margin-top: 32px; border-top: 1px solid var(--border);
       letter-spacing: 0.3px;
     }
 
-    /* ─── RESPONSIVE ─── */
-    @media (max-width: 640px) {
-      .top-nav, .today-strip, .panel { padding-left: 16px; padding-right: 16px; }
-      .intent-nav { padding: 0 16px; }
-      .intent-tab { padding: 10px 12px; font-size: 11px; }
+    .cmd-overlay {
+      position: fixed; inset: 0; z-index: 9998;
+      background: var(--overlay);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      display: none;
+      align-items: flex-start; justify-content: center;
+      padding: 80px 16px 16px;
+      animation: fade-in var(--motion-fast) var(--easing);
+    }
+    .cmd-overlay.open { display: flex; }
+    @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+    .cmd-palette {
+      width: 100%; max-width: 600px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      max-height: calc(100vh - 96px);
+      animation: cmd-in var(--motion-base) var(--easing);
+    }
+    @keyframes cmd-in { from { opacity: 0; transform: translateY(-8px) scale(0.985); } to { opacity: 1; transform: none; } }
+    .cmd-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 16px; border-bottom: 1px solid var(--border);
+    }
+    .cmd-header .ti { font-size: 18px; color: var(--text-muted); }
+    .cmd-header input {
+      flex: 1; border: none; outline: none; background: transparent;
+      color: var(--text); font-size: var(--font-title); font-family: inherit;
+    }
+    .cmd-header input::placeholder { color: var(--text-dim); }
+    .cmd-results { overflow-y: auto; padding: 6px 0; }
+    .cmd-section-label {
+      font-size: 10px; color: var(--text-dim); text-transform: uppercase;
+      letter-spacing: 1px; padding: 10px 16px 6px; font-weight: 700;
+    }
+    .cmd-result {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 16px; cursor: pointer;
+      transition: background var(--motion-fast) var(--easing);
+      text-decoration: none; color: inherit;
+    }
+    .cmd-result:hover, .cmd-result[aria-selected="true"] { background: var(--bg-hover); }
+    .cmd-result .ti { font-size: 16px; color: var(--text-muted); width: 24px; text-align: center; }
+    .cmd-result .info { flex: 1; min-width: 0; }
+    .cmd-result .name { font-size: var(--font-body); color: var(--text); font-weight: 500; }
+    .cmd-result .meta { font-size: var(--font-micro); color: var(--text-muted); }
+    .cmd-result kbd {
+      font-size: 10px; color: var(--text-dim);
+      border: 1px solid var(--border); border-radius: 4px;
+      padding: 2px 6px; font-family: inherit; background: var(--bg);
+    }
+    .cmd-empty { padding: 32px 16px; text-align: center; color: var(--text-muted); font-size: var(--font-meta); }
+    .cmd-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 16px; border-top: 1px solid var(--border);
+      font-size: 10px; color: var(--text-dim);
+    }
+    .cmd-footer .hints { display: flex; gap: 12px; }
+    .cmd-footer kbd {
+      font-family: inherit; background: var(--bg-card);
+      border: 1px solid var(--border); border-radius: 4px;
+      padding: 1px 5px; margin-right: 3px;
+    }
+    mark.match { background: var(--gold-dim); color: var(--gold-soft); border-radius: 3px; padding: 0 1px; }
+
+    .gate-modal {
+      position: fixed; inset: 0; z-index: 99999;
+      background: var(--overlay);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center;
+      animation: fade-in var(--motion-fast) var(--easing);
+    }
+    .gate-modal.open { display: flex; }
+    .gate-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px 32px 24px; max-width: 380px; width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+      animation: cmd-in var(--motion-base) var(--easing);
+    }
+    .gate-card img { width: 56px; height: 56px; object-fit: contain; filter: drop-shadow(0 2px 8px rgba(212,175,55,0.3)); margin-bottom: 18px; }
+    .gate-title {
+      font-size: var(--font-micro); letter-spacing: 2px; text-transform: uppercase;
+      color: var(--gold); font-weight: 700; margin-bottom: 6px;
+    }
+    .gate-sub { font-size: var(--font-meta); color: var(--text-muted); margin-bottom: 20px; }
+    .gate-input-wrap { position: relative; margin-bottom: 12px; }
+    .gate-input {
+      width: 100%; padding: 12px 44px 12px 16px;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text); font-size: 15px; text-align: center;
+      outline: none; font-family: inherit;
+      transition: border-color var(--motion-fast) var(--easing);
+      min-height: var(--touch-min);
+    }
+    .gate-input:focus { border-color: var(--gold); }
+    .gate-toggle {
+      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+      width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+      background: transparent; border: none; cursor: pointer;
+      color: var(--text-muted); border-radius: 4px;
+    }
+    .gate-toggle:hover { color: var(--text); background: var(--bg-hover); }
+    .gate-btn {
+      width: 100%; padding: 12px;
+      min-height: var(--touch-min);
+      background: linear-gradient(90deg, var(--gold), var(--gold-soft));
+      border: none; border-radius: var(--radius-sm);
+      color: #0f0f0f; font-size: 14px; font-weight: 700;
+      cursor: pointer; font-family: inherit;
+      transition: filter var(--motion-fast) var(--easing);
+    }
+    .gate-btn:hover:not(:disabled) { filter: brightness(1.05); }
+    .gate-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .gate-err { font-size: var(--font-meta); color: var(--red); margin-top: 10px; display: none; }
+    .gate-cancel { font-size: var(--font-meta); color: var(--text-dim); margin-top: 14px; cursor: pointer; }
+    .gate-cancel:hover { color: var(--text-muted); }
+
+    .toast-wrap {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      z-index: 99999; display: flex; flex-direction: column; gap: 8px;
+      pointer-events: none;
+    }
+    .toast {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      display: flex; align-items: center; gap: 10px;
+      font-size: var(--font-body); color: var(--text);
+      animation: toast-in 250ms var(--easing);
+      pointer-events: auto;
+      max-width: 90vw;
+    }
+    .toast.success { border-left: 3px solid var(--green); }
+    .toast.error   { border-left: 3px solid var(--red); }
+    .toast.info    { border-left: 3px solid var(--blue); }
+    .toast .ti { font-size: 18px; }
+    .toast.success .ti { color: var(--green); }
+    .toast.error .ti   { color: var(--red); }
+    .toast.info .ti    { color: var(--blue); }
+    @keyframes toast-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: none; }
+    }
+    .toast.out { animation: toast-out 200ms var(--easing) forwards; }
+    @keyframes toast-out {
+      from { opacity: 1; transform: none; }
+      to { opacity: 0; transform: translateY(8px); }
     }
 
-    /* ─── LOCK STYLES ─── */
-    .lock-icon { font-size: 12px; opacity: 0.5; margin-left: 4px; }
-    .gated-item { opacity: 0.85; }
-    .gated-item:hover .lock-icon { opacity: 0.8; }
+    @media (max-width: 640px) {
+      .top-nav, .today-strip, .panel { padding-left: var(--safe-x); padding-right: var(--safe-x); }
+      .intent-nav { padding: 0 var(--safe-x); }
+      .intent-tab { padding: 12px 14px; }
+    }
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0;
+      margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap;
+      border: 0;
+    }
   </style>
 </head>
 <body>
   <div class="hub">
-    <!-- TOP NAV -->
-    <div class="top-nav">
+    <header class="top-nav">
       <div class="logo-area">
-        <img src="./blackchicken_logo.png" alt="BC">
+        <img src="./blackchicken_logo.png" alt="Black Chicken">
         <span class="app-name">Hub de HR</span>
-        <span class="app-version">v2.0</span>
+        <span class="app-version">v3.0</span>
       </div>
-    </div>
-
-    <!-- TODAY STRIP -->
-    <div class="today-strip">
-      <div class="today-label">Hoy · <span id="today-date"></span></div>
-      <div class="today-items" id="today-items">
-        <div class="today-loading">Cargando alertas…</div>
+      <div class="top-actions">
+        <button class="icon-btn" id="theme-toggle" aria-label="Cambiar tema claro/oscuro" title="Cambiar tema">
+          <i class="ti ti-moon" aria-hidden="true"></i>
+        </button>
+        <button class="icon-btn" id="open-cmd" aria-label="Abrir buscador (Cmd+K)" title="Buscar (Cmd+K)">
+          <i class="ti ti-search" aria-hidden="true"></i>
+        </button>
       </div>
-    </div>
+    </header>
 
-    <!-- INTENT TABS -->
-    <div class="intent-nav">
-      <div class="intent-tab active" data-tab="inicio"><i class="ti ti-home" style="font-size:14px"></i> Inicio</div>
-      <div class="intent-tab" data-tab="personas"><i class="ti ti-users" style="font-size:14px"></i> Personas <span class="tab-count" id="count-personas">…</span></div>
-      <div class="intent-tab" data-tab="procesos"><i class="ti ti-checklist" style="font-size:14px"></i> Procesos</div>
-      <div class="intent-tab" data-tab="documentos"><i class="ti ti-folder" style="font-size:14px"></i> Documentos</div>
-      <div class="intent-tab" data-tab="publicaciones"><i class="ti ti-speakerphone" style="font-size:14px"></i> Publicaciones <span class="tab-count" id="count-pub">10</span></div>
-    </div>
+    <section class="today-strip" aria-labelledby="today-label">
+      <div class="today-label" id="today-label">Hoy · <span id="today-date"></span></div>
+      <div class="today-items" id="today-items" aria-live="polite">
+        <div class="sk-chip-row">
+          <div class="skeleton sk-chip"></div>
+          <div class="skeleton sk-chip" style="width:160px"></div>
+          <div class="skeleton sk-chip" style="width:110px"></div>
+        </div>
+      </div>
+    </section>
 
-    <!-- GLOBAL SEARCH (always visible) -->
-    <div class="search-box" id="search-wrap">
-      <i class="ti ti-search"></i>
-      <input id="hub-search" type="text" placeholder="Buscar persona, documento, proceso…" autocomplete="off" spellcheck="false">
-      <kbd>⌘K</kbd>
-    </div>
+    <nav class="intent-nav" role="tablist" aria-label="Secciones del Hub">
+      <button class="intent-tab" role="tab" aria-selected="true"  aria-controls="panel-inicio"        id="tab-inicio"        data-tab="inicio"><i class="ti ti-home" aria-hidden="true"></i> Inicio</button>
+      <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-personas"      id="tab-personas"      data-tab="personas"><i class="ti ti-users" aria-hidden="true"></i> Personas <span class="tab-count" id="count-personas">…</span></button>
+      <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-herramientas"  id="tab-herramientas"  data-tab="herramientas"><i class="ti ti-tools" aria-hidden="true"></i> Herramientas</button>
+      <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-documentos"    id="tab-documentos"    data-tab="documentos"><i class="ti ti-folder" aria-hidden="true"></i> Documentos</button>
+      <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-publicaciones" id="tab-publicaciones" data-tab="publicaciones"><i class="ti ti-speakerphone" aria-hidden="true"></i> Publicaciones <span class="tab-count" id="count-pub">10</span></button>
+    </nav>
 
-    <!-- ═══ PANEL: INICIO ═══ -->
-    <div class="panel active" id="panel-inicio">
-      <div class="section-title">Acciones rápidas</div>
+    <section class="panel active" id="panel-inicio" role="tabpanel" aria-labelledby="tab-inicio">
+      <button class="search-trigger" id="search-trigger-inicio" type="button" aria-label="Buscar en todo el Hub">
+        <i class="ti ti-search" aria-hidden="true"></i>
+        <span>Buscar persona, documento, proceso…</span>
+        <kbd>Cmd K</kbd>
+      </button>
+
+      <div class="section-title"><i class="ti ti-bolt" aria-hidden="true"></i> Acciones rápidas</div>
       <div class="action-grid">
         <a class="action-card" href="index.html">
           <div class="action-icon ac-green"><i class="ti ti-user-plus"></i></div>
           <div class="action-title">ATS Recruiting</div>
           <div class="action-sub">Pipeline de candidatos</div>
         </a>
-        <a class="action-card" href="#" onclick="cartaGate('BC_HR_Offboarding.html');return false;">
-          <div class="action-icon ac-red"><i class="ti ti-user-minus"></i></div>
+        <a class="action-card" href="#" data-gate="BC_HR_Offboarding.html">
+          <div class="action-icon ac-amber"><i class="ti ti-door-exit"></i></div>
           <div class="action-title">Offboarding</div>
           <div class="action-sub">16 pasos · checklist</div>
         </a>
-        <a class="action-card" href="javascript:void(0)" onclick="switchTab('publicaciones')">
-          <div class="action-icon ac-amber"><i class="ti ti-speakerphone"></i></div>
+        <a class="action-card" href="#" data-tab-jump="publicaciones">
+          <div class="action-icon ac-purple"><i class="ti ti-speakerphone"></i></div>
           <div class="action-title">Publicar cargo</div>
           <div class="action-sub">Jornada o part time</div>
         </a>
-        <a class="action-card" href="javascript:void(0)" onclick="switchTab('publicaciones')">
-          <div class="action-icon ac-purple"><i class="ti ti-send"></i></div>
+        <a class="action-card" href="#" data-tab-jump="publicaciones" data-jump-section="cartas">
+          <div class="action-icon ac-gold"><i class="ti ti-send"></i></div>
           <div class="action-title">Cartas de oferta</div>
-          <div class="action-sub">Post entrevista · 🔒</div>
+          <div class="action-sub">Post entrevista</div>
         </a>
-        <a class="action-card" href="#" onclick="cartaGate('BC_HR_Dashboard.html');return false;">
+        <a class="action-card" href="#" data-gate="BC_HR_Dashboard.html">
           <div class="action-icon ac-blue"><i class="ti ti-chart-bar"></i></div>
           <div class="action-title">Dashboard dotación</div>
           <div class="action-sub">Headcount y nómina</div>
         </a>
-        <a class="action-card" href="https://bc-evaluaciones.vercel.app" target="_blank">
+        <a class="action-card" href="https://bc-evaluaciones.vercel.app" target="_blank" rel="noopener">
           <div class="action-icon ac-gold"><i class="ti ti-star"></i></div>
           <div class="action-title">Evaluación desempeño</div>
           <div class="action-sub">Por competencias</div>
         </a>
       </div>
 
-      <div class="section-title">Procesos activos · ATS</div>
-      <div class="task-list" id="ats-tasks">
-        <div class="today-loading">Cargando procesos desde Notion…</div>
+      <div class="section-title"><i class="ti ti-route" aria-hidden="true"></i> Pipeline ATS · Candidatos en curso</div>
+      <div class="task-list" id="ats-tasks" aria-live="polite">
+        <div class="skeleton sk-task"></div>
+        <div class="skeleton sk-task"></div>
+        <div class="skeleton sk-task"></div>
       </div>
-    </div>
+    </section>
 
-    <!-- ═══ PANEL: PERSONAS ═══ -->
-    <div class="panel" id="panel-personas">
+    <section class="panel" id="panel-personas" role="tabpanel" aria-labelledby="tab-personas">
       <div class="stat-row" id="stat-row">
-        <div class="stat-card"><div class="stat-label">Procesos</div><div class="stat-val" id="stat-procesos">—</div><div class="stat-sub">En curso</div></div>
-        <div class="stat-card"><div class="stat-label">Cargos</div><div class="stat-val" id="stat-cargos">—</div><div class="stat-sub">Buscando</div></div>
-        <div class="stat-card"><div class="stat-label">Avance prom.</div><div class="stat-val" id="stat-avance">—</div><div class="stat-sub">Pipeline</div></div>
-        <div class="stat-card"><div class="stat-label">Esta semana</div><div class="stat-val" id="stat-nuevos">—</div><div class="stat-sub">Nuevos</div></div>
+        <div class="stat-card"><div class="stat-label">Avance prom.</div><div class="stat-val" id="stat-avance">—</div><div class="stat-sub">Pipeline activo</div></div>
+        <div class="stat-card alert"><div class="stat-label">Atascados</div><div class="stat-val" id="stat-atascados">—</div><div class="stat-sub">+14 días, &lt;50%</div></div>
+        <div class="stat-card"><div class="stat-label">Esta semana</div><div class="stat-val" id="stat-nuevos">—</div><div class="stat-sub">Nuevos ingresos</div></div>
       </div>
 
       <div class="search-box">
-        <i class="ti ti-search"></i>
+        <i class="ti ti-search" aria-hidden="true"></i>
+        <label for="personas-search" class="sr-only">Buscar candidato</label>
         <input id="personas-search" type="text" placeholder="Buscar por nombre, cargo o local…" autocomplete="off" spellcheck="false">
       </div>
 
-      <div class="section-title">Candidatos en pipeline</div>
-      <div class="person-grid" id="person-grid">
-        <div class="today-loading">Cargando desde Notion…</div>
+      <div class="section-title"><i class="ti ti-users" aria-hidden="true"></i> Candidatos en pipeline</div>
+      <div class="person-grid" id="person-grid" aria-live="polite">
+        <div class="sk-grid">
+          <div class="skeleton sk-person"></div>
+          <div class="skeleton sk-person"></div>
+          <div class="skeleton sk-person"></div>
+          <div class="skeleton sk-person"></div>
+        </div>
       </div>
 
-      <div class="section-title">Herramientas de personas</div>
+      <div class="section-title"><i class="ti ti-tools" aria-hidden="true"></i> Herramientas de personas</div>
       <div class="doc-list">
-        <a href="https://bc-evaluaciones.vercel.app" target="_blank" class="doc-row">
+        <a href="https://bc-evaluaciones.vercel.app" target="_blank" rel="noopener" class="doc-row">
           <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-chart-dots-2"></i></div>
           <div class="doc-info"><div class="doc-name">Evaluación de Desempeño</div><div class="doc-meta">Por competencias · Uso interno RRHH</div></div>
-          <span class="doc-arrow">↗</span>
+          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
-        <a href="https://bc-evaluacion-pares.vercel.app" target="_blank" class="doc-row">
+        <a href="https://bc-evaluacion-pares.vercel.app" target="_blank" rel="noopener" class="doc-row">
           <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-users-group"></i></div>
-          <div class="doc-info"><div class="doc-name">Evaluación entre Pares</div><div class="doc-meta">Feedback 360° anónimo</div></div>
-          <span class="doc-arrow">↗</span>
+          <div class="doc-info"><div class="doc-name">Evaluación entre Pares</div><div class="doc-meta">Feedback 360 anónimo</div></div>
+          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
-        <a href="https://bc-onboarding-bice.vercel.app" target="_blank" class="doc-row">
+        <a href="https://bc-onboarding-bice.vercel.app" target="_blank" rel="noopener" class="doc-row">
           <div class="doc-icon" style="background:var(--green-bg);color:var(--green)"><i class="ti ti-rocket"></i></div>
           <div class="doc-info"><div class="doc-name">Onboarding Garzones</div><div class="doc-meta">Portal de bienvenida · Equipo de servicio</div></div>
-          <span class="doc-arrow">↗</span>
+          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
-        <a href="https://bc-organigrama.vercel.app" target="_blank" class="doc-row">
+        <a href="https://bc-organigrama.vercel.app" target="_blank" rel="noopener" class="doc-row">
           <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-sitemap"></i></div>
           <div class="doc-info"><div class="doc-name">Organigrama Black Chicken</div><div class="doc-meta">Editable · Dirección, Gestión, Jefaturas</div></div>
-          <span class="doc-arrow">↗</span>
+          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
       </div>
-    </div>
+    </section>
 
-    <!-- ═══ PANEL: PROCESOS ═══ -->
-    <div class="panel" id="panel-procesos">
-      <div class="section-title">Flujos operativos</div>
+    <section class="panel" id="panel-herramientas" role="tabpanel" aria-labelledby="tab-herramientas">
+      <div class="section-title"><i class="ti ti-tools" aria-hidden="true"></i> Flujos operativos</div>
       <div class="doc-list">
         <a href="index.html" class="doc-row">
           <div class="doc-icon" style="background:var(--green-bg);color:var(--green)"><i class="ti ti-list-check"></i></div>
-          <div class="doc-info"><div class="doc-name">ATS Recruiting · Pipeline</div><div class="doc-meta">Tracking de candidatos por fase · Checklists · Notion sync</div></div>
+          <div class="doc-info"><div class="doc-name">ATS Recruiting · Pipeline</div><div class="doc-meta">Tracking de candidatos · Notion sync</div></div>
           <div class="doc-tags"><span class="tag tag-green">Interactivo</span></div>
         </a>
-        <a href="#" onclick="cartaGate('BC_HR_Dashboard.html');return false;" class="doc-row gated-item">
+        <a href="#" data-gate="BC_HR_Dashboard.html" class="doc-row gated-item" data-release="2026-04-15">
           <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-chart-bar"></i></div>
-          <div class="doc-info"><div class="doc-name">Dashboard de Dotación <span class="lock-icon">🔒</span></div><div class="doc-meta">Headcount por local, nómina, vacantes, equipo completo</div></div>
-          <div class="doc-tags"><span class="tag tag-blue">Live</span><span class="tag tag-new">NUEVO</span></div>
+          <div class="doc-info"><div class="doc-name">Dashboard de Dotación <i class="ti ti-lock lock-icon" aria-label="Acceso restringido"></i></div><div class="doc-meta">Headcount, nómina, vacantes</div></div>
+          <div class="doc-tags"><span class="tag tag-blue">Live</span></div>
         </a>
-        <a href="#" onclick="cartaGate('BC_HR_Calendario.html');return false;" class="doc-row gated-item">
+        <a href="#" data-gate="BC_HR_Calendario.html" class="doc-row gated-item" data-release="2026-04-22">
           <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-calendar-event"></i></div>
-          <div class="doc-info"><div class="doc-name">Calendario HR <span class="lock-icon">🔒</span></div><div class="doc-meta">Feriados, vencimientos, cumpleaños, evaluaciones</div></div>
-          <div class="doc-tags"><span class="tag tag-blue">Alertas</span><span class="tag tag-new">NUEVO</span></div>
+          <div class="doc-info"><div class="doc-name">Calendario HR <i class="ti ti-lock lock-icon" aria-label="Acceso restringido"></i></div><div class="doc-meta">Feriados, vencimientos, evaluaciones</div></div>
+          <div class="doc-tags"><span class="tag tag-blue">Alertas</span></div>
         </a>
-        <a href="#" onclick="cartaGate('BC_HR_Rotacion.html');return false;" class="doc-row gated-item">
+        <a href="#" data-gate="BC_HR_Rotacion.html" class="doc-row gated-item" data-release="2026-04-28">
           <div class="doc-icon" style="background:var(--red-bg);color:var(--red)"><i class="ti ti-trending-down"></i></div>
-          <div class="doc-info"><div class="doc-name">Tracker de Rotación <span class="lock-icon">🔒</span></div><div class="doc-meta">KPI rotación mensual, benchmarks, costo por reemplazo</div></div>
-          <div class="doc-tags"><span class="tag tag-red">KPI</span><span class="tag tag-new">NUEVO</span></div>
+          <div class="doc-info"><div class="doc-name">Tracker de Rotación <i class="ti ti-lock lock-icon" aria-label="Acceso restringido"></i></div><div class="doc-meta">KPI mensual, costo por reemplazo</div></div>
+          <div class="doc-tags"><span class="tag tag-red">KPI</span></div>
         </a>
-        <a href="#" onclick="cartaGate('BC_HR_Offboarding.html');return false;" class="doc-row gated-item">
+        <a href="#" data-gate="BC_HR_Offboarding.html" class="doc-row gated-item">
           <div class="doc-icon" style="background:var(--amber-bg);color:var(--amber)"><i class="ti ti-door-exit"></i></div>
-          <div class="doc-info"><div class="doc-name">Checklist Offboarding <span class="lock-icon">🔒</span></div><div class="doc-meta">16 pasos: accesos, equipamiento, legal, finiquito</div></div>
-          <div class="doc-tags"><span class="tag tag-gold">Interactivo</span><span class="tag tag-new">NUEVO</span></div>
+          <div class="doc-info"><div class="doc-name">Checklist Offboarding <i class="ti ti-lock lock-icon" aria-label="Acceso restringido"></i></div><div class="doc-meta">16 pasos: accesos, equipamiento, finiquito</div></div>
+          <div class="doc-tags"><span class="tag tag-gold">Interactivo</span></div>
         </a>
-        <a href="#" onclick="cartaGate('BC_HR_Templates.html');return false;" class="doc-row gated-item">
+        <a href="#" data-gate="BC_HR_Templates.html" class="doc-row gated-item">
           <div class="doc-icon" style="background:var(--green-bg);color:var(--green)"><i class="ti ti-file-text"></i></div>
-          <div class="doc-info"><div class="doc-name">Biblioteca de Templates <span class="lock-icon">🔒</span></div><div class="doc-meta">Amonestaciones, felicitaciones, cambios de turno, certificados</div></div>
-          <div class="doc-tags"><span class="tag tag-green">12 templates</span><span class="tag tag-new">NUEVO</span></div>
+          <div class="doc-info"><div class="doc-name">Biblioteca de Templates <i class="ti ti-lock lock-icon" aria-label="Acceso restringido"></i></div><div class="doc-meta">Amonestaciones, felicitaciones, certificados · 12 docs</div></div>
         </a>
-        <a href="#" onclick="cartaGate('BC_HR_Admin.html');return false;" class="doc-row gated-item">
+        <a href="#" data-gate="BC_HR_Admin.html" class="doc-row gated-item">
           <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-settings"></i></div>
-          <div class="doc-info"><div class="doc-name">Admin HR <span class="lock-icon">🔒</span></div><div class="doc-meta">Agregar miembros, registrar salidas, crear eventos</div></div>
-          <div class="doc-tags"><span class="tag tag-gold">Formularios</span><span class="tag tag-new">NUEVO</span></div>
+          <div class="doc-info"><div class="doc-name">Admin HR <i class="ti ti-lock lock-icon" aria-label="Acceso restringido"></i></div><div class="doc-meta">Agregar miembros, registrar salidas, eventos</div></div>
         </a>
-        <a href="https://bc-organigrama.vercel.app" target="_blank" class="doc-row">
+        <a href="https://bc-organigrama.vercel.app" target="_blank" rel="noopener" class="doc-row">
           <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-sitemap"></i></div>
           <div class="doc-info"><div class="doc-name">Organigrama Black Chicken</div><div class="doc-meta">Editable · Dirección, Gestión, Jefaturas</div></div>
           <div class="doc-tags"><span class="tag tag-gold">Editable</span></div>
         </a>
       </div>
-    </div>
+    </section>
 
-    <!-- ═══ PANEL: DOCUMENTOS ═══ -->
-    <div class="panel" id="panel-documentos">
+    <section class="panel" id="panel-documentos" role="tabpanel" aria-labelledby="tab-documentos">
       <div class="search-box">
-        <i class="ti ti-search"></i>
+        <i class="ti ti-search" aria-hidden="true"></i>
+        <label for="docs-search" class="sr-only">Buscar documento</label>
         <input id="docs-search" type="text" placeholder="Buscar documento…" autocomplete="off" spellcheck="false">
       </div>
 
-      <div class="section-title">🧠 HR Brain · Base de conocimiento</div>
+      <div class="section-title"><i class="ti ti-brain" aria-hidden="true"></i> HR Brain · Base de conocimiento</div>
       <div class="doc-list" id="hrbrain-list">
-        <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/1jmth3C-kd5syl_5OLYtmYkFNVx3dD4gr');return false;" class="doc-row hrbrain-locked" data-search="administración contratos finiquitos personal">
+        <a href="#" data-gate-brain="https://drive.google.com/drive/folders/1jmth3C-kd5syl_5OLYtmYkFNVx3dD4gr" class="doc-row hrbrain-locked" data-search="administración contratos finiquitos personal">
           <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-folder"></i></div>
-          <div class="doc-info"><div class="doc-name">01 · Administración <span class="lock-icon hrbrain-lock">🔒</span></div><div class="doc-meta">Contratos, finiquitos, documentación y gestión de personal</div></div>
-          <span class="doc-arrow">↗</span>
+          <div class="doc-info"><div class="doc-name">01 · Administración <i class="ti ti-lock lock-icon hrbrain-lock" aria-label="Acceso restringido"></i></div><div class="doc-meta">Contratos, finiquitos, gestión de personal</div></div>
+          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
-        <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/16Oam6nWN0tIdhk2jCIEvnJuEcrr18XoH');return false;" class="doc-row hrbrain-locked" data-search="reclutamiento selección candidatos búsqueda">
+        <a href="#" data-gate-brain="https://drive.google.com/drive/folders/16Oam6nWN0tIdhk2jCIEvnJuEcrr18XoH" class="doc-row hrbrain-locked" data-search="reclutamiento selección candidatos búsqueda">
           <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-search"></i></div>
-          <div class="doc-info"><div class="doc-name">02 · Reclutamiento y Selección <span class="lock-icon hrbrain-lock">🔒</span></div><div class="doc-meta">Procesos de búsqueda, evaluación y selección de candidatos</div></div>
-          <span class="doc-arrow">↗</span>
+          <div class="doc-info"><div class="doc-name">02 · Reclutamiento y Selección <i class="ti ti-lock lock-icon hrbrain-lock" aria-label="Acceso restringido"></i></div><div class="doc-meta">Búsqueda, evaluación y selección</div></div>
+          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
-        <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/1TqKp6x7CRH2nch8Wr2kJ4OUS10TwnvsI');return false;" class="doc-row hrbrain-locked" data-search="desarrollo capacitación formación carrera">
+        <a href="#" data-gate-brain="https://drive.google.com/drive/folders/1TqKp6x7CRH2nch8Wr2kJ4OUS10TwnvsI" class="doc-row hrbrain-locked" data-search="desarrollo capacitación formación carrera">
           <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-school"></i></div>
-          <div class="doc-info"><div class="doc-name">03 · Desarrollo y Capacitación <span class="lock-icon hrbrain-lock">🔒</span></div><div class="doc-meta">Planes de formación, capacitación y desarrollo de carrera</div></div>
-          <span class="doc-arrow">↗</span>
+          <div class="doc-info"><div class="doc-name">03 · Desarrollo y Capacitación <i class="ti ti-lock lock-icon hrbrain-lock" aria-label="Acceso restringido"></i></div><div class="doc-meta">Formación y desarrollo de carrera</div></div>
+          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
-        <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/1qhI1gHcRSA4pycy4q85kjMBIY4chG58x');return false;" class="doc-row hrbrain-locked" data-search="compensaciones beneficios sueldos bonos incentivos remuneraciones">
+        <a href="#" data-gate-brain="https://drive.google.com/drive/folders/1qhI1gHcRSA4pycy4q85kjMBIY4chG58x" class="doc-row hrbrain-locked" data-search="compensaciones beneficios sueldos bonos incentivos remuneraciones">
           <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-coin"></i></div>
-          <div class="doc-info"><div class="doc-name">04 · Compensaciones y Beneficios <span class="lock-icon hrbrain-lock">🔒</span></div><div class="doc-meta">Estructura salarial, beneficios, bonos e incentivos</div></div>
-          <span class="doc-arrow">↗</span>
+          <div class="doc-info"><div class="doc-name">04 · Compensaciones y Beneficios <i class="ti ti-lock lock-icon hrbrain-lock" aria-label="Acceso restringido"></i></div><div class="doc-meta">Salarios, bonos e incentivos</div></div>
+          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
-        <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/1EQmTiLCR5sC-kLMIGZN_Va9t58kTeWXA');return false;" class="doc-row hrbrain-locked" data-search="clima cultura encuestas bienestar organizacional">
+        <a href="#" data-gate-brain="https://drive.google.com/drive/folders/1EQmTiLCR5sC-kLMIGZN_Va9t58kTeWXA" class="doc-row hrbrain-locked" data-search="clima cultura encuestas bienestar organizacional">
           <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-heart"></i></div>
-          <div class="doc-info"><div class="doc-name">05 · Clima y Cultura <span class="lock-icon hrbrain-lock">🔒</span></div><div class="doc-meta">Encuestas de clima, cultura y bienestar del equipo</div></div>
-          <span class="doc-arrow">↗</span>
+          <div class="doc-info"><div class="doc-name">05 · Clima y Cultura <i class="ti ti-lock lock-icon hrbrain-lock" aria-label="Acceso restringido"></i></div><div class="doc-meta">Encuestas, cultura y bienestar</div></div>
+          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
-        <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/1OrmCDa4E4Xn8NEv4B0KHguRFbRYAW4ov');return false;" class="doc-row hrbrain-locked" data-search="relaciones laborales normativa conflictos">
+        <a href="#" data-gate-brain="https://drive.google.com/drive/folders/1OrmCDa4E4Xn8NEv4B0KHguRFbRYAW4ov" class="doc-row hrbrain-locked" data-search="relaciones laborales normativa conflictos">
           <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-gavel"></i></div>
-          <div class="doc-info"><div class="doc-name">06 · Relaciones Laborales <span class="lock-icon hrbrain-lock">🔒</span></div><div class="doc-meta">Normativa, resolución de conflictos, gestión del equipo</div></div>
-          <span class="doc-arrow">↗</span>
+          <div class="doc-info"><div class="doc-name">06 · Relaciones Laborales <i class="ti ti-lock lock-icon hrbrain-lock" aria-label="Acceso restringido"></i></div><div class="doc-meta">Normativa, resolución de conflictos</div></div>
+          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
-        <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/1Ho8j0KF5Omb3_xdSleZ_bsBHAhyyRtxJ');return false;" class="doc-row hrbrain-locked" data-search="prevención riesgos seguridad protocolos cumplimiento">
+        <a href="#" data-gate-brain="https://drive.google.com/drive/folders/1Ho8j0KF5Omb3_xdSleZ_bsBHAhyyRtxJ" class="doc-row hrbrain-locked" data-search="prevención riesgos seguridad protocolos cumplimiento">
           <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-shield-check"></i></div>
-          <div class="doc-info"><div class="doc-name">07 · Prevención de Riesgos <span class="lock-icon hrbrain-lock">🔒</span></div><div class="doc-meta">Protocolos de seguridad y cumplimiento normativo</div></div>
-          <span class="doc-arrow">↗</span>
+          <div class="doc-info"><div class="doc-name">07 · Prevención de Riesgos <i class="ti ti-lock lock-icon hrbrain-lock" aria-label="Acceso restringido"></i></div><div class="doc-meta">Protocolos de seguridad y cumplimiento</div></div>
+          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
-        <a href="#" onclick="hrBrainGate('https://drive.google.com/drive/folders/1wlTZvx9WVG0LqWXD_1j6kV2T4HyxzYxV');return false;" class="doc-row hrbrain-locked" data-search="histórico archivo anterior">
+        <a href="#" data-gate-brain="https://drive.google.com/drive/folders/1wlTZvx9WVG0LqWXD_1j6kV2T4HyxzYxV" class="doc-row hrbrain-locked" data-search="histórico archivo anterior">
           <div class="doc-icon" style="background:rgba(255,255,255,0.05);color:var(--text-muted)"><i class="ti ti-archive"></i></div>
-          <div class="doc-info"><div class="doc-name">99 · Histórico <span class="lock-icon hrbrain-lock">🔒</span></div><div class="doc-meta">Archivos y documentos anteriores</div></div>
-          <span class="doc-arrow">↗</span>
+          <div class="doc-info"><div class="doc-name">99 · Histórico <i class="ti ti-lock lock-icon hrbrain-lock" aria-label="Acceso restringido"></i></div><div class="doc-meta">Archivos anteriores</div></div>
+          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
       </div>
 
-      <div class="section-title">Descriptores de cargo</div>
+      <div class="section-title"><i class="ti ti-id-badge-2" aria-hidden="true"></i> Descriptores de cargo</div>
       <div class="doc-list">
         <a href="BC_Descriptor_Entrenadora.html" class="doc-row" data-search="garzón garzona entrenadora sala formativa onboarding">
           <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-id-badge-2"></i></div>
-          <div class="doc-info"><div class="doc-name">Garzón/a con Mención Entrenadora</div><div class="doc-meta">Operación diaria + función formativa · Ambos locales</div></div>
-          <div class="doc-tags"><span class="tag tag-gray">Interno</span></div>
+          <div class="doc-info"><div class="doc-name">Garzón/a con Mención Entrenadora</div><div class="doc-meta">Operación + función formativa</div></div>
         </a>
         <a href="BC_Descriptor_CapitanGarzon.html" class="doc-row" data-search="capitán garzón servicio supervisión atención">
           <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-id-badge-2"></i></div>
-          <div class="doc-info"><div class="doc-name">Capitán Garzón</div><div class="doc-meta">Responsable equipo de servicio · Local asignado</div></div>
-          <div class="doc-tags"><span class="tag tag-gray">Interno</span></div>
+          <div class="doc-info"><div class="doc-name">Capitán Garzón</div><div class="doc-meta">Responsable equipo de servicio</div></div>
         </a>
       </div>
-    </div>
+    </section>
 
-    <!-- ═══ PANEL: PUBLICACIONES ═══ -->
-    <div class="panel" id="panel-publicaciones">
-      <div class="section-title">Publicaciones activas</div>
+    <section class="panel" id="panel-publicaciones" role="tabpanel" aria-labelledby="tab-publicaciones">
+      <div class="section-title" id="seccion-publicaciones-activas"><i class="ti ti-speakerphone" aria-hidden="true"></i> Publicaciones activas · Para difundir</div>
       <div class="doc-list">
-        <a href="BC_Publicacion_JefeLocal.html" class="doc-row">
+        <a href="BC_Publicacion_JefeLocal.html" class="doc-row pub-row" data-search="jefe local jornada completa">
           <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
-          <div class="doc-info"><div class="doc-name">Jefe/a de Local · Jornada completa</div><div class="doc-meta">42 hrs · Rotativo 5×2 · Para difundir</div></div>
-          <div class="doc-tags"><span class="tag tag-green">Activa</span></div>
+          <div class="doc-info"><div class="doc-name">Jefe/a de Local</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
         </a>
-        <a href="BC_Publicacion_SubJefeLocal.html" class="doc-row">
+        <a href="BC_Publicacion_SubJefeLocal.html" class="doc-row pub-row" data-search="sub jefe local jornada completa">
           <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
-          <div class="doc-info"><div class="doc-name">Sub Jefe/a de Local · Jornada completa</div><div class="doc-meta">42 hrs · 5×2 · Para difundir</div></div>
-          <div class="doc-tags"><span class="tag tag-green">Activa</span></div>
+          <div class="doc-info"><div class="doc-name">Sub Jefe/a de Local</div><div class="doc-meta">42 hrs · 5×2</div></div>
         </a>
-        <a href="BC_Publicacion_JefeCocina.html" class="doc-row">
+        <a href="BC_Publicacion_JefeCocina.html" class="doc-row pub-row" data-search="jefe cocina jornada completa">
           <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
-          <div class="doc-info"><div class="doc-name">Jefe/a de Cocina · Jornada completa</div><div class="doc-meta">42 hrs · Rotativo 5×2 · Para difundir</div></div>
-          <div class="doc-tags"><span class="tag tag-green">Activa</span></div>
+          <div class="doc-info"><div class="doc-name">Jefe/a de Cocina</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
         </a>
-        <a href="BC_Publicacion_SousChef.html" class="doc-row">
+        <a href="BC_Publicacion_SousChef.html" class="doc-row pub-row" data-search="sous chef jornada completa">
           <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
-          <div class="doc-info"><div class="doc-name">Sous Chef · Jornada completa</div><div class="doc-meta">42 hrs · Rotativo 5×2 · Para difundir</div></div>
-          <div class="doc-tags"><span class="tag tag-green">Activa</span></div>
+          <div class="doc-info"><div class="doc-name">Sous Chef</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
         </a>
-        <a href="BC_Publicacion_JefeServicio.html" class="doc-row">
+        <a href="BC_Publicacion_JefeServicio.html" class="doc-row pub-row" data-search="jefe servicio jornada completa">
           <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
-          <div class="doc-info"><div class="doc-name">Jefe/a de Servicio · Jornada completa</div><div class="doc-meta">42 hrs · Rotativo 5×2 · Para difundir</div></div>
-          <div class="doc-tags"><span class="tag tag-green">Activa</span></div>
+          <div class="doc-info"><div class="doc-name">Jefe/a de Servicio</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
         </a>
-        <a href="BC_Publicacion_Cocineros.html" class="doc-row">
+        <a href="BC_Publicacion_Cocineros.html" class="doc-row pub-row" data-search="cocinero jornada completa">
           <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-speakerphone"></i></div>
-          <div class="doc-info"><div class="doc-name">Cocinero/a · Jornada completa</div><div class="doc-meta">42 hrs · Rotativo 5×2 · Para difundir</div></div>
-          <div class="doc-tags"><span class="tag tag-green">Activa</span></div>
+          <div class="doc-info"><div class="doc-name">Cocinero/a</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
         </a>
-        <a href="BC_Publicacion_Garzon_Entrenador.html" class="doc-row">
+        <a href="BC_Publicacion_Garzon_Entrenador.html" class="doc-row pub-row" data-search="garzón entrenador jornada completa">
           <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-speakerphone"></i></div>
-          <div class="doc-info"><div class="doc-name">Garzón/a Entrenador/a · Jornada completa</div><div class="doc-meta">42 hrs · Rotativo 5×2 · Para difundir</div></div>
-          <div class="doc-tags"><span class="tag tag-green">Activa</span></div>
+          <div class="doc-info"><div class="doc-name">Garzón/a Entrenador/a</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
         </a>
-        <a href="BC_Publicacion_Garzon_FullTime.html" class="doc-row">
+        <a href="BC_Publicacion_Garzon_FullTime.html" class="doc-row pub-row" data-search="garzón full time jornada completa">
           <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-speakerphone"></i></div>
-          <div class="doc-info"><div class="doc-name">Garzón/a Full Time · Jornada completa</div><div class="doc-meta">42 hrs · Rotativo 5×2 · Para difundir</div></div>
-          <div class="doc-tags"><span class="tag tag-green">Activa</span></div>
+          <div class="doc-info"><div class="doc-name">Garzón/a Full Time</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
         </a>
-        <a href="BC_Publicacion_Garzon_PartTime.html" class="doc-row">
+        <a href="BC_Publicacion_Garzon_PartTime.html" class="doc-row pub-row" data-search="garzón part time">
           <div class="doc-icon" style="background:var(--amber-bg);color:var(--amber)"><i class="ti ti-clock"></i></div>
-          <div class="doc-info"><div class="doc-name">Garzón/a Part Time</div><div class="doc-meta">12–18 hrs · Rotativo · Para difundir</div></div>
+          <div class="doc-info"><div class="doc-name">Garzón/a Part Time</div><div class="doc-meta">12-18 hrs · Rotativo</div></div>
           <div class="doc-tags"><span class="tag tag-amber">Part time</span></div>
         </a>
-        <a href="BC_Publicacion_Copero.html" class="doc-row">
+        <a href="BC_Publicacion_Copero.html" class="doc-row pub-row" data-search="copero jornada completa">
           <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-speakerphone"></i></div>
-          <div class="doc-info"><div class="doc-name">Copero/a · Jornada completa</div><div class="doc-meta">42 hrs · Rotativo · Para difundir</div></div>
-          <div class="doc-tags"><span class="tag tag-green">Activa</span></div>
+          <div class="doc-info"><div class="doc-name">Copero/a</div><div class="doc-meta">42 hrs · Rotativo</div></div>
         </a>
       </div>
 
-      <div class="section-title">Cartas de oferta · Privadas</div>
+      <div class="section-title" id="seccion-cartas"><i class="ti ti-mail-forward" aria-hidden="true"></i> Cartas de oferta · Privadas</div>
       <div class="doc-list">
-        <a href="#" onclick="cartaGate('BC_CartaOferta_JefeLocal.html');return false;" class="doc-row gated-item carta-locked">
-          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-lock"></i></div>
-          <div class="doc-info"><div class="doc-name">Carta Oferta · Jefe/a de Local</div><div class="doc-meta">Solo post entrevista · Requiere firma</div></div>
-          <div class="doc-tags"><span class="tag tag-gray">Restringida</span></div>
+        <a href="#" data-gate="BC_CartaOferta_JefeLocal.html" class="doc-row gated-item carta-locked" data-search="carta oferta jefe local">
+          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-file-certificate"></i></div>
+          <div class="doc-info"><div class="doc-name">Carta Oferta · Jefe/a de Local</div><div class="doc-meta">Solo post entrevista</div></div>
         </a>
-        <a href="#" onclick="cartaGate('BC_CartaOferta_SubJefe.html');return false;" class="doc-row gated-item carta-locked">
-          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-lock"></i></div>
-          <div class="doc-info"><div class="doc-name">Carta Oferta · Sub Jefe/a</div><div class="doc-meta">Solo post entrevista · Requiere firma</div></div>
-          <div class="doc-tags"><span class="tag tag-gray">Restringida</span></div>
+        <a href="#" data-gate="BC_CartaOferta_SubJefe.html" class="doc-row gated-item carta-locked" data-search="carta oferta sub jefe">
+          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-file-certificate"></i></div>
+          <div class="doc-info"><div class="doc-name">Carta Oferta · Sub Jefe/a</div><div class="doc-meta">Solo post entrevista</div></div>
         </a>
-        <a href="#" onclick="cartaGate('BC_CartaOferta_JefeCocina.html');return false;" class="doc-row gated-item carta-locked">
-          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-lock"></i></div>
-          <div class="doc-info"><div class="doc-name">Carta Oferta · Jefe/a de Cocina</div><div class="doc-meta">Solo post entrevista · Requiere firma</div></div>
-          <div class="doc-tags"><span class="tag tag-gray">Restringida</span></div>
+        <a href="#" data-gate="BC_CartaOferta_JefeCocina.html" class="doc-row gated-item carta-locked" data-search="carta oferta jefe cocina">
+          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-file-certificate"></i></div>
+          <div class="doc-info"><div class="doc-name">Carta Oferta · Jefe/a de Cocina</div><div class="doc-meta">Solo post entrevista</div></div>
         </a>
-        <a href="#" onclick="cartaGate('BC_CartaOferta_SousChef.html');return false;" class="doc-row gated-item carta-locked">
-          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-lock"></i></div>
-          <div class="doc-info"><div class="doc-name">Carta Oferta · Sous Chef</div><div class="doc-meta">Solo post entrevista · Requiere firma</div></div>
-          <div class="doc-tags"><span class="tag tag-gray">Restringida</span></div>
+        <a href="#" data-gate="BC_CartaOferta_SousChef.html" class="doc-row gated-item carta-locked" data-search="carta oferta sous chef">
+          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-file-certificate"></i></div>
+          <div class="doc-info"><div class="doc-name">Carta Oferta · Sous Chef</div><div class="doc-meta">Solo post entrevista</div></div>
         </a>
-        <a href="#" onclick="cartaGate('BC_CartaOferta_Cocinero.html');return false;" class="doc-row gated-item carta-locked">
-          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-lock"></i></div>
-          <div class="doc-info"><div class="doc-name">Carta Oferta · Cocinero/a</div><div class="doc-meta">Solo post entrevista · Requiere firma</div></div>
-          <div class="doc-tags"><span class="tag tag-gray">Restringida</span></div>
+        <a href="#" data-gate="BC_CartaOferta_Cocinero.html" class="doc-row gated-item carta-locked" data-search="carta oferta cocinero">
+          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-file-certificate"></i></div>
+          <div class="doc-info"><div class="doc-name">Carta Oferta · Cocinero/a</div><div class="doc-meta">Solo post entrevista</div></div>
         </a>
-        <a href="#" onclick="cartaGate('BlackChicken_Oferta_Garzon_FT.html');return false;" class="doc-row gated-item carta-locked">
-          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-lock"></i></div>
-          <div class="doc-info"><div class="doc-name">Carta Oferta · Garzón/a Full Time</div><div class="doc-meta">Jornada 5×2 · Requiere firma</div></div>
-          <div class="doc-tags"><span class="tag tag-gray">Restringida</span></div>
+        <a href="#" data-gate="BlackChicken_Oferta_Garzon_FT.html" class="doc-row gated-item carta-locked" data-search="carta oferta garzón full time">
+          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-file-certificate"></i></div>
+          <div class="doc-info"><div class="doc-name">Carta Oferta · Garzón/a Full Time</div><div class="doc-meta">Jornada 5×2</div></div>
         </a>
-        <a href="#" onclick="cartaGate('BC_CartaOferta_Copero.html');return false;" class="doc-row gated-item carta-locked">
-          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-lock"></i></div>
-          <div class="doc-info"><div class="doc-name">Carta Oferta · Copero/a</div><div class="doc-meta">Rotativo 11:00–20:30 · Requiere firma</div></div>
-          <div class="doc-tags"><span class="tag tag-gray">Restringida</span></div>
+        <a href="#" data-gate="BC_CartaOferta_Copero.html" class="doc-row gated-item carta-locked" data-search="carta oferta copero">
+          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-file-certificate"></i></div>
+          <div class="doc-info"><div class="doc-name">Carta Oferta · Copero/a</div><div class="doc-meta">Rotativo 11:00-20:30</div></div>
         </a>
       </div>
-    </div>
+    </section>
 
-  </div><!-- /hub -->
+  </div>
 
-  <footer>Black Chicken · Hub de HR v2.0 · Uso exclusivo interno</footer>
+  <footer>Black Chicken · Hub de HR v3.0 · Uso exclusivo interno</footer>
 
-  <!-- ═══ MODAL: CARTAS / HERRAMIENTAS ═══ -->
-  <div id="carta-modal" role="dialog" aria-modal="true" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;align-items:center;justify-content:center;font-family:'Inter',sans-serif;">
-    <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:40px;max-width:380px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.7);">
-      <img src="./blackchicken_logo.png" alt="BC" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(212,175,55,.3));margin-bottom:18px;">
-      <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#d4af37;font-weight:700;margin-bottom:6px;">Acceso restringido</p>
-      <p style="font-size:13px;color:#666;margin-bottom:22px;">Documentos confidenciales · Solo RRHH</p>
-      <input id="carta-input" type="password" placeholder="Código de acceso" autocomplete="off"
-        style="width:100%;padding:12px 16px;background:#0f0f0f;border:1px solid #2a2a2a;border-radius:8px;color:#fff;font-size:15px;text-align:center;outline:none;font-family:'Inter',sans-serif;margin-bottom:12px;">
-      <button id="carta-btn"
-        style="width:100%;padding:12px;background:linear-gradient(90deg,#d4af37,#f0c940);border:none;border-radius:8px;color:#0f0f0f;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">
-        Acceder
-      </button>
-      <p id="carta-err" style="font-size:12px;color:#e05050;margin-top:10px;display:none;">Código incorrecto</p>
-      <p id="carta-cancel" style="font-size:12px;color:#555;margin-top:14px;cursor:pointer;">Cancelar</p>
+  <div class="cmd-overlay" id="cmd-overlay" role="dialog" aria-modal="true" aria-labelledby="cmd-title">
+    <div class="cmd-palette" role="combobox" aria-haspopup="listbox" aria-expanded="true">
+      <div class="cmd-header">
+        <i class="ti ti-search" aria-hidden="true"></i>
+        <input id="cmd-input" type="text" placeholder="Buscar persona, documento, herramienta…" aria-label="Buscador global" autocomplete="off" spellcheck="false">
+        <kbd>esc</kbd>
+      </div>
+      <div class="cmd-results" id="cmd-results" role="listbox" aria-label="Resultados"></div>
+      <div class="cmd-footer">
+        <div class="hints">
+          <span><kbd>↑</kbd><kbd>↓</kbd> navegar</span>
+          <span><kbd>↵</kbd> abrir</span>
+          <span><kbd>esc</kbd> cerrar</span>
+        </div>
+        <span id="cmd-title">Hub HR · v3.0</span>
+      </div>
     </div>
   </div>
 
-  <!-- ═══ MODAL: HR BRAIN ═══ -->
-  <div id="hrbrain-modal" role="dialog" aria-modal="true" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;align-items:center;justify-content:center;font-family:'Inter',sans-serif;">
-    <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:40px;max-width:380px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.7);">
-      <img src="./blackchicken_logo.png" alt="BC" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(212,175,55,.3));margin-bottom:18px;">
-      <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#d4af37;font-weight:700;margin-bottom:6px;">Acceso restringido</p>
-      <p style="font-size:13px;color:#666;margin-bottom:22px;">🧠 HR Brain · Solo uso interno RRHH</p>
-      <input id="hrbrain-input" type="password" placeholder="Código de acceso" autocomplete="off"
-        style="width:100%;padding:12px 16px;background:#0f0f0f;border:1px solid #2a2a2a;border-radius:8px;color:#fff;font-size:15px;text-align:center;outline:none;font-family:'Inter',sans-serif;margin-bottom:12px;">
-      <button id="hrbrain-btn"
-        style="width:100%;padding:12px;background:linear-gradient(90deg,#d4af37,#f0c940);border:none;border-radius:8px;color:#0f0f0f;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;">
-        Acceder
-      </button>
-      <p id="hrbrain-err" style="font-size:12px;color:#e05050;margin-top:10px;display:none;">Código incorrecto</p>
-      <p id="hrbrain-cancel" style="font-size:12px;color:#555;margin-top:14px;cursor:pointer;">Cancelar</p>
+  <div class="gate-modal" id="gate-modal" role="dialog" aria-modal="true" aria-labelledby="gate-title">
+    <div class="gate-card">
+      <img src="./blackchicken_logo.png" alt="Black Chicken">
+      <p class="gate-title" id="gate-title">Acceso restringido</p>
+      <p class="gate-sub" id="gate-sub">Documentos confidenciales · Solo RRHH</p>
+      <div class="gate-input-wrap">
+        <input id="gate-input" class="gate-input" type="password" placeholder="Código de acceso" autocomplete="off" aria-label="Código de acceso">
+        <button class="gate-toggle" id="gate-toggle" type="button" aria-label="Mostrar u ocultar código">
+          <i class="ti ti-eye" aria-hidden="true"></i>
+        </button>
+      </div>
+      <button class="gate-btn" id="gate-btn">Acceder</button>
+      <p class="gate-err" id="gate-err" role="alert">Código incorrecto</p>
+      <p class="gate-cancel" id="gate-cancel">Cancelar</p>
     </div>
   </div>
+
+  <div class="toast-wrap" id="toast-wrap" aria-live="polite" aria-atomic="true"></div>
 
   <script>
-    /* ═══════════════════════════════════════════
-       TAB NAVIGATION
-    ═══════════════════════════════════════════ */
-    var ACTIVE_TAB_KEY = 'bc_hub_active_tab';
-    var tabs = document.querySelectorAll('.intent-tab');
-    var panels = document.querySelectorAll('.panel');
+  (function () {
+    'use strict';
 
-    function clearGlobalSearch() {
-      var mainInput = document.getElementById('hub-search');
-      if (mainInput) mainInput.value = '';
-      document.querySelectorAll('.doc-row.hidden, .person-card.hidden').forEach(function(el) {
-        el.classList.remove('hidden');
-      });
-    }
+    var STORAGE = { THEME: 'bc_hub_theme', AUTH: 'bc_rrhh_auth' };
+    var VALID_TABS = ['inicio','personas','herramientas','documentos','publicaciones'];
+    var NEW_TAG_DAYS = 14;
 
-    var _searchSwitching = false;
-    function switchTab(id) {
-      tabs.forEach(function(t) { t.classList.toggle('active', t.dataset.tab === id); });
-      panels.forEach(function(p) { p.classList.toggle('active', p.id === 'panel-' + id); });
-      if (!_searchSwitching) clearGlobalSearch();
-      try { localStorage.setItem(ACTIVE_TAB_KEY, id); } catch(e) {}
-    }
-
-    tabs.forEach(function(tab) {
-      tab.addEventListener('click', function() { switchTab(this.dataset.tab); });
-    });
-
-    // Restore last tab
-    (function() {
+    /* Auth migration — v2 keys → v3 unified key. Cero re-login para usuarios existentes. */
+    (function migrateAuth() {
       try {
-        var saved = localStorage.getItem(ACTIVE_TAB_KEY);
-        if (saved && document.getElementById('panel-' + saved)) switchTab(saved);
-      } catch(e) {}
+        if (sessionStorage.getItem(STORAGE.AUTH) === 'ok') return;
+        if (sessionStorage.getItem('bc_cartas_auth') === 'ok' ||
+            sessionStorage.getItem('bc_hrbrain_auth') === 'ok') {
+          sessionStorage.setItem(STORAGE.AUTH, 'ok');
+        }
+      } catch (e) {}
+    })();
+    var qs  = function (s, r) { return (r || document).querySelector(s); };
+    var qsa = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+    var norm = function (s) { return (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); };
+    var matchAll = function (text, words) {
+      for (var i = 0; i < words.length; i++) { if (text.indexOf(words[i]) === -1) return false; }
+      return true;
+    };
+
+    /* Theme */
+    (function () {
+      var saved = null;
+      try { saved = localStorage.getItem(STORAGE.THEME); } catch (e) {}
+      var sys = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', saved || sys);
+      var btn = qs('#theme-toggle');
+      var icon = qs('#theme-toggle .ti');
+      var refresh = function () {
+        var t = document.documentElement.getAttribute('data-theme');
+        if (icon) icon.className = 'ti ti-' + (t === 'light' ? 'sun' : 'moon');
+      };
+      refresh();
+      if (btn) btn.addEventListener('click', function () {
+        var t = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', t);
+        try { localStorage.setItem(STORAGE.THEME, t); } catch (e) {}
+        refresh();
+      });
     })();
 
-    /* ═══════════════════════════════════════════
-       TODAY DATE
-    ═══════════════════════════════════════════ */
-    (function() {
+    /* Toast */
+    function toast(message, type, ms) {
+      type = type || 'success';
+      ms = typeof ms === 'number' ? ms : 3200;
+      var wrap = qs('#toast-wrap'); if (!wrap) return;
+      var el = document.createElement('div');
+      el.className = 'toast ' + type;
+      var icon = type === 'success' ? 'circle-check' : type === 'error' ? 'alert-circle' : 'info-circle';
+      el.innerHTML = '<i class="ti ti-' + icon + '" aria-hidden="true"></i><span>' + message + '</span>';
+      wrap.appendChild(el);
+      setTimeout(function () {
+        el.classList.add('out');
+        setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 220);
+      }, ms);
+    }
+    window.bcToast = toast;
+
+    /* Tabs + deep-link */
+    var tabs = qsa('.intent-tab');
+    var panels = qsa('.panel');
+    function setTab(id, opts) {
+      opts = opts || {};
+      if (VALID_TABS.indexOf(id) === -1) id = 'inicio';
+      tabs.forEach(function (t) {
+        var on = t.dataset.tab === id;
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.tabIndex = on ? 0 : -1;
+      });
+      panels.forEach(function (p) { p.classList.toggle('active', p.id === 'panel-' + id); });
+      if (!opts.skipUrl) {
+        var url = new URL(window.location.href);
+        if (id === 'inicio') url.searchParams.delete('tab'); else url.searchParams.set('tab', id);
+        history.replaceState({ tab: id }, '', url.toString());
+      }
+      if (opts.focus) { var t = qs('#tab-' + id); if (t) t.focus(); }
+    }
+    window.bcSetTab = setTab;
+
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () { setTab(this.dataset.tab); });
+      tab.addEventListener('keydown', function (e) {
+        var i = tabs.indexOf(this);
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); setTab(tabs[(i + 1) % tabs.length].dataset.tab, { focus: true }); }
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); setTab(tabs[(i - 1 + tabs.length) % tabs.length].dataset.tab, { focus: true }); }
+        else if (e.key === 'Home') { e.preventDefault(); setTab(tabs[0].dataset.tab, { focus: true }); }
+        else if (e.key === 'End') { e.preventDefault(); setTab(tabs[tabs.length - 1].dataset.tab, { focus: true }); }
+      });
+    });
+
+    var initialTab = (new URL(window.location.href)).searchParams.get('tab');
+    setTab(initialTab || 'inicio', { skipUrl: true });
+    window.addEventListener('popstate', function () {
+      var t = (new URL(window.location.href)).searchParams.get('tab');
+      setTab(t || 'inicio', { skipUrl: true });
+    });
+
+    qsa('[data-tab-jump]').forEach(function (el) {
+      el.addEventListener('click', function (e) {
+        e.preventDefault();
+        setTab(el.dataset.tabJump);
+        if (el.dataset.jumpSection === 'cartas') {
+          setTimeout(function () {
+            var s = qs('#seccion-cartas');
+            if (s && s.scrollIntoView) s.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 80);
+        }
+      });
+    });
+
+    /* Today date */
+    (function () {
       var days = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
       var months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
       var d = new Date();
-      document.getElementById('today-date').textContent =
-        days[d.getDay()] + ' ' + d.getDate() + ' ' + months[d.getMonth()];
+      var el = qs('#today-date');
+      if (el) el.textContent = days[d.getDay()] + ' ' + d.getDate() + ' ' + months[d.getMonth()];
     })();
 
-    /* ═══════════════════════════════════════════
-       NOTION ATS DATA — Today strip + Personas + Tasks
-    ═══════════════════════════════════════════ */
+    /* Notion data */
     var _procesos = [];
+    function jumpToPersona(id) {
+      setTab('personas');
+      setTimeout(function () {
+        var card = qs('.person-card[data-id="' + id + '"]');
+        if (card) {
+          card.classList.add('glow');
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setTimeout(function () { card.classList.remove('glow'); }, 1600);
+        }
+      }, 120);
+    }
+    window.bcJumpToPersona = jumpToPersona;
 
     function loadProcesos() {
       fetch('/api/procesos?status=active')
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
           if (!Array.isArray(data)) throw new Error('Bad data');
           _procesos = data;
           renderTodayStrip(data);
           renderPersonas(data);
           renderAtsTasks(data);
           renderStats(data);
+          buildCmdIndex();
         })
-        .catch(function(err) {
+        .catch(function (err) {
           console.error('Error loading procesos:', err);
-          document.getElementById('today-items').innerHTML =
-            '<div class="today-chip" onclick="switchTab(\'procesos\')"><span class="dot dot-info"></span>Ver herramientas HR</div>';
-          document.getElementById('ats-tasks').innerHTML =
-            '<div style="color:var(--text-dim);font-size:12px;padding:8px 0;">No se pudieron cargar los procesos</div>';
-          document.getElementById('person-grid').innerHTML =
-            '<div style="color:var(--text-dim);font-size:12px;">Sin conexión a Notion</div>';
+          renderTodayStrip([]);
+          var ats = qs('#ats-tasks');
+          if (ats) ats.innerHTML =
+            '<div class="empty-state">' +
+              '<i class="ti ti-cloud-off" aria-hidden="true"></i>' +
+              '<h4>No se pudo conectar con Notion</h4>' +
+              '<p>Reintentá en un momento o avisá al admin.</p>' +
+              '<button type="button" id="ats-retry">Reintentar</button>' +
+            '</div>';
+          var btn = qs('#ats-retry'); if (btn) btn.addEventListener('click', loadProcesos);
+          var pg = qs('#person-grid');
+          if (pg) pg.innerHTML =
+            '<div class="empty-state">' +
+              '<i class="ti ti-cloud-off" aria-hidden="true"></i>' +
+              '<h4>Sin conexión a Notion</h4>' +
+              '<p>Los candidatos se mostrarán cuando vuelva la conexión.</p>' +
+            '</div>';
+          var cnt = qs('#count-personas'); if (cnt) cnt.textContent = '0';
         });
+    }
+
+    function chip(label, dotClass, onClick) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'today-chip';
+      b.innerHTML = '<span class="dot ' + dotClass + '"></span>' + label;
+      b.addEventListener('click', onClick);
+      return b;
     }
 
     function renderTodayStrip(procs) {
-      var el = document.getElementById('today-items');
-      var chips = [];
-
-      // Group by phase to find interesting alerts
-      var byPhase = {};
-      procs.forEach(function(p) {
-        if (!byPhase[p.fase]) byPhase[p.fase] = [];
-        byPhase[p.fase].push(p);
+      var el = qs('#today-items'); if (!el) return;
+      el.innerHTML = '';
+      var added = 0;
+      procs.filter(function (p) { return p.avance >= 70; }).slice(0, 2).forEach(function (p) {
+        var firstName = (p.candidato || '').split(' ')[0] || '—';
+        el.appendChild(chip(firstName + ' · ' + p.avance + '% avance', 'dot-ok', function () {
+          jumpToPersona(p.id || p.candidato);
+        }));
+        added++;
       });
-
-      // High-progress candidates (near completion)
-      procs.filter(function(p) { return p.avance >= 70; }).slice(0, 2).forEach(function(p) {
-        chips.push('<div class="today-chip" onclick="switchTab(\'personas\')"><span class="dot dot-ok"></span>' +
-          p.candidato.split(' ')[0] + ' · ' + p.avance + '% avance</div>');
-      });
-
-      // Recent entries (last 7 days)
       var weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
-      procs.filter(function(p) { return p.fechaInicio && new Date(p.fechaInicio) >= weekAgo; }).slice(0, 2).forEach(function(p) {
-        chips.push('<div class="today-chip" onclick="switchTab(\'personas\')"><span class="dot dot-new"></span>' +
-          p.candidato.split(' ')[0] + ' · Nuevo ingreso ATS</div>');
+      procs.filter(function (p) { return p.fechaInicio && new Date(p.fechaInicio) >= weekAgo; }).slice(0, 2).forEach(function (p) {
+        var firstName = (p.candidato || '').split(' ')[0] || '—';
+        el.appendChild(chip(firstName + ' · Nuevo ATS', 'dot-new', function () {
+          jumpToPersona(p.id || p.candidato);
+        }));
+        added++;
       });
-
-      // Early pipeline alerts
-      var enCapt = (byPhase['F1 Captación'] || []).length;
+      var enCapt = procs.filter(function (p) { return p.fase === 'F1 Captación'; }).length;
       if (enCapt > 0) {
-        chips.push('<div class="today-chip" onclick="switchTab(\'personas\')"><span class="dot dot-warn"></span>' +
-          enCapt + ' en captación · pendientes</div>');
+        el.appendChild(chip(enCapt + ' en captación · pendientes', 'dot-warn', function () { setTab('personas'); }));
+        added++;
       }
-
-      // Total active
       if (procs.length > 0) {
-        chips.push('<div class="today-chip" onclick="switchTab(\'personas\')"><span class="dot dot-info"></span>' +
-          procs.length + ' procesos activos</div>');
+        el.appendChild(chip(procs.length + ' procesos activos', 'dot-info', function () { setTab('personas'); }));
+        added++;
       }
-
-      if (chips.length === 0) {
-        chips.push('<div class="today-chip"><span class="dot dot-ok"></span>Sin alertas pendientes</div>');
+      if (added === 0) {
+        el.appendChild(chip('Sin alertas pendientes · todo al día', 'dot-ok', function () { setTab('personas'); }));
       }
-
-      el.innerHTML = chips.join('');
     }
 
     function renderAtsTasks(procs) {
-      var el = document.getElementById('ats-tasks');
-      if (procs.length === 0) {
-        el.innerHTML = '<div style="color:var(--text-dim);font-size:12px;padding:8px 0;">Sin procesos activos</div>';
+      var el = qs('#ats-tasks'); if (!el) return;
+      if (!procs || procs.length === 0) {
+        el.innerHTML =
+          '<div class="empty-state">' +
+            '<i class="ti ti-confetti" aria-hidden="true"></i>' +
+            '<h4>Sin procesos activos</h4>' +
+            '<p>Cuando publiques un cargo, los candidatos aparecerán aquí.</p>' +
+            '<button type="button" data-tab-jump-empty="publicaciones">Publicar cargo</button>' +
+          '</div>';
+        var jb = qs('#ats-tasks button[data-tab-jump-empty]');
+        if (jb) jb.addEventListener('click', function () { setTab('publicaciones'); });
         return;
       }
-
       var html = '';
-      // Sort: highest avance first (closest to completion)
-      var sorted = procs.slice().sort(function(a, b) { return b.avance - a.avance; });
-      sorted.slice(0, 6).forEach(function(p) {
-        var badge = '';
-        if (p.avance >= 70) badge = '<span class="task-badge badge-ok">Avanzado</span>';
-        else if (p.avance >= 30) badge = '<span class="task-badge badge-pending">En curso</span>';
-        else badge = '<span class="task-badge badge-new">Nuevo</span>';
-
-        html += '<div class="task-item">' +
-          '<div class="task-body">' +
-            '<div class="task-title">' + p.candidato + ' · ' + p.cargo + '</div>' +
-            '<div class="task-subtitle">' + p.fase + ' · ' + p.local + ' · ' + p.avance + '% avance</div>' +
-          '</div>' + badge + '</div>';
+      procs.slice().sort(function (a, b) { return b.avance - a.avance; }).slice(0, 6).forEach(function (p) {
+        var badge = p.avance >= 70 ? '<span class="task-badge badge-ok">Avanzado</span>' :
+                    p.avance >= 30 ? '<span class="task-badge badge-pending">En curso</span>' :
+                                     '<span class="task-badge badge-new">Nuevo</span>';
+        var id = (p.id || p.candidato).toString().replace(/"/g, '');
+        html +=
+          '<a class="task-item" href="#" data-jump="' + id + '">' +
+            '<div class="task-body">' +
+              '<div class="task-title">' + p.candidato + ' · ' + p.cargo + '</div>' +
+              '<div class="task-subtitle">' + p.fase + ' · ' + p.local + ' · ' + p.avance + '% avance</div>' +
+            '</div>' + badge +
+          '</a>';
       });
       el.innerHTML = html;
+      qsa('#ats-tasks [data-jump]').forEach(function (a) {
+        a.addEventListener('click', function (e) { e.preventDefault(); jumpToPersona(this.dataset.jump); });
+      });
     }
 
     function renderPersonas(procs) {
-      var el = document.getElementById('person-grid');
-      document.getElementById('count-personas').textContent = procs.length;
-
+      var el = qs('#person-grid'); if (!el) return;
+      var cnt = qs('#count-personas'); if (cnt) cnt.textContent = procs.length;
       if (procs.length === 0) {
-        el.innerHTML = '<div style="color:var(--text-dim);font-size:12px;">Sin candidatos activos</div>';
+        el.innerHTML =
+          '<div class="empty-state">' +
+            '<i class="ti ti-user-search" aria-hidden="true"></i>' +
+            '<h4>Sin candidatos en pipeline</h4>' +
+            '<p>Publicá un cargo para empezar a recibir postulaciones.</p>' +
+          '</div>';
         return;
       }
-
       var colors = [
-        { bg: 'var(--green-bg)', fg: 'var(--green)' },
-        { bg: 'var(--blue-bg)', fg: 'var(--blue)' },
-        { bg: 'var(--amber-bg)', fg: 'var(--amber)' },
+        { bg: 'var(--green-bg)',  fg: 'var(--green)' },
+        { bg: 'var(--blue-bg)',   fg: 'var(--blue)' },
+        { bg: 'var(--amber-bg)',  fg: 'var(--amber)' },
         { bg: 'var(--purple-bg)', fg: 'var(--purple)' },
-        { bg: 'var(--gold-dim)', fg: 'var(--gold)' },
-        { bg: 'var(--red-bg)', fg: 'var(--red)' }
+        { bg: 'var(--gold-dim)',  fg: 'var(--gold)' }
       ];
-
       var html = '';
-      procs.forEach(function(p, i) {
+      procs.forEach(function (p, i) {
         var c = colors[i % colors.length];
-        var initials = p.candidato.split(' ').map(function(w) { return w[0]; }).join('').substring(0, 2).toUpperCase();
+        var initials = (p.candidato || '').split(' ').map(function (w) { return w[0] || ''; }).join('').substring(0, 2).toUpperCase();
         var statusColor = p.avance >= 70 ? 'var(--green)' : p.avance >= 30 ? 'var(--amber)' : 'var(--blue)';
-        var statusText = p.fase.replace('F1 ', '').replace('F2 ', '').replace('F3 ', '').replace('F4 ', '').replace('F5 ', '');
-
-        html += '<div class="person-card" data-search="' + (p.candidato + ' ' + p.cargo + ' ' + p.local).toLowerCase() + '">' +
-          '<div class="person-av" style="background:' + c.bg + ';color:' + c.fg + '">' + initials + '</div>' +
-          '<div class="person-name">' + p.candidato + '</div>' +
-          '<div class="person-role">' + p.cargo + ' · ' + p.local + '</div>' +
-          '<div class="person-status"><span class="status-dot" style="background:' + statusColor + '"></span>' +
-          '<span>' + statusText + ' · ' + p.avance + '%</span></div></div>';
+        var statusText = (p.fase || '').replace(/^F\d\s+/, '');
+        var id = (p.id || p.candidato).toString();
+        var search = (p.candidato + ' ' + (p.cargo || '') + ' ' + (p.local || '')).toLowerCase();
+        html +=
+          '<a class="person-card" href="#" data-id="' + id.replace(/"/g, '') + '" data-search="' + search.replace(/"/g, '') + '">' +
+            '<div class="person-av" style="background:' + c.bg + ';color:' + c.fg + '">' + initials + '</div>' +
+            '<div class="person-name">' + p.candidato + '</div>' +
+            '<div class="person-role">' + (p.cargo || '') + ' · ' + (p.local || '') + '</div>' +
+            '<div class="person-status"><span class="status-dot" style="background:' + statusColor + '"></span>' +
+            '<span>' + statusText + ' · ' + p.avance + '%</span></div>' +
+          '</a>';
       });
       el.innerHTML = html;
+      qsa('#person-grid .person-card').forEach(function (card) {
+        card.addEventListener('click', function (e) { e.preventDefault(); });
+      });
     }
 
     function renderStats(procs) {
-      document.getElementById('stat-procesos').textContent = procs.length;
-
-      var cargos = {};
-      procs.forEach(function(p) { cargos[p.cargo] = true; });
-      document.getElementById('stat-cargos').textContent = Object.keys(cargos).length;
-
       var totalAvance = 0;
-      procs.forEach(function(p) { totalAvance += p.avance; });
+      procs.forEach(function (p) { totalAvance += (p.avance || 0); });
       var avg = procs.length > 0 ? Math.round(totalAvance / procs.length) : 0;
-      document.getElementById('stat-avance').textContent = avg + '%';
-
+      var sa = qs('#stat-avance'); if (sa) sa.textContent = avg + '%';
+      var twoWeeksAgo = new Date(); twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+      var atascados = procs.filter(function (p) {
+        return p.fechaInicio && new Date(p.fechaInicio) <= twoWeeksAgo && p.avance < 50;
+      }).length;
+      var st = qs('#stat-atascados'); if (st) st.textContent = atascados;
       var weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
-      var nuevos = procs.filter(function(p) { return p.fechaInicio && new Date(p.fechaInicio) >= weekAgo; }).length;
-      document.getElementById('stat-nuevos').textContent = nuevos;
+      var nuevos = procs.filter(function (p) { return p.fechaInicio && new Date(p.fechaInicio) >= weekAgo; }).length;
+      var sn = qs('#stat-nuevos'); if (sn) sn.textContent = nuevos;
     }
 
-    // Load on page ready
     loadProcesos();
 
-    /* ═══════════════════════════════════════════
-       SEARCH — Global (Inicio) + per-panel
-    ═══════════════════════════════════════════ */
-    (function() {
-      var mainInput = document.getElementById('hub-search');
-
-      // Normalize: lowercase + strip accents
-      function norm(s) { return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
-
-      // Multi-word match: every word in query must appear in text
-      function matchAll(text, words) {
-        for (var i = 0; i < words.length; i++) {
-          if (!text.includes(words[i])) return false;
-        }
-        return true;
-      }
-
-      // Debounce timer for auto-switch (only switch after user stops typing)
-      var _switchTimer = null;
-
-      // Global search: searches ALL panels, auto-switches to best tab
-      mainInput.addEventListener('input', function() {
+    /* Per-panel search */
+    var personasInput = qs('#personas-search');
+    if (personasInput) {
+      personasInput.addEventListener('input', function () {
         var raw = norm(this.value.trim());
-
-        // Clear: unhide everything
-        if (!raw) {
-          clearTimeout(_switchTimer);
-          document.querySelectorAll('.doc-row.hidden, .person-card.hidden').forEach(function(el) {
-            el.classList.remove('hidden');
-          });
-          return;
-        }
-
-        var words = raw.split(/\s+/).filter(Boolean);
-
-        // Search across all doc-rows and person-cards
-        var allRows = document.querySelectorAll('.doc-row, .person-card');
-        var found = { personas: 0, procesos: 0, documentos: 0, publicaciones: 0 };
-
-        allRows.forEach(function(row) {
+        var words = raw ? raw.split(/\s+/).filter(Boolean) : [];
+        qsa('#person-grid .person-card').forEach(function (card) {
+          var text = norm(card.dataset.search || card.textContent);
+          card.classList.toggle('hidden', words.length > 0 && !matchAll(text, words));
+        });
+      });
+    }
+    var docsInput = qs('#docs-search');
+    if (docsInput) {
+      docsInput.addEventListener('input', function () {
+        var raw = norm(this.value.trim());
+        var words = raw ? raw.split(/\s+/).filter(Boolean) : [];
+        qsa('#panel-documentos .doc-row').forEach(function (row) {
           var text = norm(row.dataset.search || row.textContent);
-          var match = matchAll(text, words);
-          row.classList.toggle('hidden', !match);
-
-          if (match) {
-            var panel = row.closest('.panel');
-            if (panel) {
-              var id = panel.id.replace('panel-', '');
-              if (found[id] !== undefined) found[id]++;
-            }
-          }
+          row.classList.toggle('hidden', words.length > 0 && !matchAll(text, words));
         });
-
-        // Auto-switch to tab with most matches (debounced 300ms)
-        clearTimeout(_switchTimer);
-        _switchTimer = setTimeout(function() {
-          var best = null; var max = 0;
-          Object.keys(found).forEach(function(k) {
-            if (found[k] > max) { max = found[k]; best = k; }
-          });
-          if (best && max > 0) {
-            _searchSwitching = true;
-            switchTab(best);
-            _searchSwitching = false;
-            mainInput.focus();
-          }
-        }, 300);
       });
+    }
 
-      // Personas search
-      var persSearch = document.getElementById('personas-search');
-      if (persSearch) {
-        persSearch.addEventListener('input', function() {
-          var raw = norm(this.value.trim());
-          var words = raw ? raw.split(/\s+/).filter(Boolean) : [];
-          document.querySelectorAll('#person-grid .person-card').forEach(function(card) {
-            var text = norm(card.dataset.search || card.textContent);
-            card.classList.toggle('hidden', words.length > 0 && !matchAll(text, words));
-          });
+    /* Command Palette */
+    var cmdOverlay = qs('#cmd-overlay');
+    var cmdInput   = qs('#cmd-input');
+    var cmdResults = qs('#cmd-results');
+    var cmdIndex = [];
+
+    function buildCmdIndex() {
+      cmdIndex = [];
+      _procesos.forEach(function (p) {
+        var id = (p.id || p.candidato).toString();
+        cmdIndex.push({
+          kind: 'Persona',
+          name: p.candidato,
+          meta: (p.cargo || '') + ' · ' + (p.local || '') + ' · ' + p.avance + '%',
+          icon: 'user',
+          run: function () { jumpToPersona(id); },
+          search: norm(p.candidato + ' ' + (p.cargo || '') + ' ' + (p.local || ''))
         });
-      }
-
-      // Docs search
-      var docsSearch = document.getElementById('docs-search');
-      if (docsSearch) {
-        docsSearch.addEventListener('input', function() {
-          var raw = norm(this.value.trim());
-          var words = raw ? raw.split(/\s+/).filter(Boolean) : [];
-          document.querySelectorAll('#panel-documentos .doc-row').forEach(function(row) {
-            var text = norm(row.dataset.search || row.textContent);
-            row.classList.toggle('hidden', words.length > 0 && !matchAll(text, words));
-          });
-        });
-      }
-
-      // Keyboard shortcuts
-      document.addEventListener('keydown', function(e) {
-        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-          e.preventDefault();
-          mainInput.focus();
-        }
-        if (e.key === 'Escape') {
-          mainInput.value = '';
-          if (persSearch) persSearch.value = '';
-          if (docsSearch) docsSearch.value = '';
-          document.querySelectorAll('.doc-row.hidden, .person-card.hidden').forEach(function(el) {
-            el.classList.remove('hidden');
-          });
-        }
       });
-    })();
-
-    /* ═══════════════════════════════════════════
-       AUTH: CARTAS / HERRAMIENTAS
-    ═══════════════════════════════════════════ */
-    (function() {
-      var KEY = 'bc_cartas_auth';
-      var pendingUrl = null;
-
-      if (sessionStorage.getItem(KEY) === 'ok') unlockCartas();
-
-      window.cartaGate = function(url) {
-        if (sessionStorage.getItem(KEY) === 'ok') { window.location.href = url; return; }
-        pendingUrl = url;
-        var modal = document.getElementById('carta-modal');
-        modal.style.display = 'flex';
-        document.getElementById('carta-input').value = '';
-        document.getElementById('carta-err').style.display = 'none';
-        setTimeout(function(){ document.getElementById('carta-input').focus(); }, 100);
-      };
-
-      document.getElementById('carta-cancel').addEventListener('click', function() {
-        document.getElementById('carta-modal').style.display = 'none';
-        pendingUrl = null;
-      });
-
-      function attempt() {
-        var v = document.getElementById('carta-input').value;
-        var btn = document.getElementById('carta-btn');
-        btn.disabled = true; btn.textContent = 'Verificando...';
-        fetch('/api/auth', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ module: 'cartas', password: v })
-        })
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
-          btn.disabled = false; btn.textContent = 'Acceder';
-          if (data.ok) {
-            sessionStorage.setItem(KEY, 'ok');
-            document.getElementById('carta-modal').style.display = 'none';
-            unlockCartas();
-            if (pendingUrl) window.location.href = pendingUrl;
-          } else { showCartaError(); }
-        })
-        .catch(function() {
-          btn.disabled = false; btn.textContent = 'Acceder';
-          showCartaError();
+      qsa('.action-card').forEach(function (a) {
+        var t = qs('.action-title', a); var s = qs('.action-sub', a);
+        if (!t) return;
+        var name = t.textContent;
+        var meta = s ? s.textContent : '';
+        var ic = qs('.action-icon i', a);
+        var icon = ic ? ic.className.replace('ti ti-', '').split(' ')[0] : 'bolt';
+        cmdIndex.push({
+          kind: 'Acción', name: name, meta: meta, icon: icon,
+          run: function () { a.click(); },
+          search: norm(name + ' ' + meta)
         });
-      }
-
-      function showCartaError() {
-        var err = document.getElementById('carta-err');
-        var inp = document.getElementById('carta-input');
-        err.style.display = 'block'; inp.style.borderColor = '#e05050'; inp.value = '';
-        setTimeout(function(){ err.style.display='none'; inp.style.borderColor='#2a2a2a'; }, 2000);
-      }
-
-      function unlockCartas() {
-        document.querySelectorAll('.carta-locked').forEach(function(el) {
-          el.querySelectorAll('.lock-icon').forEach(function(ic) { ic.textContent = ''; });
-          el.classList.remove('carta-locked', 'gated-item');
-        });
-      }
-
-      document.getElementById('carta-btn').addEventListener('click', attempt);
-      document.getElementById('carta-input').addEventListener('keydown', function(e){ if(e.key==='Enter') attempt(); });
-      document.getElementById('carta-modal').addEventListener('click', function(e){ if(e.target===this){ document.getElementById('carta-modal').style.display='none'; pendingUrl=null; } });
-    })();
-
-    /* ═══════════════════════════════════════════
-       AUTH: HR BRAIN
-    ═══════════════════════════════════════════ */
-    (function() {
-      var KEY = 'bc_hrbrain_auth';
-      var pendingUrl = null;
-
-      if (sessionStorage.getItem(KEY) === 'ok') unlockHrBrain();
-
-      window.hrBrainGate = function(url) {
-        if (sessionStorage.getItem(KEY) === 'ok') { window.open(url, '_blank'); return; }
-        pendingUrl = url;
-        var modal = document.getElementById('hrbrain-modal');
-        modal.style.display = 'flex';
-        document.getElementById('hrbrain-input').value = '';
-        document.getElementById('hrbrain-err').style.display = 'none';
-        setTimeout(function(){ document.getElementById('hrbrain-input').focus(); }, 100);
-      };
-
-      document.getElementById('hrbrain-cancel').addEventListener('click', function() {
-        document.getElementById('hrbrain-modal').style.display = 'none';
-        pendingUrl = null;
       });
+      qsa('.panel .doc-row').forEach(function (row) {
+        var nameEl = qs('.doc-name', row); var metaEl = qs('.doc-meta', row);
+        if (!nameEl) return;
+        var rawName = nameEl.textContent.replace(/\s+$/g, '').replace(/\s{2,}/g, ' ').trim();
+        var meta = metaEl ? metaEl.textContent : '';
+        var panel = row.closest('.panel');
+        var kind = panel ? panel.id.replace('panel-', '') : 'documento';
+        kind = kind.charAt(0).toUpperCase() + kind.slice(1);
+        var ic = qs('.doc-icon i', row);
+        var icon = ic ? ic.className.replace('ti ti-', '').split(' ')[0] : 'file';
+        cmdIndex.push({
+          kind: kind, name: rawName, meta: meta, icon: icon,
+          run: function () { row.click(); },
+          search: norm((row.dataset.search || '') + ' ' + rawName + ' ' + meta)
+        });
+      });
+    }
 
-      function attempt() {
-        var v = document.getElementById('hrbrain-input').value;
-        var btn = document.getElementById('hrbrain-btn');
-        btn.disabled = true; btn.textContent = 'Verificando...';
-        fetch('/api/auth', {
+    function highlight(text, words) {
+      if (!words.length) return text;
+      var t = text;
+      words.forEach(function (w) {
+        try {
+          var re = new RegExp('(' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+          t = t.replace(re, '<mark class="match">$1</mark>');
+        } catch (e) {}
+      });
+      return t;
+    }
+
+    function renderCmdResults(query) {
+      var raw = norm((query || '').trim());
+      var words = raw ? raw.split(/\s+/).filter(Boolean) : [];
+      var groups = {};
+      var totalShown = 0;
+      cmdIndex.forEach(function (it) {
+        if (words.length && !matchAll(it.search, words)) return;
+        if (!groups[it.kind]) groups[it.kind] = [];
+        if (groups[it.kind].length < 6) { groups[it.kind].push(it); totalShown++; }
+      });
+      if (!totalShown) {
+        cmdResults.innerHTML = '<div class="cmd-empty">Sin resultados para "' + (query || '') + '"</div>';
+        return;
+      }
+      var order = ['Acción','Persona','Personas','Herramientas','Documentos','Publicaciones'];
+      var html = ''; var idx = 0;
+      order.forEach(function (g) {
+        if (!groups[g] || !groups[g].length) return;
+        html += '<div class="cmd-section-label">' + g + '</div>';
+        groups[g].forEach(function (it) {
+          html +=
+            '<a class="cmd-result" href="#" role="option" data-i="' + idx + '">' +
+              '<i class="ti ti-' + it.icon + '" aria-hidden="true"></i>' +
+              '<div class="info">' +
+                '<div class="name">' + highlight(it.name, words) + '</div>' +
+                '<div class="meta">' + highlight(it.meta || '', words) + '</div>' +
+              '</div>' +
+              '<kbd>' + g + '</kbd>' +
+            '</a>';
+          idx++;
+        });
+      });
+      cmdResults.innerHTML = html;
+      var flat = [];
+      order.forEach(function (g) { (groups[g] || []).forEach(function (it) { flat.push(it); }); });
+      cmdResults._flat = flat;
+      cmdSelectIndex(0);
+    }
+
+    function cmdSelectIndex(i) {
+      var rows = qsa('.cmd-result', cmdResults);
+      if (!rows.length) return;
+      i = (i + rows.length) % rows.length;
+      rows.forEach(function (r, idx) {
+        r.setAttribute('aria-selected', idx === i ? 'true' : 'false');
+        if (idx === i) r.scrollIntoView({ block: 'nearest' });
+      });
+      cmdResults._idx = i;
+    }
+    function cmdRunSelected() {
+      var i = cmdResults._idx || 0;
+      var item = (cmdResults._flat || [])[i];
+      if (!item) return;
+      closeCmd();
+      setTimeout(function () { item.run(); }, 50);
+    }
+    function openCmd() {
+      cmdOverlay.classList.add('open');
+      cmdInput.value = '';
+      buildCmdIndex();
+      renderCmdResults('');
+      setTimeout(function () { cmdInput.focus(); }, 30);
+    }
+    function closeCmd() { cmdOverlay.classList.remove('open'); }
+
+    if (cmdInput) {
+      cmdInput.addEventListener('input', function () { renderCmdResults(this.value); });
+      cmdInput.addEventListener('keydown', function (e) {
+        var idx = cmdResults._idx || 0;
+        if (e.key === 'ArrowDown') { e.preventDefault(); cmdSelectIndex(idx + 1); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); cmdSelectIndex(idx - 1); }
+        else if (e.key === 'Enter') { e.preventDefault(); cmdRunSelected(); }
+        else if (e.key === 'Escape') { e.preventDefault(); closeCmd(); }
+      });
+    }
+    cmdResults.addEventListener('click', function (e) {
+      var row = e.target.closest('.cmd-result');
+      if (!row) return;
+      e.preventDefault();
+      cmdSelectIndex(parseInt(row.dataset.i, 10) || 0);
+      cmdRunSelected();
+    });
+    cmdOverlay.addEventListener('click', function (e) { if (e.target === cmdOverlay) closeCmd(); });
+    document.addEventListener('keydown', function (e) {
+      if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        cmdOverlay.classList.contains('open') ? closeCmd() : openCmd();
+      }
+      if (e.key === 'Escape' && cmdOverlay.classList.contains('open')) closeCmd();
+    });
+    qs('#open-cmd').addEventListener('click', openCmd);
+    qs('#search-trigger-inicio').addEventListener('click', openCmd);
+
+    /* Unified gate */
+    var gateModal  = qs('#gate-modal');
+    var gateInput  = qs('#gate-input');
+    var gateBtn    = qs('#gate-btn');
+    var gateErr    = qs('#gate-err');
+    var gateCancel = qs('#gate-cancel');
+    var gateToggle = qs('#gate-toggle');
+    var gateTitle  = qs('#gate-title');
+    var gateSub    = qs('#gate-sub');
+    var pending    = null;
+
+    function isAuthed() { try { return sessionStorage.getItem(STORAGE.AUTH) === 'ok'; } catch (e) { return false; } }
+    function markAuthed() { try { sessionStorage.setItem(STORAGE.AUTH, 'ok'); } catch (e) {} unlockAll(); }
+    function unlockAll() {
+      qsa('.gated-item, .hrbrain-locked, .carta-locked').forEach(function (el) {
+        el.classList.remove('gated-item', 'hrbrain-locked', 'carta-locked');
+        qsa('.lock-icon, .hrbrain-lock', el).forEach(function (ic) {
+          if (ic.parentNode) ic.parentNode.removeChild(ic);
+        });
+      });
+    }
+    function openGate(mode, url) {
+      pending = { mode: mode, url: url };
+      gateTitle.textContent = mode === 'brain' ? 'HR Brain · Acceso restringido' : 'Acceso restringido';
+      gateSub.textContent   = mode === 'brain' ? 'Base de conocimiento · Solo RRHH' : 'Documentos confidenciales · Solo RRHH';
+      gateInput.value = '';
+      gateInput.type = 'password';
+      var ti = qs('.ti', gateToggle); if (ti) ti.className = 'ti ti-eye';
+      gateErr.style.display = 'none';
+      gateModal.classList.add('open');
+      setTimeout(function () { gateInput.focus(); }, 60);
+    }
+    function closeGate() { gateModal.classList.remove('open'); pending = null; }
+    function showGateError() {
+      gateErr.style.display = 'block';
+      gateInput.style.borderColor = 'var(--red)';
+      gateInput.value = '';
+      setTimeout(function () { gateErr.style.display = 'none'; gateInput.style.borderColor = ''; }, 2400);
+    }
+
+    function attemptGate() {
+      var v = gateInput.value;
+      gateBtn.disabled = true; gateBtn.textContent = 'Verificando…';
+      fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ module: 'cartas', password: v })
+      })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data && data.ok) return true;
+        return fetch('/api/auth', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ module: 'hrbrain', password: v })
-        })
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
-          btn.disabled = false; btn.textContent = 'Acceder';
-          if (data.ok) {
-            sessionStorage.setItem(KEY, 'ok');
-            document.getElementById('hrbrain-modal').style.display = 'none';
-            unlockHrBrain();
-            if (pendingUrl) { window.open(pendingUrl, '_blank'); pendingUrl = null; }
-          } else { showHrBrainError(); }
-        })
-        .catch(function() {
-          btn.disabled = false; btn.textContent = 'Acceder';
-          showHrBrainError();
-        });
-      }
+        }).then(function (r) { return r.json(); }).then(function (d2) { return !!(d2 && d2.ok); });
+      })
+      .then(function (ok) {
+        gateBtn.disabled = false; gateBtn.textContent = 'Acceder';
+        if (!ok) { showGateError(); return; }
+        markAuthed();
+        var p = pending;
+        closeGate();
+        toast('Acceso concedido · documentos desbloqueados', 'success');
+        if (p && p.url) {
+          if (p.mode === 'brain') window.open(p.url, '_blank', 'noopener');
+          else window.location.href = p.url;
+        }
+      })
+      .catch(function () {
+        gateBtn.disabled = false; gateBtn.textContent = 'Acceder';
+        showGateError();
+      });
+    }
 
-      function showHrBrainError() {
-        var err = document.getElementById('hrbrain-err');
-        var inp = document.getElementById('hrbrain-input');
-        err.style.display = 'block'; inp.style.borderColor = '#e05050'; inp.value = '';
-        setTimeout(function(){ err.style.display='none'; inp.style.borderColor='#2a2a2a'; }, 2000);
-      }
+    gateBtn.addEventListener('click', attemptGate);
+    gateInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') attemptGate(); });
+    gateCancel.addEventListener('click', closeGate);
+    gateModal.addEventListener('click', function (e) { if (e.target === gateModal) closeGate(); });
+    gateToggle.addEventListener('click', function () {
+      var ti = qs('.ti', gateToggle);
+      if (gateInput.type === 'password') { gateInput.type = 'text'; if (ti) ti.className = 'ti ti-eye-off'; }
+      else { gateInput.type = 'password'; if (ti) ti.className = 'ti ti-eye'; }
+      gateInput.focus();
+    });
 
-      function unlockHrBrain() {
-        document.querySelectorAll('.hrbrain-locked').forEach(function(el) {
-          el.querySelectorAll('.hrbrain-lock').forEach(function(ic) { ic.textContent = ''; });
-          el.classList.remove('hrbrain-locked');
-        });
+    document.addEventListener('click', function (e) {
+      var card = e.target.closest('[data-gate]');
+      if (card) {
+        e.preventDefault();
+        var url = card.getAttribute('data-gate');
+        if (isAuthed()) { window.location.href = url; return; }
+        openGate('cartas', url);
+        return;
       }
+      var brain = e.target.closest('[data-gate-brain]');
+      if (brain) {
+        e.preventDefault();
+        var url2 = brain.getAttribute('data-gate-brain');
+        if (isAuthed()) { window.open(url2, '_blank', 'noopener'); return; }
+        openGate('brain', url2);
+      }
+    });
 
-      document.getElementById('hrbrain-btn').addEventListener('click', attempt);
-      document.getElementById('hrbrain-input').addEventListener('keydown', function(e){ if(e.key==='Enter') attempt(); });
-      document.getElementById('hrbrain-modal').addEventListener('click', function(e){ if(e.target===this){ document.getElementById('hrbrain-modal').style.display='none'; pendingUrl=null; } });
+    if (isAuthed()) unlockAll();
+
+    /* Auto-expire NUEVO tag */
+    (function expireNew() {
+      qsa('[data-release]').forEach(function (el) {
+        var d = new Date(el.dataset.release);
+        if (isNaN(d.getTime())) return;
+        var ageDays = (Date.now() - d.getTime()) / 86400000;
+        if (ageDays > NEW_TAG_DAYS) {
+          qsa('.tag-new', el).forEach(function (t) { if (t.parentNode) t.parentNode.removeChild(t); });
+        }
+      });
     })();
 
-    /* ═══════════════════════════════════════════
-       ERROR LOGGING
-    ═══════════════════════════════════════════ */
-    window.onerror = function(message, source, lineno, colno, error) {
+    /* Error logging */
+    window.onerror = function (message, source, lineno, colno, error) {
       try {
         fetch('/api/log', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: message, source: source, lineno: lineno, colno: colno, stack: error && error.stack ? error.stack : '', url: window.location.href, timestamp: new Date().toISOString() })
-        }).catch(function() {});
-      } catch(e) {}
+          body: JSON.stringify({
+            message: message, source: source, lineno: lineno, colno: colno,
+            stack: error && error.stack ? error.stack : '',
+            url: window.location.href, timestamp: new Date().toISOString()
+          })
+        }).catch(function () {});
+      } catch (e) {}
     };
-    window.addEventListener('unhandledrejection', function(event) {
+    window.addEventListener('unhandledrejection', function (event) {
       try {
         fetch('/api/log', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: 'Unhandled rejection: ' + (event.reason && event.reason.message ? event.reason.message : String(event.reason)), stack: event.reason && event.reason.stack ? event.reason.stack : '', url: window.location.href, timestamp: new Date().toISOString() })
-        }).catch(function() {});
-      } catch(e) {}
+          body: JSON.stringify({
+            message: 'Unhandled rejection: ' + (event.reason && event.reason.message ? event.reason.message : String(event.reason)),
+            stack: event.reason && event.reason.stack ? event.reason.stack : '',
+            url: window.location.href, timestamp: new Date().toISOString()
+          })
+        }).catch(function () {});
+      } catch (e) {}
     });
+  })();
   </script>
 </body>
 </html>
