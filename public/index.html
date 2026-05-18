@@ -189,6 +189,7 @@ function notionToApp(n) {
   // Descartado: detectar por tag en notas (no depende de status Notion)
   const notasRaw = n.notas || '';
   const descartado = notasRaw.includes('[DESCARTE:') || n.estado === 'Descartado';
+  const talentPool = n.fase === 'Talent Pool';
   // Parsear motivoDescarte y notas limpias desde el campo notas de Notion
   let motivoDescarte = '';
   let notasClean = n.notas || '';
@@ -210,7 +211,7 @@ function notionToApp(n) {
     local: n.local || 'BC1',
     fase, completados, notas: notasClean,
     fechaInicio: n.fechaInicio || new Date().toISOString().split('T')[0],
-    avance, descartado,
+    avance, descartado, talentPool,
     motivoDescarte: descartado ? motivoDescarte : undefined,
     fechaDescarte:  descartado ? (n.fechaInicio || new Date().toISOString().slice(0,10)) : undefined
   };
@@ -340,7 +341,7 @@ const AppHeader = ({procesos, onNew, showMetrics, onToggleMetrics}) => {
             Procesos de Reclutamiento <span style={{fontStyle:'italic', color:'var(--gold)'}}>&amp; Onboarding</span>
           </h1>
           <p style={{fontSize:13, color:'var(--text-2)', marginBottom:5}}>Pipeline operativo · Uso exclusivo RRHH · {active} procesos activos</p>
-          <div style={{fontSize:11, color:'var(--gold)', letterSpacing:'0.3px', opacity:0.75}}>v1.7 — fix descartados persisten + Termina proceso + organigrama separado</div>
+          <div style={{fontSize:11, color:'var(--gold)', letterSpacing:'0.3px', opacity:0.75}}>v1.8 — talent pool + fix delete bug</div>
         </div>
         <div style={{display:'flex', gap:8}}>
 
@@ -555,7 +556,7 @@ const ListView = ({procesos, onOpen, activeId}) => (
 );
 
 /* Candidate drawer */
-const CandidateDrawer = ({proc, onClose, onToggle, onAdvance, onUpdateNotas, onDiscard, onRestore, onDelete}) => {
+const CandidateDrawer = ({proc, onClose, onToggle, onAdvance, onUpdateNotas, onDiscard, onRestore, onDelete, onTalentPool, onRestoreFromPool}) => {
   if (!proc) return null;
   const profile = PROFILES[proc.track];
   const [notesDraft, setNotesDraft] = React.useState(proc.notas);
@@ -582,6 +583,7 @@ const CandidateDrawer = ({proc, onClose, onToggle, onAdvance, onUpdateNotas, onD
                 <h2 className="serif" style={{fontSize:22, color:'#fff', fontWeight:600, letterSpacing:'-0.3px'}}>{proc.candidato}</h2>
                 <div style={{display:'flex', gap:6, alignItems:'center', marginTop:4}}>
                   <span style={{fontSize:11, color:'var(--text-3)', fontWeight:700, letterSpacing:'1px'}}>{proc.idProceso}</span>
+                  {proc.talentPool && <span style={{fontSize:9, background:'rgba(122,176,224,0.2)', color:'#7ab0e0', padding:'2px 6px', borderRadius:4, fontWeight:700, letterSpacing:'0.5px', textTransform:'uppercase'}}>TALENT POOL</span>}
                   <span style={{color:'var(--text-3)'}}>·</span>
                   <span style={{fontSize:12, color:'var(--text-2)'}}>{proc.cargo}</span>
                   <Tag tone={localTone(proc.local)}>{proc.local}</Tag>
@@ -732,11 +734,25 @@ const CandidateDrawer = ({proc, onClose, onToggle, onAdvance, onUpdateNotas, onD
         <section style={{padding:'0 28px 40px'}}>
           <div style={{background:'var(--card)', border:'1px solid var(--border)', borderRadius:10, padding:16}}>
             <div style={{fontSize:10, color:'var(--text-3)', letterSpacing:'1.5px', fontWeight:700, textTransform:'uppercase', marginBottom:10}}>Acciones del proceso</div>
-            {!proc.descartado && (
+            {!proc.descartado && !proc.talentPool && (
+              <button onClick={()=>onTalentPool(proc.id)} style={{width:'100%', padding:'10px 12px', background:'rgba(122,176,224,0.08)', border:'1px solid rgba(122,176,224,0.35)', color:'#7ab0e0', borderRadius:8, fontSize:12, fontWeight:600, textAlign:'left', display:'flex', alignItems:'center', gap:10, marginBottom:8}}>
+                <span style={{fontSize:14}}>🗂</span>
+                <span style={{flex:1}}>Mover a Talent Pool</span>
+                <span style={{fontSize:10, color:'var(--text-3)', letterSpacing:'0.5px'}}>Para futuras vacantes</span>
+              </button>
+            )}
+            {!proc.descartado && !proc.talentPool && (
               <button onClick={()=>onDiscard(proc.id)} style={{width:'100%', padding:'10px 12px', background:'rgba(224,128,128,0.08)', border:'1px solid rgba(224,128,128,0.35)', color:'var(--red)', borderRadius:8, fontSize:12, fontWeight:600, textAlign:'left', display:'flex', alignItems:'center', gap:10, marginBottom:8}}>
                 <span style={{fontSize:14}}>🚫</span>
                 <span style={{flex:1}}>Descartar candidato</span>
                 <span style={{fontSize:10, color:'var(--text-3)', letterSpacing:'0.5px'}}>Queda registro</span>
+              </button>
+            )}
+            {proc.talentPool && (
+              <button onClick={()=>onRestoreFromPool(proc.id)} style={{width:'100%', padding:'10px 12px', background:'rgba(106,184,106,0.08)', border:'1px solid rgba(106,184,106,0.35)', color:'var(--bc1)', borderRadius:8, fontSize:12, fontWeight:600, textAlign:'left', display:'flex', alignItems:'center', gap:10, marginBottom:8}}>
+                <span style={{fontSize:14}}>↺</span>
+                <span style={{flex:1}}>Reactivar proceso</span>
+                <span style={{fontSize:10, color:'var(--text-3)', letterSpacing:'0.5px'}}>Vuelve a F1</span>
               </button>
             )}
             <button onClick={()=>{
@@ -1205,7 +1221,7 @@ function App(){
   }, [tweaks.accent]);
 
   const filtered = procesos.filter(p => {
-    if (showDiscarded ? !p.descartado : p.descartado) return false;
+    if (showDiscarded ? !(p.descartado || p.talentPool) : (p.descartado || p.talentPool)) return false;
     if (track!=='all' && p.track!==track) return false;
     if (local!=='all' && p.local!==local) return false;
     if (query){
@@ -1214,7 +1230,7 @@ function App(){
     }
     return true;
   });
-  const discardedCount = procesos.filter(p=>p.descartado).length;
+  const discardedCount = procesos.filter(p=>p.descartado || p.talentPool).length;
 
   const activeProcData = activeProc ? procesos.find(p=>p.id===activeProc) : null;
 
@@ -1267,9 +1283,45 @@ function App(){
       return { ...p, descartado:false, motivoDescarte:undefined, fechaDescarte:undefined };
     }));
   };
+  const talentPoolProc = async (procId) => {
+    const proc = procesos.find(p => p.id === procId);
+    if (!proc) return;
+    if (!confirm(`¿Mover a ${proc.candidato} al Talent Pool?\n\nSe guardará para futuras vacantes.`)) return;
+    if (proc.notionId) {
+      try {
+        await apiPatch(proc.notionId, { fase: 'Talent Pool', estado: 'Listo' });
+      } catch(e) { console.error('Error moviendo a talent pool:', e); }
+    }
+    setProcesos(prev => prev.map(p => {
+      if (p.id !== procId) return p;
+      return { ...p, talentPool: true, descartado: false };
+    }));
+    setActiveProc(null);
+  };
+  const restoreFromPool = async (procId) => {
+    const proc = procesos.find(p => p.id === procId);
+    if (!proc) return;
+    if (proc.notionId) {
+      try {
+        await apiPatch(proc.notionId, { fase: 'F1 Captación', estado: 'En curso', avance: 0, items_completados: [] });
+      } catch(e) { console.error('Error restaurando de pool:', e); }
+    }
+    setProcesos(prev => prev.map(p => {
+      if (p.id !== procId) return p;
+      return { ...p, talentPool: false, fase: 'F1', avance: 0, completados: [] };
+    }));
+  };
   const deleteProc = async (procId) => {
+    const proc = procesos.find(p => p.id === procId);
+    const notionId = proc?.notionId;
+    if (!notionId) {
+      // Local-only proc, just remove from state
+      setProcesos(prev => prev.filter(p => p.id!==procId));
+      setActiveProc(null);
+      return;
+    }
     try {
-      const res = await fetch(`/api/proceso?id=${procId}`, { method: 'DELETE' });
+      const res = await fetch(`/api/proceso?id=${notionId}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete');
       setProcesos(prev => prev.filter(p => p.id!==procId));
       setActiveProc(null);
@@ -1339,7 +1391,7 @@ function App(){
             showDiscarded={showDiscarded} setShowDiscarded={setShowDiscarded} discardedCount={discardedCount} />
           {showDiscarded && (
             <div style={{padding:'10px 40px', background:'rgba(224,128,128,0.04)', borderBottom:'1px solid var(--border)', fontSize:11.5, color:'var(--red)', letterSpacing:'0.5px', display:'flex', alignItems:'center', gap:8}}>
-              <span>🚫</span><span>Mostrando procesos descartados · {discardedCount} registros</span>
+              <span>🚫</span><span>Mostrando descartados ({discardedCount}) y talent pool ({procesos.filter(p=>p.talentPool).length})</span>
             </div>
           )}
         </>
@@ -1358,7 +1410,8 @@ function App(){
       {activeProcData && (
         <CandidateDrawer proc={activeProcData} onClose={()=>setActiveProc(null)}
           onToggle={toggleItem} onAdvance={(id,ph)=>advancePhase(id,ph)} onUpdateNotas={updateNotas}
-          onDiscard={(id)=>setDiscardTarget(id)} onRestore={restoreProc} onDelete={deleteProc} />
+          onDiscard={(id)=>setDiscardTarget(id)} onRestore={restoreProc} onDelete={deleteProc}
+          onTalentPool={talentPoolProc} onRestoreFromPool={restoreFromPool} />
       )}
       {discardTarget && (
         <DiscardModal proc={procesos.find(p=>p.id===discardTarget)} onClose={()=>setDiscardTarget(null)}
