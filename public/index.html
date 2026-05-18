@@ -138,6 +138,129 @@
       background: #2a2a2a;
     }
 
+    .proceso-card-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .btn-edit, .btn-delete {
+      background: none;
+      border: 1px solid #3a3a3a;
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-edit {
+      color: #d4af37;
+    }
+
+    .btn-edit:hover {
+      background: rgba(212, 175, 55, 0.15);
+      border-color: #d4af37;
+    }
+
+    .btn-delete {
+      color: #e08080;
+    }
+
+    .btn-delete:hover {
+      background: rgba(224, 128, 128, 0.15);
+      border-color: #e08080;
+    }
+
+    .btn-pool {
+      color: #7ab0e0;
+    }
+
+    .btn-pool:hover {
+      background: rgba(122, 176, 224, 0.15);
+      border-color: #7ab0e0;
+    }
+
+    /* Talent Pool Tab */
+    .pool-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .pool-card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: border-color 0.2s;
+    }
+
+    .pool-card:hover {
+      border-color: #3a3a3a;
+    }
+
+    .pool-card-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .pool-card-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .pool-card-meta {
+      font-size: 12px;
+      color: #777;
+    }
+
+    .pool-card-notes {
+      font-size: 12px;
+      color: #999;
+      margin-top: 4px;
+      font-style: italic;
+    }
+
+    .pool-card-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .btn-reactivar {
+      background: none;
+      border: 1px solid #4a8a4a;
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-size: 11px;
+      color: #6ab86a;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .btn-reactivar:hover {
+      background: rgba(74, 138, 74, 0.15);
+    }
+
+    .pool-empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: #555;
+      font-size: 13px;
+    }
+
+    .pool-count {
+      font-size: 12px;
+      color: #555;
+      margin-bottom: 16px;
+    }
+
     .proceso-card.active {
       border-color: #d4af37;
       background: rgba(212, 175, 55, 0.1);
@@ -827,6 +950,7 @@
       <button class="tab-btn" onclick="switchTab('garzones')">Garzones</button>
       <button class="tab-btn" onclick="switchTab('jefatura')">Jefatura</button>
       <button class="tab-btn" onclick="switchTab('cocineros')">Cocineros</button>
+      <button class="tab-btn" onclick="switchTab('talent-pool')">Talent Pool</button>
     </div>
 
     <!-- Save bar -->
@@ -1423,13 +1547,23 @@
         </div>
       </div>
     </div>
+
+    <!-- TAB: TALENT POOL -->
+    <div id="talent-pool" class="tab-content">
+      <div class="section-label">🗂️ Talent Pool</div>
+      <div class="pool-count" id="pool-count"></div>
+      <div id="pool-list" class="pool-list">
+        <div class="pool-empty">Cargando...</div>
+      </div>
+    </div>
   </div>
 
   <!-- Modal -->
   <div id="modalOverlay" class="modal-overlay" onclick="closeModal(event)" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal" onclick="event.stopPropagation()">
       <h2 id="modal-title">Crear Nuevo Proceso</h2>
-      <form onsubmit="submitNewProceso(event)">
+      <form onsubmit="submitProceso(event)">
+        <input type="hidden" id="editProcesoId" value="">
         <div class="form-group">
           <label for="candidato">Nombre Candidato</label>
           <input type="text" id="candidato" name="candidato" required placeholder="Ej: Juan Pérez">
@@ -1461,7 +1595,7 @@
           <textarea id="notas" name="notas" placeholder="Ej: Referencia de Felipe..."></textarea>
         </div>
         <div class="modal-actions">
-          <button type="submit" class="modal-actions button btn-crear">Crear Proceso</button>
+          <button type="submit" id="modal-submit-btn" class="modal-actions button btn-crear">Crear Proceso</button>
           <button type="button" class="modal-actions button btn-cancelar" onclick="closeModal()">Cancelar</button>
         </div>
       </form>
@@ -1506,11 +1640,17 @@
       container.innerHTML = activeProcesos.map(p => `
         <div class="proceso-card" onclick="selectProceso('${p.id}', '${p.cargo}')">
           <div class="proceso-name">${p.candidato}</div>
-          <div class="proceso-meta">${p.cargo}</div>
+          <div class="proceso-meta">${p.cargo} · ${p.local || ''}</div>
           <div class="progress-bar">
             <div class="progress-fill" style="width: ${p.avance}%"></div>
           </div>
           <div style="font-size: 11px; color: #666; margin-top: 4px;">${p.avance}%</div>
+          <div class="proceso-card-actions">
+            <button class="btn-edit" onclick="event.stopPropagation(); openEditModal('${p.id}')">Editar</button>
+            <button class="btn-edit btn-pool" onclick="event.stopPropagation(); talentPoolProceso('${p.id}', '${p.candidato}')">Pool</button>
+            <button class="btn-delete" onclick="event.stopPropagation(); finalizarProceso('${p.id}', '${p.candidato}')">Finalizar</button>
+            <button class="btn-delete" onclick="event.stopPropagation(); borrarProceso('${p.id}', '${p.candidato}')" style="color:#ff4444; border-color:#ff4444;">Borrar</button>
+          </div>
         </div>
       `).join('');
     }
@@ -1560,6 +1700,11 @@
       // Show selected
       document.getElementById(tabName).classList.add('active');
       document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+
+      // Load talent pool data when switching to that tab
+      if (tabName === 'talent-pool') {
+        loadTalentPool();
+      }
     }
 
     // Update save bar UI (without triggering save)
@@ -1678,6 +1823,23 @@
 
     // Modal
     function openModal() {
+      document.getElementById('editProcesoId').value = '';
+      document.getElementById('modal-title').textContent = 'Crear Nuevo Proceso';
+      document.getElementById('modal-submit-btn').textContent = 'Crear Proceso';
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function openEditModal(procesoId) {
+      const proceso = activeProcesos.find(p => p.id === procesoId);
+      if (!proceso) return;
+
+      document.getElementById('editProcesoId').value = procesoId;
+      document.getElementById('modal-title').textContent = 'Editar Proceso';
+      document.getElementById('modal-submit-btn').textContent = 'Guardar Cambios';
+      document.getElementById('candidato').value = proceso.candidato;
+      document.getElementById('cargo').value = proceso.cargo;
+      document.getElementById('local').value = proceso.local;
+      document.getElementById('notas').value = proceso.notas || '';
       document.getElementById('modalOverlay').classList.add('active');
     }
 
@@ -1685,34 +1847,202 @@
       if (e && e.target !== document.getElementById('modalOverlay')) return;
       document.getElementById('modalOverlay').classList.remove('active');
       document.querySelector('form').reset();
+      document.getElementById('editProcesoId').value = '';
     }
 
-    // Submit new proceso
-    async function submitNewProceso(e) {
+    // Submit proceso (create or edit)
+    async function submitProceso(e) {
       e.preventDefault();
 
+      const editId = document.getElementById('editProcesoId').value;
       const candidato = document.getElementById('candidato').value;
       const cargo = document.getElementById('cargo').value;
       const local = document.getElementById('local').value;
       const notas = document.getElementById('notas').value;
 
+      if (editId) {
+        // EDIT mode
+        try {
+          const res = await fetch(`/api/proceso?id=${editId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ candidato, cargo, local, notas: notas || '' })
+          });
+          if (!res.ok) throw new Error('Failed to update proceso');
+          const updated = await res.json();
+          const idx = activeProcesos.findIndex(p => p.id === editId);
+          if (idx !== -1) activeProcesos[idx] = updated;
+          renderActiveProcesses();
+          closeModal();
+          showToast(`Proceso actualizado: ${candidato}`);
+        } catch (e) {
+          console.error('Error updating proceso:', e);
+          showToast('Error al actualizar proceso', true);
+        }
+      } else {
+        // CREATE mode
+        try {
+          const res = await fetch('/api/procesos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ candidato, cargo, local, notas: notas || undefined })
+          });
+          if (!res.ok) throw new Error('Failed to create proceso');
+          const newProceso = await res.json();
+          activeProcesos.push(newProceso);
+          renderActiveProcesses();
+          closeModal();
+          showToast(`Proceso creado: ${candidato}`);
+        } catch (e) {
+          console.error('Error creating proceso:', e);
+          showToast('Error al crear proceso', true);
+        }
+      }
+    }
+
+    // Finalizar (marcar como Listo)
+    async function finalizarProceso(procesoId, nombre) {
+      if (!confirm(`¿Finalizar el proceso de ${nombre}? Se marcará como "Listo" en Notion.`)) return;
       try {
-        const res = await fetch('/api/procesos', {
-          method: 'POST',
+        const res = await fetch(`/api/proceso?id=${procesoId}`, {
+          method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ candidato, cargo, local, notas: notas || undefined })
+          body: JSON.stringify({ estado: 'Listo' })
         });
-
-        if (!res.ok) throw new Error('Failed to create proceso');
-
-        const newProceso = await res.json();
-        activeProcesos.push(newProceso);
+        if (!res.ok) throw new Error('Failed');
+        activeProcesos = activeProcesos.filter(p => p.id !== procesoId);
+        if (currentProcesoId === procesoId) {
+          currentProcesoId = null;
+          updateSaveBar();
+        }
         renderActiveProcesses();
-        closeModal();
-        showToast(`Proceso creado: ${candidato}`);
+        showToast(`Proceso finalizado: ${nombre}`);
       } catch (e) {
-        console.error('Error creating proceso:', e);
-        showToast('Error al crear proceso', true);
+        console.error('Error finalizando:', e);
+        showToast('Error al finalizar proceso', true);
+      }
+    }
+
+    // Borrar (archivar en Notion permanentemente)
+    async function borrarProceso(procesoId, nombre) {
+      if (!confirm(`¿Borrar permanentemente a ${nombre}? Esta acción no se puede deshacer.`)) return;
+      try {
+        const res = await fetch(`/api/proceso?id=${procesoId}`, {
+          method: 'DELETE'
+        });
+        if (!res.ok) throw new Error('Failed');
+        activeProcesos = activeProcesos.filter(p => p.id !== procesoId);
+        if (currentProcesoId === procesoId) {
+          currentProcesoId = null;
+          updateSaveBar();
+        }
+        renderActiveProcesses();
+        showToast(`Proceso eliminado: ${nombre}`);
+      } catch (e) {
+        console.error('Error borrando:', e);
+        showToast('Error al borrar proceso', true);
+      }
+    }
+
+    // Talent Pool: move candidate to pool
+    async function talentPoolProceso(procesoId, nombre) {
+      if (!confirm(`¿Mover a ${nombre} al Talent Pool? Se guardará para futuras vacantes.`)) return;
+      try {
+        const res = await fetch(`/api/proceso?id=${procesoId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fase: 'Talent Pool', estado: 'Listo' })
+        });
+        if (!res.ok) throw new Error('Failed');
+        activeProcesos = activeProcesos.filter(p => p.id !== procesoId);
+        if (currentProcesoId === procesoId) {
+          currentProcesoId = null;
+          updateSaveBar();
+        }
+        renderActiveProcesses();
+        showToast(`${nombre} movido al Talent Pool`);
+        // Refresh pool if tab is visible
+        if (document.getElementById('talent-pool').classList.contains('active')) {
+          loadTalentPool();
+        }
+      } catch (e) {
+        console.error('Error moviendo a talent pool:', e);
+        showToast('Error al mover al Talent Pool', true);
+      }
+    }
+
+    // Load talent pool candidates
+    let talentPoolData = [];
+    async function loadTalentPool() {
+      try {
+        const res = await fetch('/api/procesos?status=talent_pool');
+        if (!res.ok) throw new Error('Failed to fetch talent pool');
+        talentPoolData = await res.json();
+        renderTalentPool();
+      } catch (e) {
+        console.error('Error loading talent pool:', e);
+        document.getElementById('pool-list').innerHTML = '<div class="pool-empty">Error al cargar. Recarga la página.</div>';
+      }
+    }
+
+    // Render talent pool list
+    function renderTalentPool() {
+      const container = document.getElementById('pool-list');
+      const countEl = document.getElementById('pool-count');
+
+      if (talentPoolData.length === 0) {
+        container.innerHTML = '<div class="pool-empty">No hay candidatos en el Talent Pool todavía.</div>';
+        countEl.textContent = '';
+        return;
+      }
+
+      countEl.textContent = `${talentPoolData.length} candidato${talentPoolData.length > 1 ? 's' : ''} guardado${talentPoolData.length > 1 ? 's' : ''}`;
+
+      container.innerHTML = talentPoolData.map(p => `
+        <div class="pool-card">
+          <div class="pool-card-info">
+            <div class="pool-card-name">${p.candidato}</div>
+            <div class="pool-card-meta">${p.cargo} · ${p.local || ''} · Ingresó ${p.fechaInicio || 'N/A'}</div>
+            ${p.notas ? `<div class="pool-card-notes">${p.notas}</div>` : ''}
+          </div>
+          <div class="pool-card-actions">
+            <button class="btn-reactivar" onclick="reactivarProceso('${p.id}', '${p.candidato}', '${p.cargo}')">Reactivar</button>
+            <button class="btn-delete" onclick="borrarPoolProceso('${p.id}', '${p.candidato}')" style="font-size:11px;">Borrar</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Reactivate from talent pool
+    async function reactivarProceso(procesoId, nombre, cargo) {
+      if (!confirm(`¿Reactivar a ${nombre}? Volverá a F1 como proceso activo.`)) return;
+      try {
+        const res = await fetch(`/api/proceso?id=${procesoId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fase: 'F1 Captación', estado: 'En curso', avance: 0, items_completados: JSON.stringify([]) })
+        });
+        if (!res.ok) throw new Error('Failed');
+        showToast(`${nombre} reactivado como proceso activo`);
+        loadProcesos();
+        loadTalentPool();
+      } catch (e) {
+        console.error('Error reactivando:', e);
+        showToast('Error al reactivar proceso', true);
+      }
+    }
+
+    // Delete from talent pool
+    async function borrarPoolProceso(procesoId, nombre) {
+      if (!confirm(`¿Borrar permanentemente a ${nombre} del Talent Pool?`)) return;
+      try {
+        const res = await fetch(`/api/proceso?id=${procesoId}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Failed');
+        showToast(`${nombre} eliminado del Talent Pool`);
+        loadTalentPool();
+      } catch (e) {
+        console.error('Error borrando del pool:', e);
+        showToast('Error al borrar', true);
       }
     }
 

@@ -35,13 +35,33 @@ export default async function handler(req, res) {
     try {
       const status = req.query.status || 'active'; // 'active', 'all', 'completed'
 
+      let filter;
+      if (status === 'all') {
+        filter = undefined;
+      } else if (status === 'talent_pool') {
+        filter = {
+          and: [
+            { property: 'Fase', select: { equals: 'Talent Pool' } },
+            { property: 'Estado', status: { equals: 'Listo' } }
+          ]
+        };
+      } else if (status === 'completed') {
+        filter = {
+          and: [
+            { property: 'Estado', status: { equals: 'Listo' } },
+            { property: 'Fase', select: { does_not_equal: 'Talent Pool' } }
+          ]
+        };
+      } else {
+        // active: En curso (excludes Listo)
+        filter = { property: 'Estado', status: { does_not_equal: 'Listo' } };
+      }
+
       const response = await fetch(`https://api.notion.com/v1/databases/${DATABASE_ID}/query`, {
         method: 'POST',
         headers: headers,
         body: JSON.stringify({
-          filter: status === 'all' ? undefined : status === 'completed'
-            ? { property: 'Estado', status: { equals: 'Listo' } }
-            : { property: 'Estado', status: { does_not_equal: 'Listo' } },
+          filter: filter,
           sorts: [{ property: 'Fecha Inicio', direction: 'descending' }]
         })
       });
