@@ -205,7 +205,7 @@ function notionToApp(n) {
   }
   let total = 0;
   for (const p of ['F1','F2','F3','F4','F5']) total += (CHECKLISTS[track]?.[p]||[]).length;
-  const avance = total > 0 ? Math.round(completados.length / total * 100) : (n.avance||0);
+  const avance = total > 0 ? Math.round(completados.filter(x=>!x.includes('-eval-')).length / total * 100) : (n.avance||0);
   return {
     id: _localIdCounter++,
     notionId: n.id,
