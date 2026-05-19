@@ -175,9 +175,12 @@ const FASE_TO_NOTION = {
 const NOTION_TO_FASE = Object.fromEntries(Object.entries(FASE_TO_NOTION).map(([k,v])=>[v,k]));
 
 const CARGO_TRACK = {
-  'Garzón/a':'garzones','Copero/a':'garzones','Entrenador/a':'garzones',
-  'Jefe de Local':'jefatura','Sub Jefe':'jefatura','Jefe de Sub':'jefatura',
-  'Jefe de Cocina':'cocineros','Sous Chef':'cocineros','Cocinero/a':'cocineros'
+  'Garzón/a Full Time':'garzones','Garzón/a Part Time':'garzones',
+  'Copero/a':'garzones','Entrenador/a':'garzones',
+  'Jefe/a de Garzones':'jefatura','Supervisor/a':'jefatura',
+  'Jefe/a de Local':'jefatura','Sub Jefe/a de Local':'jefatura',
+  'Jefe/a de Cocina':'cocineros','Sous Chef':'cocineros','Cocinero/a':'cocineros',
+  'Garzón/a':'garzones','Jefe de Local':'jefatura','Sub Jefe':'jefatura','Jefe de Cocina':'cocineros'
 };
 
 let _localIdCounter = 1;
@@ -353,7 +356,7 @@ const AppHeader = ({procesos, onNew, showMetrics, onToggleMetrics}) => {
             📊 Métricas
           </button>
           <button onClick={onNew} style={{padding:'9px 16px', borderRadius:8, background:'var(--gold)', color:'#0a0a0a', fontWeight:700, fontSize:13, boxShadow:'0 4px 16px rgba(212,175,55,0.25)'}}>
-            + Nuevo proceso
+            + Nuevo postulante
           </button>
         </div>
       </div>
@@ -817,8 +820,8 @@ const DiscardModal = ({proc, onClose, onConfirm}) => {
 
 /* New Proceso Modal */
 const EditProcesoModal = ({proc, open, onClose, onSave}) => {
-  const [form, setForm] = React.useState({candidato:"",cargo:"Garzón/a",local:"BC1",notas:""});
-  React.useEffect(()=>{ if(proc) setForm({candidato:proc.candidato||"",cargo:proc.cargo||"Garzón/a",local:proc.local||"BC1",notas:proc.notas||""}); },[proc?.id]);
+  const [form, setForm] = React.useState({candidato:"",cargo:"Garzón/a Full Time",local:"BC1",notas:""});
+  React.useEffect(()=>{ if(proc) setForm({candidato:proc.candidato||"",cargo:proc.cargo||"Garzón/a Full Time",local:proc.local||"BC1",notas:proc.notas||""}); },[proc?.id]);
   if(!open||!proc) return null;
   return (
     <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.7)",zIndex:100,display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(6px)"}}>
@@ -828,7 +831,7 @@ const EditProcesoModal = ({proc, open, onClose, onSave}) => {
         <form onSubmit={(e)=>{e.preventDefault();onSave(form);onClose();}} style={{display:"grid",gap:14}}>
           {[
             {k:"candidato",label:"Nombre candidato",type:"input",placeholder:"Ej: Juan Pérez"},
-            {k:"cargo",label:"Cargo",type:"select",opts:["Garzón/a","Jefe de Local","Sub Jefe","Jefe de Cocina","Sous Chef","Cocinero/a","Copero/a","Entrenador/a"]},
+            {k:"cargo",label:"Cargo",type:"select",opts:["Garz\u00f3n/a Full Time", "Garz\u00f3n/a Part Time", "Sub Jefe/a de Local", "Jefe/a de Local", "Jefe/a de Cocina", "Sous Chef", "Cocinero/a", "Copero/a", "Entrenador/a", "Jefe/a de Garzones", "Supervisor/a"]},
             {k:"local",label:"Local",type:"select",opts:["BC1","BC2"]},
             {k:"notas",label:"Notas (opcional)",type:"textarea",placeholder:"Referencias, disponibilidad, comentarios…"},
           ].map(f=>(
@@ -850,17 +853,17 @@ const EditProcesoModal = ({proc, open, onClose, onSave}) => {
 };
 
 const NewProcesoModal = ({open, onClose, onCreate}) => {
-  const [form, setForm] = React.useState({ candidato:'', cargo:'Garzón/a', local:'BC1', notas:'' });
+  const [form, setForm] = React.useState({ candidato:'', cargo:'Garzón/a Full Time', local:'BC1', notas:'' });
   if (!open) return null;
   return (
     <div onClick={onClose} style={{position:'fixed', inset:0, background:'rgba(0,0,0,0.7)', zIndex:100, display:'flex', alignItems:'center', justifyContent:'center', backdropFilter:'blur(6px)'}}>
       <div onClick={e=>e.stopPropagation()} style={{background:'var(--bg-2)', border:'1px solid var(--border)', borderRadius:14, padding:28, width:'min(440px, 92vw)'}}>
-        <div className="serif" style={{fontSize:22, color:'#fff', fontWeight:600, marginBottom:4}}>Nuevo proceso</div>
+        <div className="serif" style={{fontSize:22, color:'#fff', fontWeight:600, marginBottom:4}}>Nuevo postulante</div>
         <div style={{fontSize:12, color:'var(--text-3)', marginBottom:22}}>Se inicializa en F1 Captación · fecha hoy</div>
-        <form onSubmit={(e)=>{ e.preventDefault(); if(!form.candidato.trim()) return; onCreate(form); onClose(); setForm({candidato:'', cargo:'Garzón/a', local:'BC1', notas:''}); }} style={{display:'grid', gap:14}}>
+        <form onSubmit={(e)=>{ e.preventDefault(); if(!form.candidato.trim()) return; onCreate(form); onClose(); setForm({candidato:'', cargo:'Garzón/a Full Time', local:'BC1', notas:''}); }} style={{display:'grid', gap:14}}>
           {[
             {k:'candidato', label:'Nombre candidato', type:'input', placeholder:'Ej: Juan Pérez'},
-            {k:'cargo', label:'Cargo', type:'select', opts:['Garzón/a','Jefe de Local','Sub Jefe','Jefe de Cocina','Sous Chef','Cocinero/a','Copero/a','Entrenador/a']},
+            {k:'cargo', label:'Cargo', type:'select', opts:["Garz\u00f3n/a Full Time", "Garz\u00f3n/a Part Time", "Sub Jefe/a de Local", "Jefe/a de Local", "Jefe/a de Cocina", "Sous Chef", "Cocinero/a", "Copero/a", "Entrenador/a", "Jefe/a de Garzones", "Supervisor/a"]},
             {k:'local', label:'Local', type:'select', opts:['BC1','BC2']},
             {k:'notas', label:'Notas (opcional)', type:'textarea', placeholder:'Referencias, disponibilidad, comentarios…'},
           ].map(f => (
@@ -1349,9 +1352,7 @@ function App(){
     }
   };
   const editProc = async (procId, form) => {
-    const trackMap = {"Garzón/a":"garzones","Copero/a":"garzones","Entrenador/a":"garzones",
-      "Jefe de Local":"jefatura","Sub Jefe":"jefatura",
-      "Jefe de Cocina":"cocineros","Sous Chef":"cocineros","Cocinero/a":"cocineros"};
+    const trackMap = {"Garzón/a Full Time":"garzones","Garzón/a Part Time":"garzones","Copero/a":"garzones","Entrenador/a":"garzones","Jefe/a de Garzones":"jefatura","Supervisor/a":"jefatura","Jefe/a de Local":"jefatura","Sub Jefe/a de Local":"jefatura","Jefe/a de Cocina":"cocineros","Sous Chef":"cocineros","Cocinero/a":"cocineros","Garzón/a":"garzones","Jefe de Local":"jefatura","Sub Jefe":"jefatura","Jefe de Cocina":"cocineros"};
     setProcesos(prev => prev.map(p => {
       if (p.id !== procId) return p;
       if (p.notionId) apiPatch(p.notionId, {candidato:form.candidato, cargo:form.cargo, local:form.local, notas:form.notas});
