@@ -616,7 +616,7 @@
       <div class="logo-area">
         <img src="./blackchicken_logo.png" alt="Black Chicken">
         <span class="app-name">Hub de HR</span>
-        <span class="app-version">v3.3</span>
+        <span class="app-version">v3.4</span>
       </div>
       <div class="top-actions">
         <button class="icon-btn" id="theme-toggle" aria-label="Cambiar tema claro/oscuro" title="Cambiar tema">
@@ -992,7 +992,7 @@
 
   </div>
 
-  <footer>Black Chicken · Hub de HR v3.3 · Uso exclusivo interno</footer>
+  <footer>Black Chicken · Hub de HR v3.4 · Uso exclusivo interno</footer>
 
   <div class="cmd-overlay" id="cmd-overlay" role="dialog" aria-modal="true" aria-labelledby="cmd-title">
     <div class="cmd-palette" role="combobox" aria-haspopup="listbox" aria-expanded="true">
@@ -1008,7 +1008,7 @@
           <span><kbd>↵</kbd> abrir</span>
           <span><kbd>esc</kbd> cerrar</span>
         </div>
-        <span id="cmd-title">Hub HR · v3.3</span>
+        <span id="cmd-title">Hub HR · v3.4</span>
       </div>
     </div>
   </div>
@@ -1436,7 +1436,7 @@
       cmdIndex.forEach(function (it) {
         if (words.length && !matchAll(it.search, words)) return;
         if (!groups[it.kind]) groups[it.kind] = [];
-        if (groups[it.kind].length < 6) { groups[it.kind].push(it); totalShown++; }
+        if (groups[it.kind].length < 20) { groups[it.kind].push(it); totalShown++; }
       });
       if (!totalShown) {
         cmdResults.innerHTML = '<div class="cmd-empty">Sin resultados para "' + (query || '') + '"</div>';
