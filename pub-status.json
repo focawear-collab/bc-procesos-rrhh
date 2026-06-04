@@ -1,4 +1,11 @@
 {
-  "statuses": {},
-  "updatedAt": "2026-06-04T14:42:11.378Z"
+  "statuses": {
+    "BC_Publicacion_JefeLocal.html": "activa",
+    "BC_Publicacion_Administrador.html": "inactiva",
+    "BC_Publicacion_GerenteRRHH.html": "inactiva",
+    "BC_Publicacion_ChefPartie.html": "inactiva",
+    "BC_Publicacion_Garzon_Entrenador.html": "inactiva",
+    "BC_Publicacion_Coordinador.html": "inactiva"
+  },
+  "updatedAt": "2026-06-04T14:49:40.930Z"
 }
