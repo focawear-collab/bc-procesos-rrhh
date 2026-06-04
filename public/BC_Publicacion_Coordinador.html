@@ -333,5 +333,13 @@
 <div class="footer">
   <p class="footer-text"><span>Black Chicken</span> · Cerro El Plomo 5931 / 5630, Las Condes · Santiago · talentos@blackchicken.cl</p>
 </div>
+<style>
+@media print {
+  .download-btn { display: none !important; }
+  .back-hub { display: none !important; }
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+<button class="download-btn" onclick="window.print()" style="position:fixed;bottom:24px;right:24px;z-index:99998;background:linear-gradient(90deg,#d4af37,#f0c940);color:#0f0f0f;border:none;border-radius:30px;padding:12px 24px;font-size:13px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;box-shadow:0 4px 16px rgba(212,175,55,.3);display:flex;align-items:center;gap:6px;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(212,175,55,.4)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(212,175,55,.3)'">📥 Descargar PDF</button>
 </body>
 </html>
