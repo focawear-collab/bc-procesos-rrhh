@@ -577,6 +577,20 @@
     }
     mark.match { background: var(--gold-dim); color: var(--gold-soft); border-radius: 3px; padding: 0 1px; }
 
+    /* Estado de publicaciones */
+    .pub-manage-btn {
+      margin-left: auto; display: inline-flex; align-items: center; gap: 6px;
+      background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted);
+      border-radius: 8px; padding: 5px 12px; font-size: var(--font-micro); font-weight: 700;
+      cursor: pointer; font-family: inherit; text-transform: none; letter-spacing: 0; transition: all .2s;
+    }
+    .pub-manage-btn:hover { color: var(--gold); border-color: var(--gold); }
+    .pub-manage-btn.active { color: #0f0f0f; background: var(--gold); border-color: var(--gold); }
+    .pub-row.pub-inactive { opacity: .45; }
+    .pub-row.pub-inactive .doc-name { text-decoration: line-through; text-decoration-color: rgba(255,255,255,.4); }
+    .tag-off { background: rgba(224,80,80,.14); color: var(--red); }
+    .pub-managing .pub-row { cursor: pointer; }
+    .pub-managing .pub-row:hover { border-color: var(--gold); }
     .gate-modal {
       position: fixed; inset: 0; z-index: 99999;
       background: var(--overlay);
@@ -687,7 +701,7 @@
       <div class="logo-area">
         <img src="./blackchicken_logo.png" alt="Black Chicken">
         <span class="app-name">Hub de HR</span>
-        <span class="app-version">v3.5</span>
+        <span class="app-version">v3.6</span>
       </div>
       <div class="top-actions">
         <button class="icon-btn" id="theme-toggle" aria-label="Cambiar tema claro/oscuro" title="Cambiar tema">
@@ -923,7 +937,7 @@
     </section>
 
     <section class="panel" id="panel-publicaciones" role="tabpanel" aria-labelledby="tab-publicaciones">
-      <div class="section-title" id="seccion-publicaciones-activas"><i class="ti ti-speakerphone" aria-hidden="true"></i> Publicaciones activas · Para difundir</div>
+      <div class="section-title" id="seccion-publicaciones-activas"><i class="ti ti-speakerphone" aria-hidden="true"></i> Publicaciones activas · Para difundir <button type="button" class="pub-manage-btn" id="pub-manage-btn"><i class="ti ti-toggle-right" aria-hidden="true"></i> Gestionar estados</button></div>
       <div class="doc-list">
         <a href="BC_Publicacion_JefeLocal.html" class="doc-row pub-row" data-search="jefe local jornada completa">
           <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
@@ -1027,7 +1041,7 @@
 
   </div>
 
-  <footer>Black Chicken · Hub de HR v3.5 · Uso exclusivo interno</footer>
+  <footer>Black Chicken · Hub de HR v3.6 · Uso exclusivo interno</footer>
 
   <div class="fav-modal" id="fav-modal" role="dialog" aria-modal="true" aria-label="Editar acciones rápidas">
     <div class="fav-card">
@@ -1060,7 +1074,7 @@
           <span><kbd>↵</kbd> abrir</span>
           <span><kbd>esc</kbd> cerrar</span>
         </div>
-        <span id="cmd-title">Hub HR · v3.5</span>
+        <span id="cmd-title">Hub HR · v3.6</span>
       </div>
     </div>
   </div>
@@ -1692,8 +1706,8 @@
     }
     function openGate(mode, url) {
       pending = { mode: mode, url: url };
-      gateTitle.textContent = mode === 'brain' ? 'HR Brain · Acceso restringido' : 'Acceso restringido';
-      gateSub.textContent   = mode === 'brain' ? 'Base de conocimiento · Solo RRHH' : 'Documentos confidenciales · Solo RRHH';
+      gateTitle.textContent = mode === 'brain' ? 'HR Brain · Acceso restringido' : (mode === 'pubstatus' ? 'Guardar estados de publicaciones' : 'Acceso restringido');
+      gateSub.textContent   = mode === 'brain' ? 'Base de conocimiento · Solo RRHH' : (mode === 'pubstatus' ? 'Confirma con tu código RRHH' : 'Documentos confidenciales · Solo RRHH');
       gateInput.value = '';
       gateInput.type = 'password';
       var ti = qs('.ti', gateToggle); if (ti) ti.className = 'ti ti-eye';
@@ -1732,6 +1746,7 @@
         markAuthed();
         var p = pending;
         closeGate();
+        if (p && p.mode === 'pubstatus') { savePubStatuses(v); return; }
         toast('Acceso concedido · documentos desbloqueados', 'success');
         if (p && p.url) {
           if (p.mode === 'brain') window.open(p.url, '_blank', 'noopener');
@@ -1774,6 +1789,89 @@
     });
 
     if (isAuthed()) unlockAll();
+
+    /* ── Estado de publicaciones · activa/inactiva (Inge) ── */
+    var pubStatuses = {};
+    var pubManaging = false;
+    var pubDirty = false;
+    var pubBtn = qs('#pub-manage-btn');
+    var pubList = (function () {
+      var t = qs('#seccion-publicaciones-activas');
+      return t ? t.nextElementSibling : null;
+    })();
+
+    function pubKey(row) { return (row.getAttribute('href') || '').split('/').pop(); }
+
+    function applyPubStatuses() {
+      if (!pubList) return;
+      var rows = qsa('.pub-row', pubList);
+      var act = [], inact = [];
+      rows.forEach(function (row) {
+        var off = pubStatuses[pubKey(row)] === 'inactiva';
+        row.classList.toggle('pub-inactive', off);
+        var tag = qs('.tag-off', row);
+        if (off && !tag) {
+          var tags = qs('.doc-tags', row);
+          if (!tags) { tags = document.createElement('div'); tags.className = 'doc-tags'; row.appendChild(tags); }
+          var sp = document.createElement('span'); sp.className = 'tag tag-off'; sp.textContent = 'Inactiva';
+          tags.appendChild(sp);
+        } else if (!off && tag) { tag.parentNode.removeChild(tag); }
+        (off ? inact : act).push(row);
+      });
+      act.concat(inact).forEach(function (r) { pubList.appendChild(r); });
+      var c = qs('#count-pub'); if (c) c.textContent = String(act.length);
+    }
+
+    function setPubManaging(on) {
+      pubManaging = on;
+      document.body.classList.toggle('pub-managing', on);
+      if (pubBtn) {
+        pubBtn.classList.toggle('active', on);
+        pubBtn.innerHTML = on
+          ? '<i class="ti ti-device-floppy" aria-hidden="true"></i> Guardar cambios'
+          : '<i class="ti ti-toggle-right" aria-hidden="true"></i> Gestionar estados';
+      }
+    }
+
+    function savePubStatuses(pw) {
+      fetch('/api/pub-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pw, statuses: pubStatuses })
+      })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d && d.ok) { pubDirty = false; setPubManaging(false); toast('Estados de publicaciones guardados', 'success'); }
+        else toast('No se pudo guardar · ' + ((d && d.error) || 'error'), 'error');
+      })
+      .catch(function () { toast('No se pudo guardar los estados', 'error'); });
+    }
+
+    if (pubBtn) pubBtn.addEventListener('click', function () {
+      if (!pubManaging) {
+        setPubManaging(true);
+        toast('Toca una publicación para activarla o desactivarla, luego guarda', 'info');
+        return;
+      }
+      if (!pubDirty) { setPubManaging(false); return; }
+      openGate('pubstatus', null);
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!pubManaging || !pubList) return;
+      var row = e.target.closest('.pub-row');
+      if (!row || !pubList.contains(row)) return;
+      e.preventDefault();
+      var k = pubKey(row);
+      pubStatuses[k] = (pubStatuses[k] === 'inactiva') ? 'activa' : 'inactiva';
+      pubDirty = true;
+      applyPubStatuses();
+    }, true);
+
+    fetch('/api/pub-status')
+      .then(function (r) { return r.json(); })
+      .then(function (d) { if (d && d.ok) { pubStatuses = d.statuses || {}; applyPubStatuses(); } })
+      .catch(function () {});
 
     /* Auto-expire NUEVO tag */
     (function expireNew() {

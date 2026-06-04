@@ -1,5 +1,6 @@
 {
   "outputDirectory": "public",
+  "git": { "deploymentEnabled": { "data": false } },
   "rewrites": [
     { "source": "/api/:path*", "destination": "/api/:path*" }
   ]
