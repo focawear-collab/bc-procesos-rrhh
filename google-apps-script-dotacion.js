@@ -1,21 +1,25 @@
 // ============================================================
 // BlackChicken HR — Apps Script del Sheet "BC HR Data"
 // Vinculado a la planilla (Extensiones → Apps Script). NO usa SHEET_ID.
-// Funciones:
 //  - doGet            : entrega la pestaña Equipo como JSON (lo lee el dashboard)
-//  - syncOrganigrama  : trae estructura del Organigrama y actualiza Equipo
+//  - syncOrganigrama  : trae estructura del Organigrama y reescribe Equipo SIN duplicados
 //  - crearTriggerDiario: instala la sync automática diaria (correr 1 vez)
-//  - onOpen           : agrega menú "🔄 Dotación → Sincronizar ahora"
+//  - onOpen           : menú "🔄 Dotación → Sincronizar ahora"
 // El Organigrama manda en: nombre, cargo, local. Se PRESERVAN sueldo_bruto y jornada.
 // ============================================================
 
 var ORG_API = 'https://bc-organigrama.vercel.app/api/organigrama';
 
-// ---------- API para el dashboard ----------
 function getSheet(name) {
   return SpreadsheetApp.getActiveSpreadsheet().getSheetByName(name);
 }
 
+function norm(s) {
+  return String(s || '').trim().toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, ''); // ignora tildes/acentos
+}
+
+// ---------- API para el dashboard ----------
 function sheetToJSON(sheet) {
   if (!sheet) return [];
   var data = sheet.getDataRange().getValues();
@@ -23,6 +27,7 @@ function sheetToJSON(sheet) {
   var headers = data[0];
   var rows = [];
   for (var i = 1; i < data.length; i++) {
+    if (!String(data[i][0] || '').trim()) continue; // saltar filas vacías
     var row = {};
     for (var j = 0; j < headers.length; j++) {
       var val = data[i][j];
@@ -43,11 +48,6 @@ function doGet(e) {
 }
 
 // ---------- Sincronización desde el Organigrama ----------
-function norm(s) {
-  return String(s || '').trim().toLowerCase()
-    .normalize('NFD').replace(/[̀-ͯ]/g, ''); // ignora tildes/acentos
-}
-
 function syncOrganigrama() {
   var sh = getSheet('Equipo');
   if (!sh) throw new Error('No existe la pestaña Equipo');
@@ -57,8 +57,7 @@ function syncOrganigrama() {
   var org = JSON.parse(resp.getContentText());
   var sections = (org.data && org.data.sections) || [];
 
-  // Aplanar personas del organigrama → {nombre, cargo, local}
-  // row (Dirección/Gestión) = Backoffice · split = grupo[0] BC1, grupo[1] BC2
+  // Aplanar personas: row = Backoffice · split = grupo[0] BC1, grupo[1] BC2
   var desired = [];
   sections.forEach(function (s) {
     (s.groups || []).forEach(function (g, gi) {
@@ -77,52 +76,55 @@ function syncOrganigrama() {
   var col = {}; headers.forEach(function (h, i) { col[h] = i; });
   if (col['nombre'] == null) throw new Error('Falta la columna nombre');
 
-  var rowByName = {};
-  for (var i = 1; i < data.length; i++) {
-    var nm = norm(data[i][col['nombre']]);
-    if (nm) rowByName[nm] = i;
-  }
-
-  var seen = {}, nuevos = 0, actualizados = 0, bajas = 0;
-
-  // Upsert
-  desired.forEach(function (d) {
-    var key = norm(d.nombre); seen[key] = true;
-    if (rowByName[key] != null) {
-      var r = rowByName[key];
-      sh.getRange(r + 1, col['cargo'] + 1).setValue(d.cargo);
-      sh.getRange(r + 1, col['local'] + 1).setValue(d.local);
-      if (col['estado'] != null && norm(data[r][col['estado']]) === 'baja') {
-        sh.getRange(r + 1, col['estado'] + 1).setValue('Activo');
-      }
-      actualizados++;
-    } else {
-      var row = headers.map(function (h) {
-        if (h === 'nombre') return d.nombre;
-        if (h === 'cargo') return d.cargo;
-        if (h === 'local') return d.local;
-        if (h === 'jornada') return 'Full';
-        if (h === 'estado') return 'Activo';
-        if (h === 'tipo_contrato') return 'Indefinido';
-        return '';
-      });
-      sh.appendRow(row);
-      nuevos++;
-    }
-  });
-
-  // Marcar bajas: en el Sheet pero ya no en el organigrama
+  // Colapsar filas existentes por nombre normalizado (merge de duplicados)
+  var MANUAL = ['sueldo_bruto', 'jornada', 'fecha_ingreso', 'cumpleanos', 'tipo_contrato', 'email', 'telefono'];
+  var existing = {};
   for (var i = 1; i < data.length; i++) {
     var nm = norm(data[i][col['nombre']]);
     if (!nm) continue;
-    if (!seen[nm] && col['estado'] != null && norm(data[i][col['estado']]) !== 'baja') {
-      sh.getRange(i + 1, col['estado'] + 1).setValue('Baja');
-      bajas++;
+    var obj = {}; headers.forEach(function (h, j) { obj[h] = data[i][j]; });
+    if (existing[nm]) {
+      var e = existing[nm];
+      MANUAL.forEach(function (k) {
+        if ((e[k] === '' || e[k] == null) && obj[k] !== '' && obj[k] != null) e[k] = obj[k];
+      });
+      if (norm(obj['estado']) === 'activo') e['estado'] = obj['estado'];
+    } else {
+      existing[nm] = obj;
     }
   }
 
-  Logger.log('Sync OK · nuevos:' + nuevos + ' actualizados:' + actualizados + ' bajas:' + bajas);
-  return { nuevos: nuevos, actualizados: actualizados, bajas: bajas };
+  function buildRow(o) { return headers.map(function (h) { return (o[h] == null ? '' : o[h]); }); }
+
+  var orgKeys = {}, finalRows = [];
+  desired.forEach(function (d) {
+    var k = norm(d.nombre); orgKeys[k] = true;
+    var base = existing[k] || {};
+    var o = {};
+    headers.forEach(function (h) { o[h] = (base[h] == null ? '' : base[h]); });
+    o['nombre'] = d.nombre;          // organigrama manda en la grafía del nombre
+    o['cargo'] = d.cargo;
+    o['local'] = d.local;
+    o['estado'] = 'Activo';
+    if (!o['jornada']) o['jornada'] = 'Full';
+    if (!o['tipo_contrato']) o['tipo_contrato'] = 'Indefinido';
+    finalRows.push(buildRow(o));
+  });
+
+  // Existentes que ya no están en el organigrama → Baja (conserva su data)
+  Object.keys(existing).forEach(function (k) {
+    if (orgKeys[k]) return;
+    var e = existing[k]; e['estado'] = 'Baja';
+    finalRows.push(buildRow(e));
+  });
+
+  // Reescribir la pestaña: headers intactos, filas limpias y SIN duplicados
+  var last = sh.getLastRow();
+  if (last > 1) sh.getRange(2, 1, last - 1, headers.length).clearContent();
+  if (finalRows.length) sh.getRange(2, 1, finalRows.length, headers.length).setValues(finalRows);
+
+  Logger.log('Sync OK · activos:' + desired.length + ' filas:' + finalRows.length);
+  return { activos: desired.length, filas: finalRows.length };
 }
 
 // ---------- Setup (correr 1 vez) ----------
