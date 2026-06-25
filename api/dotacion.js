@@ -5,7 +5,7 @@
 const SHEET_URL = process.env.BC_HR_SHEET_URL;
 
 export default async function handler(req, res) {
-  res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
+  res.setHeader('Cache-Control', 's-maxage=30, stale-while-revalidate=60');
 
   if (!SHEET_URL) { res.status(200).json([]); return; }
 

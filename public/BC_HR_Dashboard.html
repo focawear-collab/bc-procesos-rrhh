@@ -152,7 +152,7 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 (function(){
   // Datos en vivo vía proxy server-side (/api/dotacion lee BC_HR_SHEET_URL).
   // Si el proxy devuelve [] (no configurado), se mantienen los datos estáticos.
-  fetch('/api/dotacion')
+  fetch('/api/dotacion?t=' + Date.now())
     .then(function(r){ return r.json(); })
     .then(function(data){
       if (!Array.isArray(data) || data.length === 0) return;
