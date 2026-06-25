@@ -577,20 +577,6 @@
     }
     mark.match { background: var(--gold-dim); color: var(--gold-soft); border-radius: 3px; padding: 0 1px; }
 
-    /* Estado de publicaciones */
-    .pub-manage-btn {
-      margin-left: auto; display: inline-flex; align-items: center; gap: 6px;
-      background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted);
-      border-radius: 8px; padding: 5px 12px; font-size: var(--font-micro); font-weight: 700;
-      cursor: pointer; font-family: inherit; text-transform: none; letter-spacing: 0; transition: all .2s;
-    }
-    .pub-manage-btn:hover { color: var(--gold); border-color: var(--gold); }
-    .pub-manage-btn.active { color: #0f0f0f; background: var(--gold); border-color: var(--gold); }
-    .pub-row.pub-inactive { opacity: .45; }
-    .pub-row.pub-inactive .doc-name { text-decoration: line-through; text-decoration-color: rgba(255,255,255,.4); }
-    .tag-off { background: rgba(224,80,80,.14); color: var(--red); }
-    .pub-managing .pub-row { cursor: pointer; }
-    .pub-managing .pub-row:hover { border-color: var(--gold); }
     .gate-modal {
       position: fixed; inset: 0; z-index: 99999;
       background: var(--overlay);
@@ -701,7 +687,7 @@
       <div class="logo-area">
         <img src="./blackchicken_logo.png" alt="Black Chicken">
         <span class="app-name">Hub de HR</span>
-        <span class="app-version">v3.6</span>
+        <span class="app-version">v3.5</span>
       </div>
       <div class="top-actions">
         <button class="icon-btn" id="theme-toggle" aria-label="Cambiar tema claro/oscuro" title="Cambiar tema">
@@ -726,6 +712,7 @@
 
     <nav class="intent-nav" role="tablist" aria-label="Secciones del Hub">
       <button class="intent-tab" role="tab" aria-selected="true"  aria-controls="panel-inicio"        id="tab-inicio"        data-tab="inicio"><i class="ti ti-home" aria-hidden="true"></i> Inicio</button>
+      <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-dashboards"    id="tab-dashboards"    data-tab="dashboards"><i class="ti ti-chart-line" aria-hidden="true"></i> Dashboards</button>
       <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-personas"      id="tab-personas"      data-tab="personas"><i class="ti ti-users" aria-hidden="true"></i> Personas <span class="tab-count" id="count-personas">…</span></button>
       <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-herramientas"  id="tab-herramientas"  data-tab="herramientas"><i class="ti ti-tools" aria-hidden="true"></i> Herramientas</button>
       <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-documentos"    id="tab-documentos"    data-tab="documentos"><i class="ti ti-folder" aria-hidden="true"></i> Documentos</button>
@@ -743,6 +730,28 @@
         <button type="button" class="fav-edit-btn" id="fav-edit-btn"><i class="ti ti-pencil" aria-hidden="true"></i> Editar</button>
       </div>
       <div class="action-grid" id="fav-grid"></div>
+    </section>
+
+    <section class="panel" id="panel-dashboards" role="tabpanel" aria-labelledby="tab-dashboards">
+      <div class="section-title"><i class="ti ti-chart-line" aria-hidden="true"></i> Dashboards · Acceso rápido</div>
+      <p style="color:var(--text-secondary);font-size:13px;margin:-4px 0 16px">Abren en una pestaña nueva. En los que piden token, toca <strong style="color:var(--gold)">Copiar token</strong> y pégalo en el acceso. Evaluaciones usa su propia clave.</p>
+      <div class="doc-list">
+        <a href="https://bc-evaluaciones-dashboard.vercel.app" target="_blank" rel="noopener" class="doc-row">
+          <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-chart-radar"></i></div>
+          <div class="doc-info"><div class="doc-name">Evaluaciones de Desempeño</div><div class="doc-meta">Ranking, heatmap de competencias, seguimientos y evolución · Notion en vivo</div></div>
+          <div class="doc-tags"><span class="tag tag-blue">Clave propia</span></div>
+        </a>
+        <a href="https://bc-autoeval-jefe.vercel.app/dashboard" target="_blank" rel="noopener" class="doc-row">
+          <div class="doc-icon" style="background:var(--green-bg);color:var(--green)"><i class="ti ti-chart-line"></i></div>
+          <div class="doc-info"><div class="doc-name">Autoevaluaciones por Puesto</div><div class="doc-meta">Tracking onboarding · 11 puestos · NPS interno, gap autoeval vs jefe</div></div>
+          <div class="doc-tags"><span class="tag tag-green copy-tok" role="button" tabindex="0" data-d="autoeval" style="cursor:pointer">Copiar token</span></div>
+        </a>
+        <a href="https://bc-eval-servicio.vercel.app/dashboard" target="_blank" rel="noopener" class="doc-row">
+          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-clipboard-check"></i></div>
+          <div class="doc-info"><div class="doc-name">Seguimiento de Servicio</div><div class="doc-meta">Evolución de garzones · alertas, tendencias y criterios más fallados</div></div>
+          <div class="doc-tags"><span class="tag tag-gold copy-tok" role="button" tabindex="0" data-d="servicio" style="cursor:pointer">Copiar token</span></div>
+        </a>
+      </div>
     </section>
 
     <section class="panel" id="panel-personas" role="tabpanel" aria-labelledby="tab-personas">
@@ -775,11 +784,6 @@
           <div class="doc-info"><div class="doc-name">Evaluación de Desempeño</div><div class="doc-meta">Por competencias · Uso interno RRHH</div></div>
           <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
-        <a href="https://bc-evaluaciones-dashboard.vercel.app" target="_blank" rel="noopener" class="doc-row">
-          <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-chart-radar"></i></div>
-          <div class="doc-info"><div class="doc-name">Dashboard de Evaluaciones</div><div class="doc-meta">Resultados, heatmap, seguimientos · Lectura</div></div>
-          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
-        </a>
         <a href="https://bc-evaluacion-pares.vercel.app" target="_blank" rel="noopener" class="doc-row">
           <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-users-group"></i></div>
           <div class="doc-info"><div class="doc-name">Evaluación entre Pares</div><div class="doc-meta">Feedback 360 anónimo</div></div>
@@ -802,17 +806,12 @@
         </a>
         <a href="https://bc-autoeval-jefe.vercel.app" target="_blank" rel="noopener" class="doc-row">
           <div class="doc-icon" style="background:var(--green-bg);color:var(--green)"><i class="ti ti-clipboard-check"></i></div>
-          <div class="doc-info"><div class="doc-name">Autoevaluación · Jefe de Local</div><div class="doc-meta">Onboarding · 46 ítems · score + plan de acción</div></div>
+          <div class="doc-info"><div class="doc-name">Autoevaluación · Jefe de Local</div><div class="doc-meta">Onboarding · 113 ítems · 10 secciones · score + plan de acción</div></div>
           <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
-        <a href="https://bc-autoeval-jefe.vercel.app/?mode=manager" target="_blank" rel="noopener" class="doc-row">
+        <a href="https://bc-autoeval-jefe.vercel.app" target="_blank" rel="noopener" class="doc-row">
           <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-user-check"></i></div>
           <div class="doc-info"><div class="doc-name">Eval. del jefe · Jefe de Local</div><div class="doc-meta">Mirada del jefe directo · vincula con autoeval del operador</div></div>
-          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
-        </a>
-        <a href="https://bc-autoeval-jefe.vercel.app/dashboard" target="_blank" rel="noopener" class="doc-row">
-          <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-chart-line"></i></div>
-          <div class="doc-info"><div class="doc-name">Dashboard Autoevaluaciones</div><div class="doc-meta">Tracking unificado por puesto · 11 puestos · token requerido</div></div>
           <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
         <a href="https://bc-autoeval-cocinero.vercel.app" target="_blank" rel="noopener" class="doc-row">
@@ -820,9 +819,19 @@
           <div class="doc-info"><div class="doc-name">Autoevaluación · Cocinero/a</div><div class="doc-meta">Onboarding cocina · 91 ítems · 8 secciones (proteínas, salsas, equipos)</div></div>
           <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
-        <a href="https://bc-autoeval-cocinero.vercel.app/?mode=manager" target="_blank" rel="noopener" class="doc-row">
+        <a href="https://bc-autoeval-cocinero.vercel.app" target="_blank" rel="noopener" class="doc-row">
           <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-chef-hat"></i></div>
           <div class="doc-info"><div class="doc-name">Eval. del jefe · Cocinero/a</div><div class="doc-meta">Mirada del sous chef · vincula con autoeval del cocinero</div></div>
+          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
+        </a>
+        <a href="https://bc-autoeval-subjefe.vercel.app" target="_blank" rel="noopener" class="doc-row">
+          <div class="doc-icon" style="background:var(--green-bg);color:var(--green)"><i class="ti ti-clipboard-check"></i></div>
+          <div class="doc-info"><div class="doc-name">Autoevaluación · Sub Jefe de Local</div><div class="doc-meta">Onboarding · 113 ítems · 10 secciones · score + plan de acción</div></div>
+          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
+        </a>
+        <a href="https://bc-autoeval-subjefe.vercel.app" target="_blank" rel="noopener" class="doc-row">
+          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-user-check"></i></div>
+          <div class="doc-info"><div class="doc-name">Eval. del jefe · Sub Jefe de Local</div><div class="doc-meta">Mirada del jefe directo · vincula con autoeval del operador</div></div>
           <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
       </div>
@@ -831,6 +840,11 @@
     <section class="panel" id="panel-herramientas" role="tabpanel" aria-labelledby="tab-herramientas">
       <div class="section-title"><i class="ti ti-tools" aria-hidden="true"></i> Flujos operativos</div>
       <div class="doc-list">
+        <a href="https://bc-task-tracker-nine.vercel.app" target="_blank" rel="noopener" class="doc-row">
+          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-list-check"></i></div>
+          <div class="doc-info"><div class="doc-name">Task Tracker</div><div class="doc-meta">Tareas del equipo · Inge entra con su PIN (queda recordado en su equipo)</div></div>
+          <div class="doc-tags"><span class="tag tag-gold">Directo</span></div>
+        </a>
         <a href="index.html" class="doc-row">
           <div class="doc-icon" style="background:var(--green-bg);color:var(--green)"><i class="ti ti-list-check"></i></div>
           <div class="doc-info"><div class="doc-name">ATS Recruiting · Pipeline</div><div class="doc-meta">Tracking de candidatos · Notion sync</div></div>
@@ -937,7 +951,7 @@
     </section>
 
     <section class="panel" id="panel-publicaciones" role="tabpanel" aria-labelledby="tab-publicaciones">
-      <div class="section-title" id="seccion-publicaciones-activas"><i class="ti ti-speakerphone" aria-hidden="true"></i> Publicaciones activas · Para difundir <button type="button" class="pub-manage-btn" id="pub-manage-btn"><i class="ti ti-toggle-right" aria-hidden="true"></i> Gestionar estados</button></div>
+      <div class="section-title" id="seccion-publicaciones-activas"><i class="ti ti-speakerphone" aria-hidden="true"></i> Publicaciones activas · Para difundir</div>
       <div class="doc-list">
         <a href="BC_Publicacion_JefeLocal.html" class="doc-row pub-row" data-search="jefe local jornada completa">
           <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
@@ -1041,7 +1055,7 @@
 
   </div>
 
-  <footer>Black Chicken · Hub de HR v3.6 · Uso exclusivo interno</footer>
+  <footer>Black Chicken · Hub de HR v3.5 · Uso exclusivo interno</footer>
 
   <div class="fav-modal" id="fav-modal" role="dialog" aria-modal="true" aria-label="Editar acciones rápidas">
     <div class="fav-card">
@@ -1074,7 +1088,7 @@
           <span><kbd>↵</kbd> abrir</span>
           <span><kbd>esc</kbd> cerrar</span>
         </div>
-        <span id="cmd-title">Hub HR · v3.6</span>
+        <span id="cmd-title">Hub HR · v3.5</span>
       </div>
     </div>
   </div>
@@ -1103,7 +1117,7 @@
     'use strict';
 
     var STORAGE = { THEME: 'bc_hub_theme', AUTH: 'bc_rrhh_auth' };
-    var VALID_TABS = ['inicio','personas','herramientas','documentos','publicaciones'];
+    var VALID_TABS = ['inicio','dashboards','personas','herramientas','documentos','publicaciones'];
     var NEW_TAG_DAYS = 14;
 
     /* Auth migration — v2 keys → v3 unified key. Cero re-login para usuarios existentes. */
@@ -1222,7 +1236,13 @@
         { id: 'cartas',      title: 'Cartas de oferta',        sub: 'Post entrevista',         icon: 'send',           color: 'ac-gold',   jump: 'publicaciones', jumpSection: 'cartas' },
         { id: 'onboarding',  title: 'Onboarding Garzones',     sub: 'Portal de bienvenida',    icon: 'rocket',         color: 'ac-green',  ext: 'https://bc-onboarding-bice.vercel.app' }
       ]},
+      { group: 'Dashboards', items: [
+        { id: 'dasheval',     title: 'Dashboard Evaluaciones', sub: 'Ranking, heatmap · clave',  icon: 'chart-radar',     color: 'ac-blue',  ext: 'https://bc-evaluaciones-dashboard.vercel.app' },
+        { id: 'dashautoeval', title: 'Dashboard Autoeval.',    sub: '11 puestos · token',        icon: 'chart-line',      color: 'ac-green', ext: 'https://bc-autoeval-jefe.vercel.app/dashboard' },
+        { id: 'dashservicio', title: 'Seguimiento Servicio',   sub: 'Garzones · token',          icon: 'clipboard-check', color: 'ac-gold',  ext: 'https://bc-eval-servicio.vercel.app/dashboard' }
+      ]},
       { group: 'Flujos operativos', items: [
+        { id: 'tasktracker', title: 'Task Tracker',           sub: 'Tareas del equipo',       icon: 'list-check',     color: 'ac-gold',   ext: 'https://bc-task-tracker-nine.vercel.app' },
         { id: 'offboarding', title: 'Offboarding',             sub: '16 pasos · checklist',    icon: 'door-exit',      color: 'ac-amber',  gate: 'BC_HR_Offboarding.html' },
         { id: 'dotacion',    title: 'Dashboard dotación',      sub: 'Headcount y nómina',      icon: 'chart-bar',      color: 'ac-blue',   gate: 'BC_HR_Dashboard.html' },
         { id: 'calendario',  title: 'Calendario HR',           sub: 'Feriados y vencimientos', icon: 'calendar-event', color: 'ac-blue',   gate: 'BC_HR_Calendario.html' },
@@ -1232,18 +1252,16 @@
       ]},
       { group: 'Herramientas de personas', items: [
         { id: 'evaldes',          title: 'Evaluación desempeño',     sub: 'Por competencias',        icon: 'star',            color: 'ac-gold',   ext: 'https://bc-evaluaciones.vercel.app' },
-        { id: 'dasheval',         title: 'Dashboard Evaluaciones',   sub: 'Resultados consolidados', icon: 'chart-radar',     color: 'ac-blue',   ext: 'https://bc-evaluaciones-dashboard.vercel.app' },
         { id: 'evalpares',        title: 'Evaluación entre Pares',   sub: 'Feedback 360 anónimo',    icon: 'users-group',     color: 'ac-purple', ext: 'https://bc-evaluacion-pares.vercel.app' },
         { id: 'organigrama',      title: 'Organigrama BC',           sub: 'Dirección y jefaturas',   icon: 'sitemap',         color: 'ac-gold',   ext: 'https://bc-organigrama.vercel.app' },
         { id: 'escalas',          title: 'Escalas Salariales',       sub: 'Rentas y bono KPI · PIN', icon: 'coin',            color: 'ac-gold',   ext: 'https://bc-escalas-salariales.vercel.app' },
         { id: 'autoevaljefe',     title: 'Autoeval. Jefe de Local',  sub: '46 ítems + plan',         icon: 'clipboard-check', color: 'ac-green',  ext: 'https://bc-autoeval-jefe.vercel.app' },
-        { id: 'evaljefemgr',      title: 'Eval. jefe · Jefe Local',  sub: 'Mirada del jefe directo', icon: 'user-check',      color: 'ac-purple', ext: 'https://bc-autoeval-jefe.vercel.app/?mode=manager' },
-        { id: 'dashautoeval',     title: 'Dashboard Autoeval.',      sub: '11 puestos · token',      icon: 'chart-line',      color: 'ac-blue',   ext: 'https://bc-autoeval-jefe.vercel.app/dashboard' },
+        { id: 'evaljefemgr',      title: 'Eval. jefe · Jefe Local',  sub: 'Mirada del jefe directo', icon: 'user-check',      color: 'ac-purple', ext: 'https://bc-autoeval-jefe.vercel.app' },
         { id: 'autoevalcocinero', title: 'Autoeval. Cocinero/a',     sub: '91 ítems cocina',         icon: 'tools-kitchen-2', color: 'ac-green',  ext: 'https://bc-autoeval-cocinero.vercel.app' },
-        { id: 'evalcocineromgr',  title: 'Eval. jefe · Cocinero/a',  sub: 'Mirada del sous chef',    icon: 'chef-hat',        color: 'ac-purple', ext: 'https://bc-autoeval-cocinero.vercel.app/?mode=manager' }
+        { id: 'evalcocineromgr',  title: 'Eval. jefe · Cocinero/a',  sub: 'Mirada del sous chef',    icon: 'chef-hat',        color: 'ac-purple', ext: 'https://bc-autoeval-cocinero.vercel.app' }
       ]}
     ];
-    var FAV_DEFAULT = ['ats', 'offboarding', 'publicar', 'cartas', 'dotacion', 'evaldes', 'dasheval'];
+    var FAV_DEFAULT = ['ats', 'tasktracker', 'offboarding', 'publicar', 'cartas', 'dotacion', 'evaldes', 'dasheval'];
     var FAV_KEY = 'bcHubFavs_v1';
 
     function favCatalogById(id) {
@@ -1706,8 +1724,8 @@
     }
     function openGate(mode, url) {
       pending = { mode: mode, url: url };
-      gateTitle.textContent = mode === 'brain' ? 'HR Brain · Acceso restringido' : (mode === 'pubstatus' ? 'Guardar estados de publicaciones' : 'Acceso restringido');
-      gateSub.textContent   = mode === 'brain' ? 'Base de conocimiento · Solo RRHH' : (mode === 'pubstatus' ? 'Confirma con tu código RRHH' : 'Documentos confidenciales · Solo RRHH');
+      gateTitle.textContent = mode === 'brain' ? 'HR Brain · Acceso restringido' : 'Acceso restringido';
+      gateSub.textContent   = mode === 'brain' ? 'Base de conocimiento · Solo RRHH' : 'Documentos confidenciales · Solo RRHH';
       gateInput.value = '';
       gateInput.type = 'password';
       var ti = qs('.ti', gateToggle); if (ti) ti.className = 'ti ti-eye';
@@ -1746,7 +1764,6 @@
         markAuthed();
         var p = pending;
         closeGate();
-        if (p && p.mode === 'pubstatus') { savePubStatuses(v); return; }
         toast('Acceso concedido · documentos desbloqueados', 'success');
         if (p && p.url) {
           if (p.mode === 'brain') window.open(p.url, '_blank', 'noopener');
@@ -1790,89 +1807,6 @@
 
     if (isAuthed()) unlockAll();
 
-    /* ── Estado de publicaciones · activa/inactiva (Inge) ── */
-    var pubStatuses = {};
-    var pubManaging = false;
-    var pubDirty = false;
-    var pubBtn = qs('#pub-manage-btn');
-    var pubList = (function () {
-      var t = qs('#seccion-publicaciones-activas');
-      return t ? t.nextElementSibling : null;
-    })();
-
-    function pubKey(row) { return (row.getAttribute('href') || '').split('/').pop(); }
-
-    function applyPubStatuses() {
-      if (!pubList) return;
-      var rows = qsa('.pub-row', pubList);
-      var act = [], inact = [];
-      rows.forEach(function (row) {
-        var off = pubStatuses[pubKey(row)] === 'inactiva';
-        row.classList.toggle('pub-inactive', off);
-        var tag = qs('.tag-off', row);
-        if (off && !tag) {
-          var tags = qs('.doc-tags', row);
-          if (!tags) { tags = document.createElement('div'); tags.className = 'doc-tags'; row.appendChild(tags); }
-          var sp = document.createElement('span'); sp.className = 'tag tag-off'; sp.textContent = 'Inactiva';
-          tags.appendChild(sp);
-        } else if (!off && tag) { tag.parentNode.removeChild(tag); }
-        (off ? inact : act).push(row);
-      });
-      act.concat(inact).forEach(function (r) { pubList.appendChild(r); });
-      var c = qs('#count-pub'); if (c) c.textContent = String(act.length);
-    }
-
-    function setPubManaging(on) {
-      pubManaging = on;
-      document.body.classList.toggle('pub-managing', on);
-      if (pubBtn) {
-        pubBtn.classList.toggle('active', on);
-        pubBtn.innerHTML = on
-          ? '<i class="ti ti-device-floppy" aria-hidden="true"></i> Guardar cambios'
-          : '<i class="ti ti-toggle-right" aria-hidden="true"></i> Gestionar estados';
-      }
-    }
-
-    function savePubStatuses(pw) {
-      fetch('/api/pub-status', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: pw, statuses: pubStatuses })
-      })
-      .then(function (r) { return r.json(); })
-      .then(function (d) {
-        if (d && d.ok) { pubDirty = false; setPubManaging(false); toast('Estados de publicaciones guardados', 'success'); }
-        else toast('No se pudo guardar · ' + ((d && d.error) || 'error'), 'error');
-      })
-      .catch(function () { toast('No se pudo guardar los estados', 'error'); });
-    }
-
-    if (pubBtn) pubBtn.addEventListener('click', function () {
-      if (!pubManaging) {
-        setPubManaging(true);
-        toast('Toca una publicación para activarla o desactivarla, luego guarda', 'info');
-        return;
-      }
-      if (!pubDirty) { setPubManaging(false); return; }
-      openGate('pubstatus', null);
-    });
-
-    document.addEventListener('click', function (e) {
-      if (!pubManaging || !pubList) return;
-      var row = e.target.closest('.pub-row');
-      if (!row || !pubList.contains(row)) return;
-      e.preventDefault();
-      var k = pubKey(row);
-      pubStatuses[k] = (pubStatuses[k] === 'inactiva') ? 'activa' : 'inactiva';
-      pubDirty = true;
-      applyPubStatuses();
-    }, true);
-
-    fetch('/api/pub-status')
-      .then(function (r) { return r.json(); })
-      .then(function (d) { if (d && d.ok) { pubStatuses = d.statuses || {}; applyPubStatuses(); } })
-      .catch(function () {});
-
     /* Auto-expire NUEVO tag */
     (function expireNew() {
       qsa('[data-release]').forEach(function (el) {
@@ -1909,6 +1843,33 @@
           })
         }).catch(function () {});
       } catch (e) {}
+    });
+  })();
+  </script>
+  <script>
+  /* Copiar token de dashboard (servido desde /api/token, no en el HTML) */
+  (function () {
+    function flash(el, msg) { var o = el.textContent; el.textContent = msg; setTimeout(function () { el.textContent = o; }, 1600); }
+    async function copyToken(el) {
+      var d = el.getAttribute('data-d'); if (!d || el.dataset.busy) return;
+      el.dataset.busy = '1';
+      try {
+        var r = await fetch('/api/token?d=' + encodeURIComponent(d), { cache: 'no-store' });
+        var j = await r.json();
+        if (!j || !j.ok || !j.token) throw new Error('sin token');
+        await navigator.clipboard.writeText(j.token);
+        flash(el, '✓ Copiado');
+      } catch (e) { flash(el, 'Error — reintenta'); }
+      finally { setTimeout(function () { delete el.dataset.busy; }, 1600); }
+    }
+    document.addEventListener('click', function (e) {
+      var el = e.target.closest('.copy-tok'); if (!el) return;
+      e.preventDefault(); e.stopPropagation(); copyToken(el);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var el = e.target.closest && e.target.closest('.copy-tok'); if (!el) return;
+      e.preventDefault(); e.stopPropagation(); copyToken(el);
     });
   })();
   </script>
