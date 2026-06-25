@@ -150,10 +150,9 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 
 <script>
 (function(){
-  var API_URL = localStorage.getItem('bc_hr_api_url');
-  if (!API_URL) return; // mantiene datos estáticos
-
-  fetch(API_URL + '?tab=equipo')
+  // Datos en vivo vía proxy server-side (/api/dotacion lee BC_HR_SHEET_URL).
+  // Si el proxy devuelve [] (no configurado), se mantienen los datos estáticos.
+  fetch('/api/dotacion')
     .then(function(r){ return r.json(); })
     .then(function(data){
       if (!Array.isArray(data) || data.length === 0) return;
