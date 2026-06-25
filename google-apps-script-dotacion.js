@@ -43,7 +43,10 @@ function doGet(e) {
 }
 
 // ---------- Sincronización desde el Organigrama ----------
-function norm(s) { return String(s || '').trim().toLowerCase(); }
+function norm(s) {
+  return String(s || '').trim().toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, ''); // ignora tildes/acentos
+}
 
 function syncOrganigrama() {
   var sh = getSheet('Equipo');
