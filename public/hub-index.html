@@ -713,6 +713,7 @@
     <nav class="intent-nav" role="tablist" aria-label="Secciones del Hub">
       <button class="intent-tab" role="tab" aria-selected="true"  aria-controls="panel-inicio"        id="tab-inicio"        data-tab="inicio"><i class="ti ti-home" aria-hidden="true"></i> Inicio</button>
       <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-dashboards"    id="tab-dashboards"    data-tab="dashboards"><i class="ti ti-chart-line" aria-hidden="true"></i> Dashboards</button>
+      <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-tracker"      id="tab-tracker"      data-tab="tracker"><i class="ti ti-checklist" aria-hidden="true"></i> Task Tracker</button>
       <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-personas"      id="tab-personas"      data-tab="personas"><i class="ti ti-users" aria-hidden="true"></i> Personas <span class="tab-count" id="count-personas">…</span></button>
       <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-herramientas"  id="tab-herramientas"  data-tab="herramientas"><i class="ti ti-tools" aria-hidden="true"></i> Herramientas</button>
       <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-documentos"    id="tab-documentos"    data-tab="documentos"><i class="ti ti-folder" aria-hidden="true"></i> Documentos</button>
@@ -751,6 +752,25 @@
           <div class="doc-info"><div class="doc-name">Seguimiento de Servicio</div><div class="doc-meta">Evolución de garzones · alertas, tendencias y criterios más fallados</div></div>
           <div class="doc-tags"><span class="tag tag-gold copy-tok" role="button" tabindex="0" data-d="servicio" style="cursor:pointer">Copiar token</span></div>
         </a>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-tracker" role="tabpanel" aria-labelledby="tab-tracker">
+      <style>
+        #panel-tracker.panel { padding: 0; }
+        .tt-bar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 24px 10px; flex-wrap:wrap; }
+        .tt-bar .tt-hint { color:var(--text-secondary); font-size:13px; }
+        .tt-open { font-size:13px; color:var(--gold); text-decoration:none; white-space:nowrap; }
+        .tt-open:hover { text-decoration:underline; }
+        .tt-frame-wrap { position:relative; width:100vw; margin-left:calc(50% - 50vw); height:calc(100vh - 165px); min-height:560px; border-top:1px solid var(--border,#2a2a2a); }
+        #tt-frame { width:100%; height:100%; border:0; display:block; background:#0f0f0f; }
+      </style>
+      <div class="tt-bar">
+        <span class="tt-hint">App completa embebida · Inge entra con su PIN una vez y queda recordado en su equipo.</span>
+        <a class="tt-open" href="https://bc-task-tracker-nine.vercel.app" target="_blank" rel="noopener">Abrir en pantalla completa ↗</a>
+      </div>
+      <div class="tt-frame-wrap">
+        <iframe id="tt-frame" title="BC Task Tracker" loading="lazy" src="about:blank" data-src="https://bc-task-tracker-nine.vercel.app"></iframe>
       </div>
     </section>
 
@@ -1117,7 +1137,7 @@
     'use strict';
 
     var STORAGE = { THEME: 'bc_hub_theme', AUTH: 'bc_rrhh_auth' };
-    var VALID_TABS = ['inicio','dashboards','personas','herramientas','documentos','publicaciones'];
+    var VALID_TABS = ['inicio','dashboards','tracker','personas','herramientas','documentos','publicaciones'];
     var NEW_TAG_DAYS = 14;
 
     /* Auth migration — v2 keys → v3 unified key. Cero re-login para usuarios existentes. */
@@ -1871,6 +1891,20 @@
       var el = e.target.closest && e.target.closest('.copy-tok'); if (!el) return;
       e.preventDefault(); e.stopPropagation(); copyToken(el);
     });
+  })();
+  </script>
+  <script>
+  /* Carga perezosa del Task Tracker embebido (solo al abrir la tab) */
+  (function () {
+    var f = document.getElementById('tt-frame');
+    function load() { if (f && (!f.src || f.src.indexOf('about:blank') === 0)) f.src = f.dataset.src; }
+    var tab = document.getElementById('tab-tracker');
+    if (tab) tab.addEventListener('click', load);
+    document.addEventListener('click', function (e) {
+      var j = e.target.closest && e.target.closest('[data-tab-jump="tracker"]');
+      if (j) load();
+    });
+    if (new URLSearchParams(location.search).get('tab') === 'tracker') load();
   })();
   </script>
 </body>
