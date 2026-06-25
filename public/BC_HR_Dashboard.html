@@ -94,12 +94,12 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
     <div class="nomina-bar">
       <div class="nomina-seg" style="width:58.5%;background:#d4af37">BC1 · $11,3M</div>
       <div class="nomina-seg" style="width:36.3%;background:#7ab0e0">BC2 · $7M</div>
-      <div class="nomina-seg" style="width:5.2%;background:#6ab86a">Adm</div>
+      <div class="nomina-seg" style="width:5.2%;background:#6ab86a">Backoffice</div>
     </div>
     <div class="nomina-legend">
       <span><span class="legend-dot" style="background:#d4af37"></span>BC1 (58,5%)</span>
       <span><span class="legend-dot" style="background:#7ab0e0"></span>BC2 (36,3%)</span>
-      <span><span class="legend-dot" style="background:#6ab86a"></span>Admin (5,2%)</span>
+      <span><span class="legend-dot" style="background:#6ab86a"></span>Backoffice (5,2%)</span>
     </div>
   </div>
 </div>
@@ -160,7 +160,7 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
       var activos = data.filter(function(p){ return (p.estado || 'Activo') === 'Activo'; });
       var bc1 = activos.filter(function(p){ return p.local === 'BC1'; });
       var bc2 = activos.filter(function(p){ return p.local === 'BC2'; });
-      var admin = activos.filter(function(p){ return p.local === 'Admin' || p.local === 'Ambos'; });
+      var admin = activos.filter(function(p){ return p.local === 'Admin' || p.local === 'Ambos' || p.local === 'Backoffice'; });
       var ft = activos.filter(function(p){ return (p.jornada || '').indexOf('Part') === -1; });
       var pt = activos.filter(function(p){ return (p.jornada || '').indexOf('Part') >= 0; });
 
@@ -200,21 +200,22 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
           '<div class="nomina-bar">' +
           '<div class="nomina-seg" style="width:'+pbc1+'%;background:#d4af37">BC1 · '+fmtM(bc1Nom)+'</div>' +
           '<div class="nomina-seg" style="width:'+pbc2+'%;background:#7ab0e0">BC2 · '+fmtM(bc2Nom)+'</div>' +
-          '<div class="nomina-seg" style="width:'+padm+'%;background:#6ab86a">Adm</div>' +
+          '<div class="nomina-seg" style="width:'+padm+'%;background:#6ab86a">Backoffice</div>' +
           '</div><div class="nomina-legend">' +
           '<span><span class="legend-dot" style="background:#d4af37"></span>BC1 ('+pbc1.replace('.',',')+'%)</span>' +
           '<span><span class="legend-dot" style="background:#7ab0e0"></span>BC2 ('+pbc2.replace('.',',')+'%)</span>' +
-          '<span><span class="legend-dot" style="background:#6ab86a"></span>Admin ('+padm.replace('.',',')+'%)</span>' +
+          '<span><span class="legend-dot" style="background:#6ab86a"></span>Backoffice ('+padm.replace('.',',')+'%)</span>' +
           '</div>';
       }
 
       // Team table
       var tbody = document.getElementById('team-tbody');
       var html = '';
-      // Admin first
-      admin.forEach(function(p){
-        html += buildRow(p, 'ft');
-      });
+      // Backoffice (global BlackChicken, no cargado a un local)
+      if (admin.length) {
+        html += '<tr style="border-top:2px solid #2a2a2a"><td colspan="5" style="color:#6ab86a;font-weight:700;font-size:11px;letter-spacing:1px;padding:12px">BACKOFFICE — GLOBAL BLACKCHICKEN</td></tr>';
+        admin.forEach(function(p){ p.local = 'Backoffice'; html += buildRow(p, 'ft'); });
+      }
       // BC1
       html += '<tr style="border-top:2px solid #2a2a2a"><td colspan="5" style="color:#d4af37;font-weight:700;font-size:11px;letter-spacing:1px;padding:12px">BC1 — CERRO EL PLOMO 5931</td></tr>';
       bc1.forEach(function(p){ html += buildRow(p, getBadge(p)); });
