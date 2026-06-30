@@ -114,7 +114,7 @@
   </div>
 
   <div class="section" style="margin-bottom:36px;">
-    <div style="background:linear-gradient(135deg,#1a1505,#1a1a0a);border:1px solid #d4af37;border-radius:16px;padding:32px;text-align:center;">
+    <div class="pasos-box" style="background:linear-gradient(135deg,#1a1505,#1a1a0a);border:1px solid #d4af37;border-radius:16px;padding:32px;text-align:center;">
       <p style="font-size:20px;font-weight:900;color:#fff;margin-bottom:12px;">Próximos pasos</p>
       <p style="font-size:14px;color:#888;line-height:1.7;margin-bottom:20px;">Hemos revisado tu perfil y nos interesa que formes parte del equipo.<br>Si tienes consultas sobre esta oferta, contáctate con:</p>
       <p style="font-size:18px;font-weight:800;color:#d4af37;margin-bottom:8px;">Talentos@BlackChicken.cl</p>
@@ -136,23 +136,14 @@
 @media print {
   .download-btn { display: none !important; }
   #auth-gate { display: none !important; }
+  .back-hub { display: none !important; }
   body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .doc-wrap { max-width: 100%; padding: 24px 28px 32px; }
+  .welcome-block, .signature-block, .ben-card, .item-row, .pasos-box { break-inside: avoid; page-break-inside: avoid; }
+  .section { break-inside: avoid; page-break-inside: avoid; }
+  .section-header { break-after: avoid; page-break-after: avoid; }
 }
 </style>
 <button class="download-btn" onclick="window.print()" style="position:fixed;bottom:24px;right:24px;z-index:99998;background:linear-gradient(90deg,#d4af37,#f0c940);color:#0f0f0f;border:none;border-radius:30px;padding:12px 24px;font-size:13px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;box-shadow:0 4px 16px rgba(212,175,55,.3);display:flex;align-items:center;gap:6px;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(212,175,55,.4)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(212,175,55,.3)'">📥 Descargar PDF</button>
-<script>
-(function(){
-  var KEY="bc_rrhh_auth",PASS="TalentosBC";
-  if(sessionStorage.getItem(KEY)==="ok")return;
-  document.body.style.display="none";
-  var o=document.createElement("div");o.id="auth-gate";
-  o.innerHTML='<div style="position:fixed;inset:0;background:#0f0f0f;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:Inter,sans-serif"><div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:40px;max-width:380px;width:90%;text-align:center"><img src="./blackchicken_logo.png" alt="BC" style="width:64px;height:64px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(212,175,55,.3));margin-bottom:20px"><p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#d4af37;font-weight:700;margin-bottom:8px">Hub RRHH &middot; Acceso Restringido</p><p style="font-size:14px;color:#666;margin-bottom:24px">Ingresa el c&oacute;digo de acceso para continuar</p><input id="gate-input" type="password" placeholder="C&oacute;digo de acceso" style="width:100%;padding:12px 16px;background:#0f0f0f;border:1px solid #2a2a2a;border-radius:8px;color:#fff;font-size:15px;text-align:center;outline:none;font-family:Inter,sans-serif;margin-bottom:12px"><button id="gate-btn" style="width:100%;padding:12px;background:linear-gradient(90deg,#d4af37,#f0c940);border:none;border-radius:8px;color:#0f0f0f;font-size:14px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">Acceder</button><p id="gate-err" style="font-size:12px;color:#e05050;margin-top:12px;display:none">C&oacute;digo incorrecto</p></div></div>';
-  document.documentElement.appendChild(o);
-  function t(){var v=document.getElementById("gate-input").value;if(v===PASS){sessionStorage.setItem(KEY,"ok");o.remove();document.body.style.display="";}else{document.getElementById("gate-err").style.display="block";document.getElementById("gate-input").style.borderColor="#e05050";setTimeout(function(){document.getElementById("gate-err").style.display="none";document.getElementById("gate-input").style.borderColor="#2a2a2a";},2000);}}
-  document.getElementById("gate-btn").addEventListener("click",t);
-  document.getElementById("gate-input").addEventListener("keydown",function(e){if(e.key==="Enter")t();});
-  setTimeout(function(){document.getElementById("gate-input").focus();},100);
-})();
-</script>
 </body>
 </html>
