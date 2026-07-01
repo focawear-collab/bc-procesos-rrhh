@@ -679,6 +679,50 @@
       margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap;
       border: 0;
     }
+
+    /* ── Editor de Hub · ocultar/mostrar + reordenar (por usuario) ── */
+    .hx-fab {
+      position: fixed; right: 18px; bottom: 18px; z-index: 950;
+      background: var(--gold); color: #0f0f0f; border: none; border-radius: 24px;
+      padding: 11px 16px; font-size: 13px; font-weight: 600; cursor: pointer;
+      box-shadow: 0 6px 18px rgba(0,0,0,.4); display: inline-flex; gap: 7px; align-items: center;
+    }
+    .hx-fab .ti { font-size: 15px; }
+    body.hx-edit .hx-fab { background: #1f1f1f; color: var(--gold); border: 1px solid var(--gold); }
+    .hx-bar { position: fixed; right: 18px; bottom: 66px; z-index: 950; display: none; flex-direction: column; gap: 8px; align-items: flex-end; }
+    body.hx-edit .hx-bar { display: flex; }
+    .hx-bar button {
+      background: #1a1a1a; color: var(--text, #d4d4d4); border: 1px solid var(--border, #2a2a2a);
+      border-radius: 18px; padding: 8px 13px; font-size: 12px; font-weight: 500; cursor: pointer;
+      display: inline-flex; gap: 6px; align-items: center;
+    }
+    .hx-bar button:hover { border-color: var(--gold); color: var(--gold); }
+    body:not(.hx-edit) .hx-off { display: none !important; }
+    body.hx-edit .hx-off { opacity: .4; filter: grayscale(.7); }
+    body.hx-edit .panel .doc-row, body.hx-edit .panel .section-title { position: relative; }
+    body.hx-edit .panel .doc-row { cursor: grab; }
+    body.hx-edit .panel .doc-row.hx-drag { opacity: .45; }
+    body.hx-edit .panel .doc-row.hx-over { outline: 2px dashed var(--gold); outline-offset: 2px; }
+    .hx-tg {
+      position: absolute; top: 6px; right: 8px; z-index: 6; width: 26px; height: 26px;
+      border-radius: 50%; border: 1px solid var(--border, #2a2a2a); background: #1a1a1a;
+      color: var(--text, #d4d4d4); align-items: center; justify-content: center; cursor: pointer;
+      font-size: 14px; display: none; padding: 0;
+    }
+    body.hx-edit .hx-tg { display: inline-flex; }
+    .hx-tg:hover { color: var(--gold); border-color: var(--gold); }
+    .hx-tg.is-off { color: #e08080; border-color: #e08080; }
+    /* categorías (pestañas) en modo edición */
+    body.hx-edit .intent-nav .intent-tab { position: relative; cursor: grab; }
+    body.hx-edit .intent-nav .intent-tab.hx-drag { opacity: .45; }
+    body.hx-edit .intent-nav .intent-tab.hx-over { outline: 2px dashed var(--gold); outline-offset: -2px; }
+    .intent-nav .intent-tab .hx-tg { top: 1px; right: 1px; width: 18px; height: 18px; font-size: 10px; }
+    .hx-hint {
+      position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 949;
+      background: #1a1a1a; color: var(--text, #d4d4d4); border: 1px solid var(--gold); border-radius: 10px;
+      padding: 8px 14px; font-size: 12px; font-weight: 500; display: none; box-shadow: 0 6px 18px rgba(0,0,0,.4);
+    }
+    body.hx-edit .hx-hint { display: block; }
   </style>
 </head>
 <body>
@@ -687,7 +731,7 @@
       <div class="logo-area">
         <img src="./blackchicken_logo.png" alt="Black Chicken">
         <span class="app-name">Hub de HR</span>
-        <span class="app-version">v3.5</span>
+        <span class="app-version">v3.7</span>
       </div>
       <div class="top-actions">
         <button class="icon-btn" id="theme-toggle" aria-label="Cambiar tema claro/oscuro" title="Cambiar tema">
@@ -710,14 +754,15 @@
       </div>
     </section>
 
-    <nav class="intent-nav" role="tablist" aria-label="Secciones del Hub">
-      <button class="intent-tab" role="tab" aria-selected="true"  aria-controls="panel-inicio"        id="tab-inicio"        data-tab="inicio"><i class="ti ti-home" aria-hidden="true"></i> Inicio</button>
-      <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-dashboards"    id="tab-dashboards"    data-tab="dashboards"><i class="ti ti-chart-line" aria-hidden="true"></i> Dashboards</button>
-      <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-tracker"      id="tab-tracker"      data-tab="tracker"><i class="ti ti-checklist" aria-hidden="true"></i> Task Tracker</button>
-      <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-personas"      id="tab-personas"      data-tab="personas"><i class="ti ti-users" aria-hidden="true"></i> Personas <span class="tab-count" id="count-personas">…</span></button>
-      <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-herramientas"  id="tab-herramientas"  data-tab="herramientas"><i class="ti ti-tools" aria-hidden="true"></i> Herramientas</button>
-      <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-documentos"    id="tab-documentos"    data-tab="documentos"><i class="ti ti-folder" aria-hidden="true"></i> Documentos</button>
-      <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-publicaciones" id="tab-publicaciones" data-tab="publicaciones"><i class="ti ti-speakerphone" aria-hidden="true"></i> Publicaciones <span class="tab-count" id="count-pub">14</span></button>
+        <nav class="intent-nav" role="tablist" aria-label="Secciones del Hub">
+      <button class="intent-tab" role="tab" aria-selected="true"  aria-controls="panel-inicio"         id="tab-inicio"         data-tab="inicio"><i class="ti ti-home" aria-hidden="true"></i> Inicio</button>
+      <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-reclutamiento"  id="tab-reclutamiento"  data-tab="reclutamiento"><i class="ti ti-user-search" aria-hidden="true"></i> Reclutamiento <span class="tab-count" id="count-personas">…</span></button>
+      <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-onboarding"     id="tab-onboarding"     data-tab="onboarding"><i class="ti ti-rocket" aria-hidden="true"></i> Onboarding</button>
+      <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-administracion" id="tab-administracion" data-tab="administracion"><i class="ti ti-briefcase" aria-hidden="true"></i> Administración</button>
+      <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-desempeno"      id="tab-desempeno"      data-tab="desempeno"><i class="ti ti-chart-dots-2" aria-hidden="true"></i> Desempeño</button>
+      <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-clima"          id="tab-clima"          data-tab="clima"><i class="ti ti-heart" aria-hidden="true"></i> Clima</button>
+      <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-legal"          id="tab-legal"          data-tab="legal"><i class="ti ti-gavel" aria-hidden="true"></i> Legal</button>
+      <button class="intent-tab" role="tab" aria-selected="false" aria-controls="panel-tracker"        id="tab-tracker"        data-tab="tracker"><i class="ti ti-checklist" aria-hidden="true"></i> Task Tracker</button>
     </nav>
 
     <section class="panel active" id="panel-inicio" role="tabpanel" aria-labelledby="tab-inicio">
@@ -733,48 +778,8 @@
       <div class="action-grid" id="fav-grid"></div>
     </section>
 
-    <section class="panel" id="panel-dashboards" role="tabpanel" aria-labelledby="tab-dashboards">
-      <div class="section-title"><i class="ti ti-chart-line" aria-hidden="true"></i> Dashboards · Acceso rápido</div>
-      <p style="color:var(--text-secondary);font-size:13px;margin:-4px 0 16px">Abren en una pestaña nueva. En los que piden token, toca <strong style="color:var(--gold)">Copiar token</strong> y pégalo en el acceso. Evaluaciones usa su propia clave.</p>
-      <div class="doc-list">
-        <a href="https://bc-evaluaciones-dashboard.vercel.app" target="_blank" rel="noopener" class="doc-row">
-          <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-chart-radar"></i></div>
-          <div class="doc-info"><div class="doc-name">Evaluaciones de Desempeño</div><div class="doc-meta">Ranking, heatmap de competencias, seguimientos y evolución · Notion en vivo</div></div>
-          <div class="doc-tags"><span class="tag tag-blue">Clave propia</span></div>
-        </a>
-        <a href="https://bc-autoeval-jefe.vercel.app/dashboard" target="_blank" rel="noopener" class="doc-row">
-          <div class="doc-icon" style="background:var(--green-bg);color:var(--green)"><i class="ti ti-chart-line"></i></div>
-          <div class="doc-info"><div class="doc-name">Autoevaluaciones por Puesto</div><div class="doc-meta">Tracking onboarding · 11 puestos · NPS interno, gap autoeval vs jefe</div></div>
-          <div class="doc-tags"><span class="tag tag-green copy-tok" role="button" tabindex="0" data-d="autoeval" style="cursor:pointer">Copiar token</span></div>
-        </a>
-        <a href="https://bc-eval-servicio.vercel.app/dashboard" target="_blank" rel="noopener" class="doc-row">
-          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-clipboard-check"></i></div>
-          <div class="doc-info"><div class="doc-name">Seguimiento de Servicio</div><div class="doc-meta">Evolución de garzones · alertas, tendencias y criterios más fallados</div></div>
-          <div class="doc-tags"><span class="tag tag-gold copy-tok" role="button" tabindex="0" data-d="servicio" style="cursor:pointer">Copiar token</span></div>
-        </a>
-      </div>
-    </section>
-
-    <section class="panel" id="panel-tracker" role="tabpanel" aria-labelledby="tab-tracker">
-      <style>
-        #panel-tracker.panel { padding: 0; }
-        .tt-bar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 24px 10px; flex-wrap:wrap; }
-        .tt-bar .tt-hint { color:var(--text-secondary); font-size:13px; }
-        .tt-open { font-size:13px; color:var(--gold); text-decoration:none; white-space:nowrap; }
-        .tt-open:hover { text-decoration:underline; }
-        .tt-frame-wrap { position:relative; width:100vw; margin-left:calc(50% - 50vw); height:calc(100vh - 165px); min-height:560px; border-top:1px solid var(--border,#2a2a2a); }
-        #tt-frame { width:100%; height:100%; border:0; display:block; background:#0f0f0f; }
-      </style>
-      <div class="tt-bar">
-        <span class="tt-hint">App completa embebida · Inge entra con su PIN una vez y queda recordado en su equipo.</span>
-        <a class="tt-open" href="https://bc-task-tracker-nine.vercel.app" target="_blank" rel="noopener">Abrir en pantalla completa ↗</a>
-      </div>
-      <div class="tt-frame-wrap">
-        <iframe id="tt-frame" title="BC Task Tracker" loading="lazy" src="about:blank" data-src="https://bc-task-tracker-nine.vercel.app"></iframe>
-      </div>
-    </section>
-
-    <section class="panel" id="panel-personas" role="tabpanel" aria-labelledby="tab-personas">
+    <section class="panel" id="panel-reclutamiento" role="tabpanel" aria-labelledby="tab-reclutamiento">
+      <div class="section-title"><i class="ti ti-users" aria-hidden="true"></i> Candidatos en pipeline</div>
       <div class="stat-row" id="stat-row">
         <div class="stat-card"><div class="stat-label">Avance prom.</div><div class="stat-val" id="stat-avance">—</div><div class="stat-sub">Pipeline activo</div></div>
         <div class="stat-card alert"><div class="stat-label">Atascados</div><div class="stat-val" id="stat-atascados">—</div><div class="stat-sub">+14 días, &lt;50%</div></div>
@@ -787,7 +792,6 @@
         <input id="personas-search" type="text" placeholder="Buscar por nombre, cargo o local…" autocomplete="off" spellcheck="false">
       </div>
 
-      <div class="section-title"><i class="ti ti-users" aria-hidden="true"></i> Candidatos en pipeline</div>
       <div class="person-grid" id="person-grid" aria-live="polite">
         <div class="sk-grid">
           <div class="skeleton sk-person"></div>
@@ -797,31 +801,137 @@
         </div>
       </div>
 
-      <div class="section-title"><i class="ti ti-tools" aria-hidden="true"></i> Herramientas de personas</div>
+      
+
+      <div class="section-title"><i class="ti ti-list-check" aria-hidden="true"></i> ATS y difusión</div>
       <div class="doc-list">
-        <a href="https://bc-evaluaciones.vercel.app" target="_blank" rel="noopener" class="doc-row">
-          <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-chart-dots-2"></i></div>
-          <div class="doc-info"><div class="doc-name">Evaluación de Desempeño</div><div class="doc-meta">Por competencias · Uso interno RRHH</div></div>
-          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
+        <a href="index.html" class="doc-row">
+          <div class="doc-icon" style="background:var(--green-bg);color:var(--green)"><i class="ti ti-list-check"></i></div>
+          <div class="doc-info"><div class="doc-name">ATS Recruiting · Pipeline</div><div class="doc-meta">Tracking de candidatos · Notion sync</div></div>
+          <div class="doc-tags"><span class="tag tag-green">Interactivo</span></div>
         </a>
-        <a href="https://bc-evaluacion-pares.vercel.app" target="_blank" rel="noopener" class="doc-row">
-          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-users-group"></i></div>
-          <div class="doc-info"><div class="doc-name">Evaluación entre Pares</div><div class="doc-meta">Feedback 360 anónimo</div></div>
-          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
+      </div>
+
+      <div class="section-title" id="seccion-publicaciones-activas"><i class="ti ti-speakerphone" aria-hidden="true"></i> Publicaciones activas · Para difundir</div>
+      <div class="doc-list">
+        <a href="BC_Publicacion_JefeLocal.html" class="doc-row pub-row" data-search="jefe local jornada completa">
+          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
+          <div class="doc-info"><div class="doc-name">Jefe/a de Local</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
         </a>
+        <a href="BC_Publicacion_SubJefeLocal.html" class="doc-row pub-row" data-search="sub jefe local jornada completa">
+          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
+          <div class="doc-info"><div class="doc-name">Sub Jefe/a de Local</div><div class="doc-meta">42 hrs · 5×2</div></div>
+        </a>
+        <a href="BC_Publicacion_Coordinador.html" class="doc-row pub-row" data-search="supervisor operaciones jornada completa">
+          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
+          <div class="doc-info"><div class="doc-name">Supervisor/a de Operaciones</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
+          <div class="doc-tags"><span class="tag tag-gold">Nuevo</span></div>
+        </a>
+        <a href="BC_Publicacion_Administrador.html" class="doc-row pub-row" data-search="administrador locales jornada completa">
+          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
+          <div class="doc-info"><div class="doc-name">Administrador/a de Locales</div><div class="doc-meta">45 hrs · Lunes a Viernes</div></div>
+          <div class="doc-tags"><span class="tag tag-gold">Nuevo</span></div>
+        </a>
+        <a href="BC_Publicacion_GerenteRRHH.html" class="doc-row pub-row" data-search="gerente recursos humanos rrhh jornada completa">
+          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
+          <div class="doc-info"><div class="doc-name">Gerente de Recursos Humanos</div><div class="doc-meta">Jornada completa · Presencial + flexibilidad</div></div>
+          <div class="doc-tags"><span class="tag tag-gold">Nuevo</span></div>
+        </a>
+        <a href="BC_Publicacion_ChefPartie.html" class="doc-row pub-row" data-search="chef partie cocina jornada completa">
+          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
+          <div class="doc-info"><div class="doc-name">Chef de Partie</div><div class="doc-meta">45 hrs · Rotativo 5×2</div></div>
+          <div class="doc-tags"><span class="tag tag-gold">Nuevo</span></div>
+        </a>
+        <a href="BC_Publicacion_JefeCocina.html" class="doc-row pub-row" data-search="jefe cocina jornada completa">
+          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
+          <div class="doc-info"><div class="doc-name">Jefe/a de Cocina</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
+        </a>
+        <a href="BC_Publicacion_SousChef.html" class="doc-row pub-row" data-search="sous chef jornada completa">
+          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
+          <div class="doc-info"><div class="doc-name">Sous Chef</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
+        </a>
+        <a href="BC_Publicacion_JefeServicio.html" class="doc-row pub-row" data-search="jefe servicio jornada completa">
+          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
+          <div class="doc-info"><div class="doc-name">Jefe/a de Servicio</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
+        </a>
+        <a href="BC_Publicacion_Cocineros.html" class="doc-row pub-row" data-search="cocinero jornada completa">
+          <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-speakerphone"></i></div>
+          <div class="doc-info"><div class="doc-name">Cocinero/a</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
+        </a>
+        <a href="BC_Publicacion_Garzon_Entrenador.html" class="doc-row pub-row" data-search="garzón entrenador jornada completa">
+          <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-speakerphone"></i></div>
+          <div class="doc-info"><div class="doc-name">Garzón/a Entrenador/a</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
+        </a>
+        <a href="BC_Publicacion_Garzon_FullTime.html" class="doc-row pub-row" data-search="garzón full time jornada completa">
+          <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-speakerphone"></i></div>
+          <div class="doc-info"><div class="doc-name">Garzón/a Full Time</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
+        </a>
+        <a href="BC_Publicacion_Garzon_PartTime.html" class="doc-row pub-row" data-search="garzón part time">
+          <div class="doc-icon" style="background:var(--amber-bg);color:var(--amber)"><i class="ti ti-clock"></i></div>
+          <div class="doc-info"><div class="doc-name">Garzón/a Part Time</div><div class="doc-meta">20 hrs · L–V 12:00–16:30</div></div>
+          <div class="doc-tags"><span class="tag tag-amber">Part time</span></div>
+        </a>
+        <a href="BC_Publicacion_Copero.html" class="doc-row pub-row" data-search="copero jornada completa">
+          <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-speakerphone"></i></div>
+          <div class="doc-info"><div class="doc-name">Copero/a</div><div class="doc-meta">42 hrs · L–V 12:00–20:30</div></div>
+        </a>
+      </div>
+
+      <div class="section-title"><i class="ti ti-id-badge-2" aria-hidden="true"></i> Descriptores de cargo</div>
+      <div class="doc-list">
+        <a href="BC_Descriptor_Entrenadora.html" class="doc-row" data-search="garzón garzona entrenadora sala formativa onboarding">
+          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-id-badge-2"></i></div>
+          <div class="doc-info"><div class="doc-name">Garzón/a con Mención Entrenadora</div><div class="doc-meta">Operación + función formativa</div></div>
+        </a>
+        <a href="BC_Descriptor_CapitanGarzon.html" class="doc-row" data-search="capitán garzón servicio supervisión atención">
+          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-id-badge-2"></i></div>
+          <div class="doc-info"><div class="doc-name">Capitán Garzón</div><div class="doc-meta">Responsable equipo de servicio</div></div>
+        </a>
+      </div>
+
+      <div class="section-title" id="seccion-cartas"><i class="ti ti-mail-forward" aria-hidden="true"></i> Cartas de oferta · Privadas</div>
+      <div class="doc-list">
+        <a href="#" data-gate="BC_CartaOferta_JefeLocal.html" class="doc-row gated-item carta-locked" data-search="carta oferta jefe local">
+          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-file-certificate"></i></div>
+          <div class="doc-info"><div class="doc-name">Carta Oferta · Jefe/a de Local</div><div class="doc-meta">Solo post entrevista</div></div>
+        </a>
+        <a href="#" data-gate="BC_CartaOferta_JefeGarzones.html" class="doc-row gated-item carta-locked" data-search="carta oferta jefe garzones servicio sala">
+          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-file-certificate"></i></div>
+          <div class="doc-info"><div class="doc-name">Carta Oferta · Jefe/a de Garzones</div><div class="doc-meta">Solo post entrevista</div></div>
+        </a>
+        <a href="#" data-gate="BC_CartaOferta_SubJefe.html" class="doc-row gated-item carta-locked" data-search="carta oferta sub jefe">
+          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-file-certificate"></i></div>
+          <div class="doc-info"><div class="doc-name">Carta Oferta · Sub Jefe/a</div><div class="doc-meta">Solo post entrevista</div></div>
+        </a>
+        <a href="#" data-gate="BC_CartaOferta_JefeCocina.html" class="doc-row gated-item carta-locked" data-search="carta oferta jefe cocina">
+          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-file-certificate"></i></div>
+          <div class="doc-info"><div class="doc-name">Carta Oferta · Jefe/a de Cocina</div><div class="doc-meta">Solo post entrevista</div></div>
+        </a>
+        <a href="#" data-gate="BC_CartaOferta_SousChef.html" class="doc-row gated-item carta-locked" data-search="carta oferta sous chef">
+          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-file-certificate"></i></div>
+          <div class="doc-info"><div class="doc-name">Carta Oferta · Sous Chef</div><div class="doc-meta">Solo post entrevista</div></div>
+        </a>
+        <a href="#" data-gate="BC_CartaOferta_Cocinero.html" class="doc-row gated-item carta-locked" data-search="carta oferta cocinero">
+          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-file-certificate"></i></div>
+          <div class="doc-info"><div class="doc-name">Carta Oferta · Cocinero/a</div><div class="doc-meta">Solo post entrevista</div></div>
+        </a>
+        <a href="#" data-gate="BlackChicken_Oferta_Garzon_FT.html" class="doc-row gated-item carta-locked" data-search="carta oferta garzón full time">
+          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-file-certificate"></i></div>
+          <div class="doc-info"><div class="doc-name">Carta Oferta · Garzón/a Full Time</div><div class="doc-meta">Jornada 5×2</div></div>
+        </a>
+        <a href="#" data-gate="BC_CartaOferta_Copero.html" class="doc-row gated-item carta-locked" data-search="carta oferta copero">
+          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-file-certificate"></i></div>
+          <div class="doc-info"><div class="doc-name">Carta Oferta · Copero/a</div><div class="doc-meta">L–V 12:00–20:30</div></div>
+        </a>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-onboarding" role="tabpanel" aria-labelledby="tab-onboarding">
+      <div class="section-title"><i class="ti ti-rocket" aria-hidden="true"></i> Inducción y capacitación</div>
+      <div class="doc-list">
         <a href="https://bc-onboarding-bice.vercel.app" target="_blank" rel="noopener" class="doc-row">
           <div class="doc-icon" style="background:var(--green-bg);color:var(--green)"><i class="ti ti-rocket"></i></div>
           <div class="doc-info"><div class="doc-name">Onboarding BlackChicken</div><div class="doc-meta">Portal de bienvenida · Todo el equipo</div></div>
-          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
-        </a>
-        <a href="https://bc-organigrama.vercel.app" target="_blank" rel="noopener" class="doc-row">
-          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-sitemap"></i></div>
-          <div class="doc-info"><div class="doc-name">Organigrama Black Chicken</div><div class="doc-meta">Editable · Dirección, Gestión, Jefaturas</div></div>
-          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
-        </a>
-        <a href="https://bc-escalas-salariales.vercel.app" target="_blank" rel="noopener" class="doc-row">
-          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-coin"></i></div>
-          <div class="doc-info"><div class="doc-name">Escalas Salariales BC</div><div class="doc-meta">Renta líquida, propinas y bono KPI por cargo · Editable con historial · PIN</div></div>
           <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
         <a href="https://bc-autoeval-jefe.vercel.app" target="_blank" rel="noopener" class="doc-row">
@@ -829,9 +939,9 @@
           <div class="doc-info"><div class="doc-name">Autoevaluación · Jefe de Local</div><div class="doc-meta">Onboarding · 113 ítems · 10 secciones · score + plan de acción</div></div>
           <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
-        <a href="https://bc-autoeval-jefe.vercel.app" target="_blank" rel="noopener" class="doc-row">
-          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-user-check"></i></div>
-          <div class="doc-info"><div class="doc-name">Eval. del jefe · Jefe de Local</div><div class="doc-meta">Mirada del jefe directo · vincula con autoeval del operador</div></div>
+        <a href="https://bc-autoeval-subjefe.vercel.app" target="_blank" rel="noopener" class="doc-row">
+          <div class="doc-icon" style="background:var(--green-bg);color:var(--green)"><i class="ti ti-clipboard-check"></i></div>
+          <div class="doc-info"><div class="doc-name">Autoevaluación · Sub Jefe de Local</div><div class="doc-meta">Onboarding · 113 ítems · 10 secciones · score + plan de acción</div></div>
           <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
         <a href="https://bc-autoeval-cocinero.vercel.app" target="_blank" rel="noopener" class="doc-row">
@@ -839,36 +949,31 @@
           <div class="doc-info"><div class="doc-name">Autoevaluación · Cocinero/a</div><div class="doc-meta">Onboarding cocina · 91 ítems · 8 secciones (proteínas, salsas, equipos)</div></div>
           <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
-        <a href="https://bc-autoeval-cocinero.vercel.app" target="_blank" rel="noopener" class="doc-row">
-          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-chef-hat"></i></div>
-          <div class="doc-info"><div class="doc-name">Eval. del jefe · Cocinero/a</div><div class="doc-meta">Mirada del sous chef · vincula con autoeval del cocinero</div></div>
-          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
-        </a>
-        <a href="https://bc-autoeval-subjefe.vercel.app" target="_blank" rel="noopener" class="doc-row">
-          <div class="doc-icon" style="background:var(--green-bg);color:var(--green)"><i class="ti ti-clipboard-check"></i></div>
-          <div class="doc-info"><div class="doc-name">Autoevaluación · Sub Jefe de Local</div><div class="doc-meta">Onboarding · 113 ítems · 10 secciones · score + plan de acción</div></div>
-          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
-        </a>
-        <a href="https://bc-autoeval-subjefe.vercel.app" target="_blank" rel="noopener" class="doc-row">
-          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-user-check"></i></div>
-          <div class="doc-info"><div class="doc-name">Eval. del jefe · Sub Jefe de Local</div><div class="doc-meta">Mirada del jefe directo · vincula con autoeval del operador</div></div>
-          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
+      </div>
+
+      <div class="section-title"><i class="ti ti-chart-line" aria-hidden="true"></i> Seguimiento de onboarding</div>
+      <div class="doc-list">
+        <a href="https://bc-autoeval-jefe.vercel.app/dashboard" target="_blank" rel="noopener" class="doc-row">
+          <div class="doc-icon" style="background:var(--green-bg);color:var(--green)"><i class="ti ti-chart-line"></i></div>
+          <div class="doc-info"><div class="doc-name">Autoevaluaciones por Puesto</div><div class="doc-meta">Tracking onboarding · 11 puestos · NPS interno, gap autoeval vs jefe</div></div>
+          <div class="doc-tags"><span class="tag tag-green copy-tok" role="button" tabindex="0" data-d="autoeval" style="cursor:pointer">Copiar token</span></div>
         </a>
       </div>
     </section>
 
-    <section class="panel" id="panel-herramientas" role="tabpanel" aria-labelledby="tab-herramientas">
-      <div class="section-title"><i class="ti ti-tools" aria-hidden="true"></i> Flujos operativos</div>
+    <section class="panel" id="panel-administracion" role="tabpanel" aria-labelledby="tab-administracion">
+      <div class="search-box">
+        <i class="ti ti-search" aria-hidden="true"></i>
+        <label for="docs-search" class="sr-only">Buscar documento</label>
+        <input id="docs-search" type="text" placeholder="Buscar documento…" autocomplete="off" spellcheck="false">
+      </div>
+
+      <div class="section-title"><i class="ti ti-users-group" aria-hidden="true"></i> Gestión de personal</div>
       <div class="doc-list">
-        <a href="https://bc-task-tracker-nine.vercel.app" target="_blank" rel="noopener" class="doc-row">
-          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-list-check"></i></div>
-          <div class="doc-info"><div class="doc-name">Task Tracker</div><div class="doc-meta">Tareas del equipo · Inge entra con su PIN (queda recordado en su equipo)</div></div>
-          <div class="doc-tags"><span class="tag tag-gold">Directo</span></div>
-        </a>
-        <a href="index.html" class="doc-row">
-          <div class="doc-icon" style="background:var(--green-bg);color:var(--green)"><i class="ti ti-list-check"></i></div>
-          <div class="doc-info"><div class="doc-name">ATS Recruiting · Pipeline</div><div class="doc-meta">Tracking de candidatos · Notion sync</div></div>
-          <div class="doc-tags"><span class="tag tag-green">Interactivo</span></div>
+        <a href="https://bc-organigrama.vercel.app" target="_blank" rel="noopener" class="doc-row">
+          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-sitemap"></i></div>
+          <div class="doc-info"><div class="doc-name">Organigrama Black Chicken</div><div class="doc-meta">Editable · Dirección, Gestión, Jefaturas</div></div>
+          <div class="doc-tags"><span class="tag tag-gold">Editable</span></div>
         </a>
         <a href="#" data-gate="BC_HR_Dashboard.html" class="doc-row gated-item" data-release="2026-04-15">
           <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-chart-bar"></i></div>
@@ -890,23 +995,24 @@
           <div class="doc-info"><div class="doc-name">Checklist Offboarding <i class="ti ti-lock lock-icon" aria-label="Acceso restringido"></i></div><div class="doc-meta">16 pasos: accesos, equipamiento, finiquito</div></div>
           <div class="doc-tags"><span class="tag tag-gold">Interactivo</span></div>
         </a>
+        <a href="https://bc-turnos.vercel.app" target="_blank" rel="noopener" class="doc-row">
+          <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-calendar-time"></i></div>
+          <div class="doc-info"><div class="doc-name">App de Turnos</div><div class="doc-meta">Planificación de turnos por local · salón y cocina</div></div>
+          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
+        </a>
+      </div>
+
+      <div class="section-title"><i class="ti ti-coin" aria-hidden="true"></i> Remuneraciones y documentos</div>
+      <div class="doc-list">
+        <a href="https://bc-escalas-salariales.vercel.app" target="_blank" rel="noopener" class="doc-row">
+          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-coin"></i></div>
+          <div class="doc-info"><div class="doc-name">Escalas Salariales BC</div><div class="doc-meta">Renta líquida, propinas y bono KPI por cargo · Editable con historial · PIN</div></div>
+          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
+        </a>
         <a href="#" data-gate="BC_HR_Templates.html" class="doc-row gated-item">
           <div class="doc-icon" style="background:var(--green-bg);color:var(--green)"><i class="ti ti-file-text"></i></div>
           <div class="doc-info"><div class="doc-name">Biblioteca de Templates <i class="ti ti-lock lock-icon" aria-label="Acceso restringido"></i></div><div class="doc-meta">Amonestaciones, felicitaciones, certificados · 12 docs</div></div>
         </a>
-        <a href="https://bc-organigrama.vercel.app" target="_blank" rel="noopener" class="doc-row">
-          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-sitemap"></i></div>
-          <div class="doc-info"><div class="doc-name">Organigrama Black Chicken</div><div class="doc-meta">Editable · Dirección, Gestión, Jefaturas</div></div>
-          <div class="doc-tags"><span class="tag tag-gold">Editable</span></div>
-        </a>
-      </div>
-    </section>
-
-    <section class="panel" id="panel-documentos" role="tabpanel" aria-labelledby="tab-documentos">
-      <div class="search-box">
-        <i class="ti ti-search" aria-hidden="true"></i>
-        <label for="docs-search" class="sr-only">Buscar documento</label>
-        <input id="docs-search" type="text" placeholder="Buscar documento…" autocomplete="off" spellcheck="false">
       </div>
 
       <div class="section-title"><i class="ti ti-brain" aria-hidden="true"></i> HR Brain · Base de conocimiento</div>
@@ -952,130 +1058,92 @@
           <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
       </div>
+    </section>
 
-      <div class="section-title"><i class="ti ti-id-badge-2" aria-hidden="true"></i> Descriptores de cargo</div>
+    <section class="panel" id="panel-desempeno" role="tabpanel" aria-labelledby="tab-desempeno">
+      <div class="section-title"><i class="ti ti-chart-dots-2" aria-hidden="true"></i> Evaluación</div>
       <div class="doc-list">
-        <a href="BC_Descriptor_Entrenadora.html" class="doc-row" data-search="garzón garzona entrenadora sala formativa onboarding">
-          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-id-badge-2"></i></div>
-          <div class="doc-info"><div class="doc-name">Garzón/a con Mención Entrenadora</div><div class="doc-meta">Operación + función formativa</div></div>
+        <a href="https://bc-evaluaciones.vercel.app" target="_blank" rel="noopener" class="doc-row">
+          <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-chart-dots-2"></i></div>
+          <div class="doc-info"><div class="doc-name">Evaluación de Desempeño</div><div class="doc-meta">Por competencias · Uso interno RRHH</div></div>
+          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
         </a>
-        <a href="BC_Descriptor_CapitanGarzon.html" class="doc-row" data-search="capitán garzón servicio supervisión atención">
-          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-id-badge-2"></i></div>
-          <div class="doc-info"><div class="doc-name">Capitán Garzón</div><div class="doc-meta">Responsable equipo de servicio</div></div>
+        <a href="https://bc-evaluacion-pares.vercel.app" target="_blank" rel="noopener" class="doc-row">
+          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-users-group"></i></div>
+          <div class="doc-info"><div class="doc-name">Evaluación entre Pares</div><div class="doc-meta">Feedback 360 anónimo</div></div>
+          <span class="doc-arrow"><i class="ti ti-arrow-up-right"></i></span>
+        </a>
+      </div>
+
+      <div class="section-title"><i class="ti ti-chart-line" aria-hidden="true"></i> Dashboards de desempeño</div>
+      <div class="doc-list">
+        <a href="https://bc-evaluaciones-dashboard.vercel.app" target="_blank" rel="noopener" class="doc-row">
+          <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-chart-radar"></i></div>
+          <div class="doc-info"><div class="doc-name">Evaluaciones de Desempeño</div><div class="doc-meta">Ranking, heatmap de competencias, seguimientos y evolución · Notion en vivo</div></div>
+          <div class="doc-tags"><span class="tag tag-blue">Clave propia</span></div>
+        </a>
+        <a href="https://bc-eval-servicio.vercel.app/dashboard" target="_blank" rel="noopener" class="doc-row">
+          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-clipboard-check"></i></div>
+          <div class="doc-info"><div class="doc-name">Seguimiento de Servicio</div><div class="doc-meta">Evolución de garzones · alertas, tendencias y criterios más fallados</div></div>
+          <div class="doc-tags"><span class="tag tag-gold copy-tok" role="button" tabindex="0" data-d="servicio" style="cursor:pointer">Copiar token</span></div>
         </a>
       </div>
     </section>
 
-    <section class="panel" id="panel-publicaciones" role="tabpanel" aria-labelledby="tab-publicaciones">
-      <div class="section-title" id="seccion-publicaciones-activas"><i class="ti ti-speakerphone" aria-hidden="true"></i> Publicaciones activas · Para difundir</div>
+    <section class="panel" id="panel-clima" role="tabpanel" aria-labelledby="tab-clima">
+      <div class="section-title"><i class="ti ti-heart" aria-hidden="true"></i> Pulso de Clima mensual</div>
       <div class="doc-list">
-        <a href="BC_Publicacion_JefeLocal.html" class="doc-row pub-row" data-search="jefe local jornada completa">
-          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
-          <div class="doc-info"><div class="doc-name">Jefe/a de Local</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
+        <a href="https://bc-clima.vercel.app" target="_blank" rel="noopener" class="doc-row">
+          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-mood-smile"></i></div>
+          <div class="doc-info"><div class="doc-name">Pulso de Clima · Formulario</div><div class="doc-meta">Anónimo · 90 seg · 6 preguntas + abierta · link/QR para el equipo</div></div>
+          <div class="doc-tags"><span class="tag tag-purple">Anónimo</span></div>
         </a>
-        <a href="BC_Publicacion_SubJefeLocal.html" class="doc-row pub-row" data-search="sub jefe local jornada completa">
-          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
-          <div class="doc-info"><div class="doc-name">Sub Jefe/a de Local</div><div class="doc-meta">42 hrs · 5×2</div></div>
+        <a href="https://bc-clima.vercel.app/dashboard" target="_blank" rel="noopener" class="doc-row">
+          <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-chart-bar"></i></div>
+          <div class="doc-info"><div class="doc-name">Dashboard de Clima</div><div class="doc-meta">Resultados por local y área · tendencia mensual · % respuesta · token</div></div>
+          <div class="doc-tags"><span class="tag tag-blue">Token</span></div>
         </a>
-        <a href="BC_Publicacion_Coordinador.html" class="doc-row pub-row" data-search="supervisor operaciones jornada completa">
-          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
-          <div class="doc-info"><div class="doc-name">Supervisor/a de Operaciones</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
-          <div class="doc-tags"><span class="tag tag-gold">Nuevo</span></div>
-        </a>
+      </div>
+    </section>
 
-        <a href="BC_Publicacion_Administrador.html" class="doc-row pub-row" data-search="administrador locales jornada completa">
-          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
-          <div class="doc-info"><div class="doc-name">Administrador/a de Locales</div><div class="doc-meta">45 hrs · Lunes a Viernes</div></div>
-          <div class="doc-tags"><span class="tag tag-gold">Nuevo</span></div>
-        </a>
-
-        <a href="BC_Publicacion_GerenteRRHH.html" class="doc-row pub-row" data-search="gerente recursos humanos rrhh jornada completa">
-          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
-          <div class="doc-info"><div class="doc-name">Gerente de Recursos Humanos</div><div class="doc-meta">Jornada completa · Presencial + flexibilidad</div></div>
-          <div class="doc-tags"><span class="tag tag-gold">Nuevo</span></div>
-        </a>
-
-        <a href="BC_Publicacion_ChefPartie.html" class="doc-row pub-row" data-search="chef partie cocina jornada completa">
-          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
-          <div class="doc-info"><div class="doc-name">Chef de Partie</div><div class="doc-meta">45 hrs · Rotativo 5×2</div></div>
-          <div class="doc-tags"><span class="tag tag-gold">Nuevo</span></div>
-        </a>
-
-        <a href="BC_Publicacion_JefeCocina.html" class="doc-row pub-row" data-search="jefe cocina jornada completa">
-          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
-          <div class="doc-info"><div class="doc-name">Jefe/a de Cocina</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
-        </a>
-        <a href="BC_Publicacion_SousChef.html" class="doc-row pub-row" data-search="sous chef jornada completa">
-          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
-          <div class="doc-info"><div class="doc-name">Sous Chef</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
-        </a>
-        <a href="BC_Publicacion_JefeServicio.html" class="doc-row pub-row" data-search="jefe servicio jornada completa">
-          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-speakerphone"></i></div>
-          <div class="doc-info"><div class="doc-name">Jefe/a de Servicio</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
-        </a>
-        <a href="BC_Publicacion_Cocineros.html" class="doc-row pub-row" data-search="cocinero jornada completa">
-          <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-speakerphone"></i></div>
-          <div class="doc-info"><div class="doc-name">Cocinero/a</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
-        </a>
-        <a href="BC_Publicacion_Garzon_Entrenador.html" class="doc-row pub-row" data-search="garzón entrenador jornada completa">
-          <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-speakerphone"></i></div>
-          <div class="doc-info"><div class="doc-name">Garzón/a Entrenador/a</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
-        </a>
-        <a href="BC_Publicacion_Garzon_FullTime.html" class="doc-row pub-row" data-search="garzón full time jornada completa">
-          <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-speakerphone"></i></div>
-          <div class="doc-info"><div class="doc-name">Garzón/a Full Time</div><div class="doc-meta">42 hrs · Rotativo 5×2</div></div>
-        </a>
-        <a href="BC_Publicacion_Garzon_PartTime.html" class="doc-row pub-row" data-search="garzón part time">
-          <div class="doc-icon" style="background:var(--amber-bg);color:var(--amber)"><i class="ti ti-clock"></i></div>
-          <div class="doc-info"><div class="doc-name">Garzón/a Part Time</div><div class="doc-meta">20 hrs · L–V 12:00–16:30</div></div>
-          <div class="doc-tags"><span class="tag tag-amber">Part time</span></div>
-        </a>
-        <a href="BC_Publicacion_Copero.html" class="doc-row pub-row" data-search="copero jornada completa">
-          <div class="doc-icon" style="background:var(--blue-bg);color:var(--blue)"><i class="ti ti-speakerphone"></i></div>
-          <div class="doc-info"><div class="doc-name">Copero/a</div><div class="doc-meta">42 hrs · L–V 12:00–20:30</div></div>
+    <section class="panel" id="panel-legal" role="tabpanel" aria-labelledby="tab-legal">
+      <div class="section-title"><i class="ti ti-gavel" aria-hidden="true"></i> Cumplimiento legal laboral</div>
+      <div class="doc-list">
+        <a href="#" data-gate="BC_HR_Templates.html" class="doc-row gated-item">
+          <div class="doc-icon" style="background:var(--green-bg);color:var(--green)"><i class="ti ti-file-text"></i></div>
+          <div class="doc-info"><div class="doc-name">Biblioteca de Templates <i class="ti ti-lock lock-icon" aria-label="Acceso restringido"></i></div><div class="doc-meta">Amonestaciones, felicitaciones, certificados · 12 docs</div></div>
         </a>
       </div>
 
-      <div class="section-title" id="seccion-cartas"><i class="ti ti-mail-forward" aria-hidden="true"></i> Cartas de oferta · Privadas</div>
-      <div class="doc-list">
-        <a href="#" data-gate="BC_CartaOferta_JefeLocal.html" class="doc-row gated-item carta-locked" data-search="carta oferta jefe local">
-          <div class="doc-icon" style="background:var(--purple-bg);color:var(--purple)"><i class="ti ti-file-certificate"></i></div>
-          <div class="doc-info"><div class="doc-name">Carta Oferta · Jefe/a de Local</div><div class="doc-meta">Solo post entrevista</div></div>
-        </a>
-        <a href="#" data-gate="BC_CartaOferta_JefeGarzones.html" class="doc-row gated-item carta-locked" data-search="carta oferta jefe garzones servicio sala">
-          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-file-certificate"></i></div>
-          <div class="doc-info"><div class="doc-name">Carta Oferta · Jefe/a de Garzones</div><div class="doc-meta">Solo post entrevista</div></div>
-        </a>
-        <a href="#" data-gate="BC_CartaOferta_SubJefe.html" class="doc-row gated-item carta-locked" data-search="carta oferta sub jefe">
-          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-file-certificate"></i></div>
-          <div class="doc-info"><div class="doc-name">Carta Oferta · Sub Jefe/a</div><div class="doc-meta">Solo post entrevista</div></div>
-        </a>
-        <a href="#" data-gate="BC_CartaOferta_JefeCocina.html" class="doc-row gated-item carta-locked" data-search="carta oferta jefe cocina">
-          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-file-certificate"></i></div>
-          <div class="doc-info"><div class="doc-name">Carta Oferta · Jefe/a de Cocina</div><div class="doc-meta">Solo post entrevista</div></div>
-        </a>
-        <a href="#" data-gate="BC_CartaOferta_SousChef.html" class="doc-row gated-item carta-locked" data-search="carta oferta sous chef">
-          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-file-certificate"></i></div>
-          <div class="doc-info"><div class="doc-name">Carta Oferta · Sous Chef</div><div class="doc-meta">Solo post entrevista</div></div>
-        </a>
-        <a href="#" data-gate="BC_CartaOferta_Cocinero.html" class="doc-row gated-item carta-locked" data-search="carta oferta cocinero">
-          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-file-certificate"></i></div>
-          <div class="doc-info"><div class="doc-name">Carta Oferta · Cocinero/a</div><div class="doc-meta">Solo post entrevista</div></div>
-        </a>
-        <a href="#" data-gate="BlackChicken_Oferta_Garzon_FT.html" class="doc-row gated-item carta-locked" data-search="carta oferta garzón full time">
-          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-file-certificate"></i></div>
-          <div class="doc-info"><div class="doc-name">Carta Oferta · Garzón/a Full Time</div><div class="doc-meta">Jornada 5×2</div></div>
-        </a>
-        <a href="#" data-gate="BC_CartaOferta_Copero.html" class="doc-row gated-item carta-locked" data-search="carta oferta copero">
-          <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-file-certificate"></i></div>
-          <div class="doc-info"><div class="doc-name">Carta Oferta · Copero/a</div><div class="doc-meta">L–V 12:00–20:30</div></div>
-        </a>
+      <div class="empty-state">
+        <i class="ti ti-shield-check" aria-hidden="true"></i>
+        <h4>En construcción</h4>
+        <p>Acceso a BPM/SEREMI y carpeta de documentación ante fiscalizaciones. Próximamente.</p>
+      </div>
+    </section>
+
+<section class="panel" id="panel-tracker" role="tabpanel" aria-labelledby="tab-tracker">
+      <style>
+        #panel-tracker.panel { padding: 0; }
+        .tt-bar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 24px 10px; flex-wrap:wrap; }
+        .tt-bar .tt-hint { color:var(--text-secondary); font-size:13px; }
+        .tt-open { font-size:13px; color:var(--gold); text-decoration:none; white-space:nowrap; }
+        .tt-open:hover { text-decoration:underline; }
+        .tt-frame-wrap { position:relative; width:100vw; margin-left:calc(50% - 50vw); height:calc(100vh - 165px); min-height:560px; border-top:1px solid var(--border,#2a2a2a); }
+        #tt-frame { width:100%; height:100%; border:0; display:block; background:#0f0f0f; }
+      </style>
+      <div class="tt-bar">
+        <span class="tt-hint">App completa embebida · Inge entra con su PIN una vez y queda recordado en su equipo.</span>
+        <a class="tt-open" href="https://bc-task-tracker-nine.vercel.app" target="_blank" rel="noopener">Abrir en pantalla completa ↗</a>
+      </div>
+      <div class="tt-frame-wrap">
+        <iframe id="tt-frame" title="BC Task Tracker" loading="lazy" src="about:blank" data-src="https://bc-task-tracker-nine.vercel.app"></iframe>
       </div>
     </section>
 
   </div>
 
-  <footer>Black Chicken · Hub de HR v3.5 · Uso exclusivo interno</footer>
+  <footer>Black Chicken · Hub de HR v3.7 · Uso exclusivo interno</footer>
 
   <div class="fav-modal" id="fav-modal" role="dialog" aria-modal="true" aria-label="Editar acciones rápidas">
     <div class="fav-card">
@@ -1108,7 +1176,7 @@
           <span><kbd>↵</kbd> abrir</span>
           <span><kbd>esc</kbd> cerrar</span>
         </div>
-        <span id="cmd-title">Hub HR · v3.5</span>
+        <span id="cmd-title">Hub HR · v3.7</span>
       </div>
     </div>
   </div>
@@ -1137,7 +1205,7 @@
     'use strict';
 
     var STORAGE = { THEME: 'bc_hub_theme', AUTH: 'bc_rrhh_auth' };
-    var VALID_TABS = ['inicio','dashboards','tracker','personas','herramientas','documentos','publicaciones'];
+    var VALID_TABS = ['inicio','reclutamiento','onboarding','administracion','desempeno','clima','legal','tracker'];
     var NEW_TAG_DAYS = 14;
 
     /* Auth migration — v2 keys → v3 unified key. Cero re-login para usuarios existentes. */
@@ -1252,8 +1320,8 @@
     var FAV_CATALOG = [
       { group: 'Reclutamiento', items: [
         { id: 'ats',         title: 'ATS Recruiting',          sub: 'Pipeline de candidatos',  icon: 'user-plus',      color: 'ac-green',  href: 'index.html' },
-        { id: 'publicar',    title: 'Publicar cargo',          sub: 'Jornada o part time',     icon: 'speakerphone',   color: 'ac-purple', jump: 'publicaciones' },
-        { id: 'cartas',      title: 'Cartas de oferta',        sub: 'Post entrevista',         icon: 'send',           color: 'ac-gold',   jump: 'publicaciones', jumpSection: 'cartas' },
+        { id: 'publicar',    title: 'Publicar cargo',          sub: 'Jornada o part time',     icon: 'speakerphone',   color: 'ac-purple', jump: 'reclutamiento' },
+        { id: 'cartas',      title: 'Cartas de oferta',        sub: 'Post entrevista',         icon: 'send',           color: 'ac-gold',   jump: 'reclutamiento', jumpSection: 'cartas' },
         { id: 'onboarding',  title: 'Onboarding BlackChicken', sub: 'Portal de bienvenida',    icon: 'rocket',         color: 'ac-green',  ext: 'https://bc-onboarding-bice.vercel.app' }
       ]},
       { group: 'Dashboards', items: [
@@ -1403,7 +1471,7 @@
     /* Notion data */
     var _procesos = [];
     function jumpToPersona(id) {
-      setTab('personas');
+      setTab('reclutamiento');
       setTimeout(function () {
         var card = qs('.person-card[data-id="' + id + '"]');
         if (card) {
@@ -1449,36 +1517,28 @@
       return b;
     }
 
-    function renderTodayStrip(procs) {
+    // HOY: solo cumpleaños de colaboradores + acceso a tareas del Task Tracker.
+    // Cumpleaños: window.BC_BIRTHDAYS = [{ nombre:'...', fecha:'YYYY-MM-DD' | 'MM-DD' }]
+    // (se conecta a la planilla de colaboradores; sin data no muestra cumpleaños)
+    function renderTodayStrip() {
       var el = qs('#today-items'); if (!el) return;
       el.innerHTML = '';
       var added = 0;
-      procs.filter(function (p) { return p.avance >= 70; }).slice(0, 2).forEach(function (p) {
-        var firstName = (p.candidato || '').split(' ')[0] || '—';
-        el.appendChild(chip(firstName + ' · ' + p.avance + '% avance', 'dot-ok', function () {
-          jumpToPersona(p.id || p.candidato);
-        }));
-        added++;
+      var bdays = Array.isArray(window.BC_BIRTHDAYS) ? window.BC_BIRTHDAYS : [];
+      var now = new Date();
+      var todayMD = ('0' + (now.getMonth() + 1)).slice(-2) + '-' + ('0' + now.getDate()).slice(-2);
+      bdays.forEach(function (b) {
+        var f = (b.fecha || '').trim();
+        var md = f.length >= 5 ? f.slice(-5) : '';
+        if (md && md === todayMD) {
+          var nombre = (b.nombre || '').split(' ')[0] || 'Colaborador/a';
+          el.appendChild(chip('🎂 ' + nombre + ' cumple hoy', 'dot-new', function () { setTab('administracion'); }));
+          added++;
+        }
       });
-      var weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
-      procs.filter(function (p) { return p.fechaInicio && new Date(p.fechaInicio) >= weekAgo; }).slice(0, 2).forEach(function (p) {
-        var firstName = (p.candidato || '').split(' ')[0] || '—';
-        el.appendChild(chip(firstName + ' · Nuevo ATS', 'dot-new', function () {
-          jumpToPersona(p.id || p.candidato);
-        }));
-        added++;
-      });
-      var enCapt = procs.filter(function (p) { return p.fase === 'F1 Captación'; }).length;
-      if (enCapt > 0) {
-        el.appendChild(chip(enCapt + ' en captación · pendientes', 'dot-warn', function () { setTab('personas'); }));
-        added++;
-      }
-      if (procs.length > 0) {
-        el.appendChild(chip(procs.length + ' procesos activos', 'dot-info', function () { setTab('personas'); }));
-        added++;
-      }
+      el.appendChild(chip('✅ Tareas del equipo · Task Tracker', 'dot-info', function () { setTab('tracker'); }));
       if (added === 0) {
-        el.appendChild(chip('Sin alertas pendientes · todo al día', 'dot-ok', function () { setTab('personas'); }));
+        el.insertBefore(chip('Sin cumpleaños hoy', 'dot-ok', function () { setTab('administracion'); }), el.firstChild);
       }
     }
 
@@ -1904,6 +1964,193 @@
       if (j) load();
     });
     if (new URLSearchParams(location.search).get('tab') === 'tracker') load();
+  })();
+  </script>
+
+  <!-- Editor de Hub (por usuario) -->
+  <button type="button" class="hx-fab" id="hx-fab"><i class="ti ti-pencil" aria-hidden="true"></i> <span id="hx-fab-label">Editar Hub</span></button>
+  <div class="hx-bar" id="hx-bar">
+    <button type="button" id="hx-reset"><i class="ti ti-restore" aria-hidden="true"></i> Restaurar todo</button>
+  </div>
+  <div class="hx-hint">Modo edición · toca el ojo para ocultar/mostrar · arrastra las tarjetas para reordenar</div>
+
+  <script>
+  /* Editor de Hub — ocultar/mostrar + reordenar, persistido por navegador (localStorage) */
+  (function () {
+    var KEY = 'bc_hub_prefs_v1';
+    var $  = function (s, r) { return (r || document).querySelector(s); };
+    var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+    function load() {
+      try { var p = JSON.parse(localStorage.getItem(KEY) || '{}'); p.hidden = p.hidden || []; p.order = p.order || {}; return p; }
+      catch (e) { return { hidden: [], order: {} }; }
+    }
+    function save() { try { localStorage.setItem(KEY, JSON.stringify(prefs)); } catch (e) {} }
+    var prefs = load();
+
+    var txt = function (el) { return (el ? el.textContent : '').replace(/\s+/g, ' ').trim(); };
+
+    function sections() { return $$('.panel .section-title').filter(function (t) { return !t.classList.contains('fav-title-row'); }); }
+    function tabsEls() { return $$('.intent-nav .intent-tab'); }
+    function tabKey(t) { return 'tab::' + t.dataset.tab; }
+    function sectionKey(t) { return 'sec::' + txt(t); }
+    function lists() { return $$('.panel .doc-list'); }
+    function listKey(list) {
+      var p = list.previousElementSibling;
+      while (p && !p.classList.contains('section-title')) p = p.previousElementSibling;
+      return 'list::' + (p ? txt(p) : Array.prototype.indexOf.call(list.parentNode.children, list));
+    }
+    function cards(list) { return $$(':scope > .doc-row', list); }
+    function cardName(row) { var n = row.querySelector('.doc-name'); return n ? txt(n) : txt(row); }
+    function cardKey(list, row) { return 'card::' + listKey(list) + '::' + cardName(row); }
+    function sectionMembers(title) {
+      var out = [title], n = title.nextElementSibling;
+      while (n && !(n.classList && n.classList.contains('section-title'))) { out.push(n); n = n.nextElementSibling; }
+      return out;
+    }
+
+    function apply() {
+      $$('.hx-off').forEach(function (e) { e.classList.remove('hx-off'); });
+      lists().forEach(function (list) {
+        var ord = prefs.order[listKey(list)];
+        if (ord && ord.length) {
+          var byName = {}; cards(list).forEach(function (r) { byName[cardName(r)] = r; });
+          ord.forEach(function (nm) { if (byName[nm]) { list.appendChild(byName[nm]); delete byName[nm]; } });
+        }
+      });
+      sections().forEach(function (t) {
+        if (prefs.hidden.indexOf(sectionKey(t)) !== -1) sectionMembers(t).forEach(function (m) { m.classList.add('hx-off'); });
+      });
+      lists().forEach(function (list) {
+        cards(list).forEach(function (r) { if (prefs.hidden.indexOf(cardKey(list, r)) !== -1) r.classList.add('hx-off'); });
+      });
+      // categorías (pestañas): reordenar + ocultar
+      var nav = document.querySelector('.intent-nav');
+      if (nav) {
+        var to = prefs.tabsOrder || [];
+        if (to.length) {
+          var byTab = {}; tabsEls().forEach(function (t) { byTab[t.dataset.tab] = t; });
+          to.forEach(function (dt) { if (byTab[dt]) { nav.appendChild(byTab[dt]); delete byTab[dt]; } });
+        }
+        tabsEls().forEach(function (t) { if (prefs.hidden.indexOf(tabKey(t)) !== -1) t.classList.add('hx-off'); });
+        var active = document.querySelector('.intent-tab[aria-selected="true"]');
+        if (active && active.classList.contains('hx-off') && window.bcSetTab) {
+          var vis = tabsEls().filter(function (t) { return !t.classList.contains('hx-off'); })[0];
+          if (vis) window.bcSetTab(vis.dataset.tab);
+        }
+      }
+    }
+
+    function tgBtn(off) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'hx-tg' + (off ? ' is-off' : ''); b.tabIndex = -1;
+      b.innerHTML = '<i class="ti ti-' + (off ? 'eye-off' : 'eye') + '"></i>';
+      b.title = off ? 'Mostrar' : 'Ocultar';
+      return b;
+    }
+    function refreshTg(b, off) {
+      b.classList.toggle('is-off', off);
+      b.innerHTML = '<i class="ti ti-' + (off ? 'eye-off' : 'eye') + '"></i>';
+      b.title = off ? 'Mostrar' : 'Ocultar';
+    }
+    function toggleHidden(key) {
+      var i = prefs.hidden.indexOf(key);
+      if (i === -1) prefs.hidden.push(key); else prefs.hidden.splice(i, 1);
+      save(); apply();
+      return prefs.hidden.indexOf(key) !== -1;
+    }
+    function saveOrder(list) { prefs.order[listKey(list)] = cards(list).map(cardName); save(); }
+
+    function buildControls() {
+      sections().forEach(function (t) {
+        if (t.querySelector(':scope > .hx-tg')) return;
+        var key = sectionKey(t);
+        var b = tgBtn(prefs.hidden.indexOf(key) !== -1);
+        b.addEventListener('click', function (e) { e.stopPropagation(); refreshTg(b, toggleHidden(key)); });
+        t.appendChild(b);
+      });
+      lists().forEach(function (list) {
+        cards(list).forEach(function (r) {
+          if (r.querySelector(':scope > .hx-tg')) return;
+          var key = cardKey(list, r);
+          var b = tgBtn(prefs.hidden.indexOf(key) !== -1);
+          b.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); refreshTg(b, toggleHidden(key)); });
+          r.appendChild(b);
+          r.addEventListener('click', function (e) { if (document.body.classList.contains('hx-edit')) e.preventDefault(); }, true);
+          r.setAttribute('draggable', 'false');
+          r.addEventListener('dragstart', function (e) {
+            if (!document.body.classList.contains('hx-edit')) return;
+            r.classList.add('hx-drag'); e.dataTransfer.effectAllowed = 'move';
+            try { e.dataTransfer.setData('text/plain', cardName(r)); } catch (x) {}
+          });
+          r.addEventListener('dragend', function () {
+            r.classList.remove('hx-drag'); $$('.hx-over').forEach(function (x) { x.classList.remove('hx-over'); });
+            saveOrder(list);
+          });
+          r.addEventListener('dragover', function (e) {
+            if (!document.body.classList.contains('hx-edit')) return;
+            var dragging = list.querySelector('.hx-drag'); if (!dragging || dragging === r) return;
+            e.preventDefault(); r.classList.add('hx-over');
+            var rect = r.getBoundingClientRect();
+            if ((e.clientY - rect.top) > rect.height / 2) list.insertBefore(dragging, r.nextSibling);
+            else list.insertBefore(dragging, r);
+          });
+          r.addEventListener('dragleave', function () { r.classList.remove('hx-over'); });
+          r.addEventListener('drop', function (e) { e.preventDefault(); r.classList.remove('hx-over'); });
+        });
+      });
+      // controles para categorías (pestañas)
+      tabsEls().forEach(function (t) {
+        if (t.querySelector(':scope > .hx-tg')) return;
+        var key = tabKey(t);
+        var off = prefs.hidden.indexOf(key) !== -1;
+        var s = document.createElement('span');
+        s.className = 'hx-tg' + (off ? ' is-off' : '');
+        s.innerHTML = '<i class="ti ti-' + (off ? 'eye-off' : 'eye') + '"></i>';
+        s.title = 'Ocultar/mostrar categoría';
+        s.addEventListener('click', function (e) { e.stopPropagation(); e.preventDefault(); refreshTg(s, toggleHidden(key)); });
+        t.appendChild(s);
+        t.setAttribute('draggable', 'false');
+        t.addEventListener('dragstart', function (e) {
+          if (!document.body.classList.contains('hx-edit')) return;
+          t.classList.add('hx-drag'); e.dataTransfer.effectAllowed = 'move';
+          try { e.dataTransfer.setData('text/plain', t.dataset.tab); } catch (x) {}
+        });
+        t.addEventListener('dragend', function () {
+          t.classList.remove('hx-drag'); $$('.hx-over').forEach(function (x) { x.classList.remove('hx-over'); });
+          prefs.tabsOrder = tabsEls().map(function (x) { return x.dataset.tab; }); save();
+        });
+        t.addEventListener('dragover', function (e) {
+          if (!document.body.classList.contains('hx-edit')) return;
+          var nav = t.parentNode, dragging = nav.querySelector('.intent-tab.hx-drag');
+          if (!dragging || dragging === t) return;
+          e.preventDefault(); t.classList.add('hx-over');
+          var rect = t.getBoundingClientRect();
+          if ((e.clientX - rect.left) > rect.width / 2) nav.insertBefore(dragging, t.nextSibling);
+          else nav.insertBefore(dragging, t);
+        });
+        t.addEventListener('dragleave', function () { t.classList.remove('hx-over'); });
+        t.addEventListener('drop', function (e) { e.preventDefault(); t.classList.remove('hx-over'); });
+      });
+    }
+
+    function setEdit(on) {
+      document.body.classList.toggle('hx-edit', on);
+      var lbl = $('#hx-fab-label'); if (lbl) lbl.textContent = on ? 'Listo' : 'Editar Hub';
+      $$('.panel .doc-row').forEach(function (r) { r.setAttribute('draggable', on ? 'true' : 'false'); });
+      tabsEls().forEach(function (t) { t.setAttribute('draggable', on ? 'true' : 'false'); });
+    }
+
+    function init() {
+      buildControls(); apply();
+      var fab = $('#hx-fab');
+      if (fab) fab.addEventListener('click', function () { setEdit(!document.body.classList.contains('hx-edit')); });
+      var reset = $('#hx-reset');
+      if (reset) reset.addEventListener('click', function () { prefs = { hidden: [], order: {} }; save(); location.reload(); });
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
   })();
   </script>
 </body>
