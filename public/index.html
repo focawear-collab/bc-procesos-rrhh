@@ -193,6 +193,7 @@ function notionToApp(n) {
   const notasRaw = n.notas || '';
   const descartado = notasRaw.includes('[DESCARTE:') || n.estado === 'Descartado';
   const talentPool = n.fase === 'Talent Pool';
+  const finalizado = n.estado === 'Listo';
   // Parsear motivoDescarte y notas limpias desde el campo notas de Notion
   let motivoDescarte = '';
   let notasClean = n.notas || '';
@@ -214,7 +215,7 @@ function notionToApp(n) {
     local: n.local || 'BC1',
     fase, completados, notas: notasClean,
     fechaInicio: n.fechaInicio || new Date().toISOString().split('T')[0],
-    avance, descartado, talentPool,
+    avance, descartado, talentPool, finalizado,
     motivoDescarte: descartado ? motivoDescarte : undefined,
     fechaDescarte:  descartado ? (n.fechaInicio || new Date().toISOString().slice(0,10)) : undefined
   };
@@ -379,7 +380,7 @@ const AppHeader = ({procesos, onNew, showMetrics, onToggleMetrics}) => {
 };
 
 /* Filter bar */
-const FilterBar = ({track, setTrack, query, setQuery, local, setLocal, showDiscarded, setShowDiscarded, discardedCount}) => (
+const FilterBar = ({track, setTrack, query, setQuery, local, setLocal, showDiscarded, setShowDiscarded, discardedCount, showFinalized, setShowFinalized, finalizadoCount}) => (
   <div style={{display:'flex', alignItems:'center', gap:12, padding:'16px 40px', borderBottom:'1px solid var(--border)', flexWrap:'wrap'}}>
     <div style={{display:'flex', gap:4, background:'var(--card)', padding:4, borderRadius:8, border:'1px solid var(--border)'}}>
       {[['all','Todos','📋'], ['garzones','Garzones','🍽️'], ['jefatura','Jefatura','👑'], ['cocineros','Cocineros','🔥']].map(([k, label, ico]) => (
@@ -408,7 +409,7 @@ const FilterBar = ({track, setTrack, query, setQuery, local, setLocal, showDisca
         style={{width:'100%', padding:'9px 12px 9px 36px', background:'var(--card)', border:'1px solid var(--border)', borderRadius:8, color:'#fff', fontSize:13, outline:'none'}} />
     </div>
 
-    <button onClick={()=>setShowDiscarded(!showDiscarded)} title="Mostrar u ocultar descartados"
+    <button onClick={()=>{setShowFinalized(false); setShowDiscarded(!showDiscarded);}} title="Mostrar u ocultar descartados"
       style={{padding:'7px 11px', borderRadius:8, fontSize:11, fontWeight:600, letterSpacing:'0.5px',
         background: showDiscarded ? 'var(--red-dim)' : 'var(--card)',
         border: `1px solid ${showDiscarded ? 'var(--red)':'var(--border)'}`,
@@ -416,6 +417,16 @@ const FilterBar = ({track, setTrack, query, setQuery, local, setLocal, showDisca
       <span>🗂</span>
       <span>{showDiscarded ? 'Ocultando activos' : 'Ver descartados'}</span>
       {discardedCount>0 && <span style={{background:'var(--red)', color:'#0a0a0a', fontSize:10, fontWeight:700, padding:'1px 6px', borderRadius:10}}>{discardedCount}</span>}
+    </button>
+
+    <button onClick={()=>{setShowDiscarded(false); setShowFinalized(!showFinalized);}} title="Mostrar u ocultar contratados"
+      style={{padding:'7px 11px', borderRadius:8, fontSize:11, fontWeight:600, letterSpacing:'0.5px',
+        background: showFinalized ? 'rgba(212,175,55,0.15)' : 'var(--card)',
+        border: `1px solid ${showFinalized ? 'var(--gold)':'var(--border)'}`,
+        color: showFinalized ? 'var(--gold)':'var(--text-2)', display:'flex', alignItems:'center', gap:6}}>
+      <span>✅</span>
+      <span>{showFinalized ? 'Ocultando activos' : 'Ver contratados'}</span>
+      {finalizadoCount>0 && <span style={{background:'var(--gold)', color:'#0a0a0a', fontSize:10, fontWeight:700, padding:'1px 6px', borderRadius:10}}>{finalizadoCount}</span>}
     </button>
 
     <div style={{fontSize:11, color:'var(--text-3)', letterSpacing:'1.2px', textTransform:'uppercase', fontWeight:700}}>
@@ -927,10 +938,12 @@ const MetricsView = ({procesos}) => {
   const daysDiff = (dateStr) => dateStr ? Math.max(0, Math.floor((now - new Date(dateStr)) / 86400000)) : 0;
 
   const allProcs = procesos;
-  const active   = procesos.filter(p => !p.descartado);
+  const active   = procesos.filter(p => !p.descartado && !p.finalizado);
+  const finalized = procesos.filter(p => p.finalizado);
   const discarded = procesos.filter(p => p.descartado);
   const inF5     = active.filter(p => p.fase === 'F5');
-  const globalConv = allProcs.length > 0 ? Math.round(inF5.length / allProcs.length * 100) : 0;
+  const reachedF5 = inF5.length + finalized.length;
+  const globalConv = allProcs.length > 0 ? Math.round(reachedF5 / allProcs.length * 100) : 0;
 
   // Funnel: candidates at each phase or beyond (cumulative)
   const phaseCumul = phaseOrder.map((ph, i) =>
@@ -1001,10 +1014,11 @@ const MetricsView = ({procesos}) => {
       </div>
 
       {/* Stat cards */}
-      <div style={{display:'grid', gridTemplateColumns:'repeat(5, 1fr)', gap:12, marginBottom:24}}>
+      <div style={{display:'grid', gridTemplateColumns:'repeat(6, 1fr)', gap:12, marginBottom:24}}>
         <StatCard label="Total procesos" value={allProcs.length} sub="Histórico completo" />
         <StatCard label="En pipeline" value={active.length} sub="Candidatos activos" tone="gold" />
         <StatCard label="En onboarding" value={inF5.length} sub="Fase F5 activa" tone="bc1" />
+        <StatCard label="Contratados" value={finalized.length} sub="Procesos finalizados" tone="gold" />
         <StatCard label="Descartados" value={discarded.length} sub={`${allProcs.length>0?Math.round(discarded.length/allProcs.length*100):0}% del total`} tone="red" />
         <StatCard label="Conversión global" value={`${globalConv}%`} sub="Llegaron a F5 / total" tone="blue" />
       </div>
@@ -1190,6 +1204,7 @@ function App(){
   const [view, setView] = React.useState('pipeline');
   const [showMetrics, setShowMetrics] = React.useState(false);
   const [showDiscarded, setShowDiscarded] = React.useState(false);
+  const [showFinalized, setShowFinalized] = React.useState(false);
   const [discardTarget, setDiscardTarget] = React.useState(null);
   const [tweaks, updateTweaks, editMode] = useTweaks();
 
@@ -1224,7 +1239,10 @@ function App(){
   }, [tweaks.accent]);
 
   const filtered = procesos.filter(p => {
-    if (showDiscarded ? !(p.descartado || p.talentPool) : (p.descartado || p.talentPool)) return false;
+    const isOtro = p.descartado || p.talentPool;
+    if (showFinalized) { if (!p.finalizado) return false; }
+    else if (showDiscarded) { if (!isOtro) return false; }
+    else { if (isOtro || p.finalizado) return false; }
     if (track!=='all' && p.track!==track) return false;
     if (local!=='all' && p.local!==local) return false;
     if (query){
@@ -1234,6 +1252,7 @@ function App(){
     return true;
   });
   const discardedCount = procesos.filter(p=>p.descartado || p.talentPool).length;
+  const finalizadoCount = procesos.filter(p=>p.finalizado).length;
 
   const activeProcData = activeProc ? procesos.find(p=>p.id===activeProc) : null;
 
@@ -1365,7 +1384,7 @@ function App(){
     setProcesos(prev => prev.map(p => {
       if (p.id !== proc.id) return p;
       if (p.notionId) apiPatch(p.notionId, {estado:"Listo", avance:100});
-      return {...p, fase:"F5", avance:100};
+      return {...p, finalizado:true, avance:100};
     }));
   };
 
@@ -1389,10 +1408,16 @@ function App(){
       {(
         <>
           <FilterBar track={track} setTrack={setTrack} query={query} setQuery={setQuery} local={local} setLocal={setLocal}
-            showDiscarded={showDiscarded} setShowDiscarded={setShowDiscarded} discardedCount={discardedCount} />
+            showDiscarded={showDiscarded} setShowDiscarded={setShowDiscarded} discardedCount={discardedCount}
+            showFinalized={showFinalized} setShowFinalized={setShowFinalized} finalizadoCount={finalizadoCount} />
           {showDiscarded && (
             <div style={{padding:'10px 40px', background:'rgba(224,128,128,0.04)', borderBottom:'1px solid var(--border)', fontSize:11.5, color:'var(--red)', letterSpacing:'0.5px', display:'flex', alignItems:'center', gap:8}}>
               <span>🚫</span><span>Mostrando descartados ({discardedCount}) y talent pool ({procesos.filter(p=>p.talentPool).length})</span>
+            </div>
+          )}
+          {showFinalized && (
+            <div style={{padding:'10px 40px', background:'rgba(212,175,55,0.06)', borderBottom:'1px solid var(--border)', fontSize:11.5, color:'var(--gold)', letterSpacing:'0.5px', display:'flex', alignItems:'center', gap:8}}>
+              <span>✅</span><span>Mostrando contratados / finalizados ({finalizadoCount})</span>
             </div>
           )}
         </>
