@@ -1702,8 +1702,10 @@
         return;
       }
       var order = ['Acción','Persona','Personas','Herramientas','Documentos','Publicaciones'];
+      var ordered = order.filter(function (g) { return groups[g]; })
+        .concat(Object.keys(groups).filter(function (g) { return order.indexOf(g) === -1; }));
       var html = ''; var idx = 0;
-      order.forEach(function (g) {
+      ordered.forEach(function (g) {
         if (!groups[g] || !groups[g].length) return;
         html += '<div class="cmd-section-label">' + g + '</div>';
         groups[g].forEach(function (it) {
@@ -1721,7 +1723,7 @@
       });
       cmdResults.innerHTML = html;
       var flat = [];
-      order.forEach(function (g) { (groups[g] || []).forEach(function (it) { flat.push(it); }); });
+      ordered.forEach(function (g) { (groups[g] || []).forEach(function (it) { flat.push(it); }); });
       cmdResults._flat = flat;
       cmdSelectIndex(0);
     }
