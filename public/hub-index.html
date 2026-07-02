@@ -1137,7 +1137,7 @@
         <a class="tt-open" href="https://bc-task-tracker-nine.vercel.app" target="_blank" rel="noopener">Abrir en pantalla completa ↗</a>
       </div>
       <div class="tt-frame-wrap">
-        <iframe id="tt-frame" title="BC Task Tracker" loading="lazy" src="about:blank" data-src="https://bc-task-tracker-nine.vercel.app"></iframe>
+        <iframe id="tt-frame" title="BC Task Tracker" loading="lazy" src="about:blank" data-src="https://bc-task-tracker-nine.vercel.app" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals allow-downloads" referrerpolicy="strict-origin-when-cross-origin"></iframe>
       </div>
     </section>
 
@@ -1276,23 +1276,25 @@
         t.tabIndex = on ? 0 : -1;
       });
       panels.forEach(function (p) { p.classList.toggle('active', p.id === 'panel-' + id); });
+      if (id === 'tracker' && window.__bcLoadTracker) window.__bcLoadTracker();
       if (!opts.skipUrl) {
         var url = new URL(window.location.href);
         if (id === 'inicio') url.searchParams.delete('tab'); else url.searchParams.set('tab', id);
         history.replaceState({ tab: id }, '', url.toString());
       }
-      if (opts.focus) { var t = qs('#tab-' + id); if (t) t.focus(); }
+      if (opts.focus) { var focusEl = qs('#tab-' + id); if (focusEl) focusEl.focus(); }
     }
     window.bcSetTab = setTab;
 
     tabs.forEach(function (tab) {
       tab.addEventListener('click', function () { setTab(this.dataset.tab); });
       tab.addEventListener('keydown', function (e) {
-        var i = tabs.indexOf(this);
-        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); setTab(tabs[(i + 1) % tabs.length].dataset.tab, { focus: true }); }
-        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); setTab(tabs[(i - 1 + tabs.length) % tabs.length].dataset.tab, { focus: true }); }
-        else if (e.key === 'Home') { e.preventDefault(); setTab(tabs[0].dataset.tab, { focus: true }); }
-        else if (e.key === 'End') { e.preventDefault(); setTab(tabs[tabs.length - 1].dataset.tab, { focus: true }); }
+        var ord = qsa('.intent-tab');
+        var i = ord.indexOf(this);
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); setTab(ord[(i + 1) % ord.length].dataset.tab, { focus: true }); }
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); setTab(ord[(i - 1 + ord.length) % ord.length].dataset.tab, { focus: true }); }
+        else if (e.key === 'Home') { e.preventDefault(); setTab(ord[0].dataset.tab, { focus: true }); }
+        else if (e.key === 'End') { e.preventDefault(); setTab(ord[ord.length - 1].dataset.tab, { focus: true }); }
       });
     });
 
@@ -1473,37 +1475,47 @@
     function jumpToPersona(id) {
       setTab('reclutamiento');
       setTimeout(function () {
-        var card = qs('.person-card[data-id="' + id + '"]');
+        var card = qs('.person-card[data-id="' + (id || '').toString().replace(/"/g, '') + '"]');
         if (card) {
           card.classList.add('glow');
           card.scrollIntoView({ behavior: 'smooth', block: 'center' });
           setTimeout(function () { card.classList.remove('glow'); }, 1600);
+        } else if (window.bcToast) {
+          window.bcToast('No se encontró a la persona en el pipeline', 'error');
         }
       }, 120);
     }
     window.bcJumpToPersona = jumpToPersona;
 
     function loadProcesos() {
-      fetch('/api/procesos?status=active')
+      var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+      var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 15000);
+      fetch('/api/procesos?status=active', ctrl ? { signal: ctrl.signal } : undefined)
         .then(function (r) { return r.json(); })
         .then(function (data) {
+          clearTimeout(timer);
           if (!Array.isArray(data)) throw new Error('Bad data');
           _procesos = data;
-          renderTodayStrip(data);
+          renderTodayStrip();
           renderPersonas(data);
           renderStats(data);
           buildCmdIndex();
         })
         .catch(function (err) {
+          clearTimeout(timer);
           console.error('Error loading procesos:', err);
-          renderTodayStrip([]);
+          renderTodayStrip();
           var pg = qs('#person-grid');
-          if (pg) pg.innerHTML =
-            '<div class="empty-state">' +
-              '<i class="ti ti-cloud-off" aria-hidden="true"></i>' +
-              '<h4>Sin conexión a Notion</h4>' +
-              '<p>Los candidatos se mostrarán cuando vuelva la conexión.</p>' +
-            '</div>';
+          if (pg) {
+            pg.innerHTML =
+              '<div class="empty-state">' +
+                '<i class="ti ti-cloud-off" aria-hidden="true"></i>' +
+                '<h4>Sin conexión a Notion</h4>' +
+                '<p>No se pudieron cargar los candidatos.</p>' +
+                '<button type="button" class="today-chip" id="retry-personas" style="margin-top:10px">↻ Reintentar</button>' +
+              '</div>';
+            var rb = qs('#retry-personas'); if (rb) rb.addEventListener('click', loadProcesos);
+          }
           var cnt = qs('#count-personas'); if (cnt) cnt.textContent = '0';
         });
     }
@@ -1567,15 +1579,16 @@
         var initials = (p.candidato || '').split(' ').map(function (w) { return w[0] || ''; }).join('').substring(0, 2).toUpperCase();
         var statusColor = p.avance >= 70 ? 'var(--green)' : p.avance >= 30 ? 'var(--amber)' : 'var(--blue)';
         var statusText = (p.fase || '').replace(/^F\d\s+/, '');
-        var id = (p.id || p.candidato).toString();
-        var search = (p.candidato + ' ' + (p.cargo || '') + ' ' + (p.local || '')).toLowerCase();
+        var id = (p.id || ('name-' + (p.candidato || 'sin-nombre') + '-' + i)).toString();
+        var search = ((p.candidato || '') + ' ' + (p.cargo || '') + ' ' + (p.local || '')).toLowerCase();
+        var avanceN = (typeof p.avance === 'number') ? p.avance : 0;
         html +=
-          '<a class="person-card" href="#" data-id="' + id.replace(/"/g, '') + '" data-search="' + search.replace(/"/g, '') + '">' +
-            '<div class="person-av" style="background:' + c.bg + ';color:' + c.fg + '">' + initials + '</div>' +
-            '<div class="person-name">' + p.candidato + '</div>' +
-            '<div class="person-role">' + (p.cargo || '') + ' · ' + (p.local || '') + '</div>' +
+          '<a class="person-card" href="#" data-id="' + escapeHtml(id).replace(/"/g, '') + '" data-search="' + escapeHtml(search).replace(/"/g, '') + '">' +
+            '<div class="person-av" style="background:' + c.bg + ';color:' + c.fg + '">' + escapeHtml(initials) + '</div>' +
+            '<div class="person-name">' + escapeHtml(p.candidato || '—') + '</div>' +
+            '<div class="person-role">' + escapeHtml((p.cargo || '') + ' · ' + (p.local || '')) + '</div>' +
             '<div class="person-status"><span class="status-dot" style="background:' + statusColor + '"></span>' +
-            '<span>' + statusText + ' · ' + p.avance + '%</span></div>' +
+            '<span>' + escapeHtml(statusText) + ' · ' + avanceN + '%</span></div>' +
           '</a>';
       });
       el.innerHTML = html;
@@ -1618,7 +1631,7 @@
       docsInput.addEventListener('input', function () {
         var raw = norm(this.value.trim());
         var words = raw ? raw.split(/\s+/).filter(Boolean) : [];
-        qsa('#panel-documentos .doc-row').forEach(function (row) {
+        qsa('#panel-administracion .doc-row').forEach(function (row) {
           var text = norm(row.dataset.search || row.textContent);
           row.classList.toggle('hidden', words.length > 0 && !matchAll(text, words));
         });
@@ -1675,16 +1688,44 @@
       });
     }
 
-    function highlight(text, words) {
-      if (!words.length) return text;
-      var t = text;
-      words.forEach(function (w) {
-        try {
-          var re = new RegExp('(' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
-          t = t.replace(re, '<mark class="match">$1</mark>');
-        } catch (e) {}
+    function escapeHtml(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
       });
-      return t;
+    }
+    function highlight(text, words) {
+      text = String(text == null ? '' : text);
+      if (!words || !words.length) return escapeHtml(text);
+      var normStr = '', map = [];
+      for (var i = 0; i < text.length; i++) {
+        var nc = text[i].toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+        for (var j = 0; j < nc.length; j++) { normStr += nc[j]; map.push(i); }
+      }
+      var ranges = [];
+      words.forEach(function (w) {
+        if (!w) return;
+        var from = 0, idx;
+        while ((idx = normStr.indexOf(w, from)) !== -1) {
+          ranges.push([map[idx], map[idx + w.length - 1]]);
+          from = idx + w.length;
+        }
+      });
+      if (!ranges.length) return escapeHtml(text);
+      ranges.sort(function (a, b) { return a[0] - b[0]; });
+      var merged = [ranges[0].slice()];
+      for (var r = 1; r < ranges.length; r++) {
+        var last = merged[merged.length - 1];
+        if (ranges[r][0] <= last[1] + 1) last[1] = Math.max(last[1], ranges[r][1]);
+        else merged.push(ranges[r].slice());
+      }
+      var out = '', pos = 0;
+      merged.forEach(function (m) {
+        out += escapeHtml(text.slice(pos, m[0]));
+        out += '<mark class="match">' + escapeHtml(text.slice(m[0], m[1] + 1)) + '</mark>';
+        pos = m[1] + 1;
+      });
+      out += escapeHtml(text.slice(pos));
+      return out;
     }
 
     function renderCmdResults(query) {
@@ -1698,16 +1739,17 @@
         if (groups[it.kind].length < 20) { groups[it.kind].push(it); totalShown++; }
       });
       if (!totalShown) {
-        cmdResults.innerHTML = '<div class="cmd-empty">Sin resultados para "' + (query || '') + '"</div>';
+        cmdResults.innerHTML = '<div class="cmd-empty">Sin resultados para "' + escapeHtml(query || '') + '"</div>';
         return;
       }
       var order = ['Acción','Persona','Personas','Herramientas','Documentos','Publicaciones'];
+      var KIND_LABELS = { 'Persona':'Personas', 'Administracion':'Administración', 'Desempeno':'Desempeño', 'Reclutamiento':'Reclutamiento', 'Onboarding':'Onboarding', 'Clima':'Clima', 'Legal':'Legal', 'Tracker':'Tracker', 'Inicio':'Inicio' };
       var ordered = order.filter(function (g) { return groups[g]; })
         .concat(Object.keys(groups).filter(function (g) { return order.indexOf(g) === -1; }));
       var html = ''; var idx = 0;
       ordered.forEach(function (g) {
         if (!groups[g] || !groups[g].length) return;
-        html += '<div class="cmd-section-label">' + g + '</div>';
+        html += '<div class="cmd-section-label">' + (KIND_LABELS[g] || g) + '</div>';
         groups[g].forEach(function (it) {
           html +=
             '<a class="cmd-result" href="#" role="option" data-i="' + idx + '">' +
@@ -1716,7 +1758,7 @@
                 '<div class="name">' + highlight(it.name, words) + '</div>' +
                 '<div class="meta">' + highlight(it.meta || '', words) + '</div>' +
               '</div>' +
-              '<kbd>' + g + '</kbd>' +
+              '<kbd>' + (KIND_LABELS[g] || g) + '</kbd>' +
             '</a>';
           idx++;
         });
@@ -1815,7 +1857,9 @@
       setTimeout(function () { gateInput.focus(); }, 60);
     }
     function closeGate() { gateModal.classList.remove('open'); pending = null; }
-    function showGateError() {
+    var _gateErrDefault = (gateErr && gateErr.textContent) || 'Código incorrecto';
+    function showGateError(msg) {
+      if (gateErr) gateErr.textContent = msg || _gateErrDefault;
       gateErr.style.display = 'block';
       gateInput.style.borderColor = 'var(--red)';
       gateInput.value = '';
@@ -1853,7 +1897,7 @@
       })
       .catch(function () {
         gateBtn.disabled = false; gateBtn.textContent = 'Acceder';
-        showGateError();
+        showGateError('Error de conexión — reintenta');
       });
     }
 
@@ -1959,6 +2003,7 @@
   (function () {
     var f = document.getElementById('tt-frame');
     function load() { if (f && (!f.src || f.src.indexOf('about:blank') === 0)) f.src = f.dataset.src; }
+    window.__bcLoadTracker = load;
     var tab = document.getElementById('tab-tracker');
     if (tab) tab.addEventListener('click', load);
     document.addEventListener('click', function (e) {
@@ -1984,10 +2029,19 @@
     var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
     function load() {
-      try { var p = JSON.parse(localStorage.getItem(KEY) || '{}'); p.hidden = p.hidden || []; p.order = p.order || {}; return p; }
-      catch (e) { return { hidden: [], order: {} }; }
+      try {
+        var p = JSON.parse(localStorage.getItem(KEY) || '{}');
+        if (!p || typeof p !== 'object') p = {};
+        if (!Array.isArray(p.hidden)) p.hidden = [];
+        if (!p.order || typeof p.order !== 'object' || Array.isArray(p.order)) p.order = {};
+        if (!Array.isArray(p.tabsOrder)) p.tabsOrder = [];
+        return p;
+      } catch (e) { return { hidden: [], order: {}, tabsOrder: [] }; }
     }
-    function save() { try { localStorage.setItem(KEY, JSON.stringify(prefs)); } catch (e) {} }
+    function save() {
+      try { localStorage.setItem(KEY, JSON.stringify(prefs)); }
+      catch (e) { if (window.bcToast) window.bcToast('No se pudo guardar la preferencia (almacenamiento lleno)', 'error'); }
+    }
     var prefs = load();
 
     var txt = function (el) { return (el ? el.textContent : '').replace(/\s+/g, ' ').trim(); };
@@ -2148,7 +2202,7 @@
       var fab = $('#hx-fab');
       if (fab) fab.addEventListener('click', function () { setEdit(!document.body.classList.contains('hx-edit')); });
       var reset = $('#hx-reset');
-      if (reset) reset.addEventListener('click', function () { prefs = { hidden: [], order: {} }; save(); location.reload(); });
+      if (reset) reset.addEventListener('click', function () { prefs = { hidden: [], order: {}, tabsOrder: [] }; save(); location.reload(); });
     }
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

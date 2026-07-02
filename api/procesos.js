@@ -1,5 +1,6 @@
+const ORIGIN = 'https://bc-procesos-rrhh.vercel.app';
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': ORIGIN,
   'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 };
@@ -12,7 +13,7 @@ function stripHtml(str) {
 export default async function handler(req, res) {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
-    res.status(200).setHeader('Access-Control-Allow-Origin', '*').end();
+    res.status(200).setHeader('Access-Control-Allow-Origin', ORIGIN).end();
     return;
   }
 
@@ -53,12 +54,12 @@ export default async function handler(req, res) {
       const data = await response.json();
       const procesos = data.results.map(page => parseProcesoPage(page));
 
-      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Origin', ORIGIN);
       res.status(200).json(procesos);
     } catch (error) {
       console.error('Error fetching procesos:', error);
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.status(500).json({ error: error.message });
+      res.setHeader('Access-Control-Allow-Origin', ORIGIN);
+      res.status(500).json({ error: 'Error al procesar la solicitud' });
     }
   }
   // POST: Create new proceso
@@ -104,12 +105,12 @@ export default async function handler(req, res) {
       const data = await response.json();
       const proceso = parseProcesoPage(data);
 
-      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Origin', ORIGIN);
       res.status(201).json(proceso);
     } catch (error) {
       console.error('Error creating proceso:', error);
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.status(500).json({ error: error.message });
+      res.setHeader('Access-Control-Allow-Origin', ORIGIN);
+      res.status(500).json({ error: 'Error al procesar la solicitud' });
     }
   }
   else {

@@ -1,5 +1,6 @@
+const ORIGIN = 'https://bc-procesos-rrhh.vercel.app';
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': ORIGIN,
   'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 };
@@ -10,10 +11,14 @@ function stripHtml(str) {
   return str.replace(/<[^>]*>/g, '');
 }
 
+function isValidNotionId(id) {
+  return typeof id === 'string' && /^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$/i.test(id);
+}
+
 export default async function handler(req, res) {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
-    res.status(200).setHeader('Access-Control-Allow-Origin', '*').end();
+    res.status(200).setHeader('Access-Control-Allow-Origin', ORIGIN).end();
     return;
   }
 
@@ -34,6 +39,7 @@ export default async function handler(req, res) {
   if (req.method === 'PATCH') {
     try {
       const { id } = req.query;
+      if (!isValidNotionId(id)) { res.setHeader('Access-Control-Allow-Origin', ORIGIN); res.status(400).json({ error: 'Parámetro id inválido' }); return; }
       const body = req.body || {};
       const fase = stripHtml(body.fase);
       const estado = stripHtml(body.estado);
@@ -88,18 +94,19 @@ export default async function handler(req, res) {
       const data = await response.json();
       const updated = parseProcesoPage(data);
 
-      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Origin', ORIGIN);
       res.status(200).json(updated);
     } catch (error) {
       console.error('Error updating proceso:', error);
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.status(500).json({ error: error.message });
+      res.setHeader('Access-Control-Allow-Origin', ORIGIN);
+      res.status(500).json({ error: 'Error al procesar la solicitud' });
     }
   }
   // DELETE: Archive proceso in Notion
   else if (req.method === 'DELETE') {
     try {
       const { id } = req.query;
+      if (!isValidNotionId(id)) { res.setHeader('Access-Control-Allow-Origin', ORIGIN); res.status(400).json({ error: 'Parámetro id inválido' }); return; }
       if (!id) {
         res.status(400).json({ error: 'Missing query param: id' });
         return;
@@ -116,12 +123,12 @@ export default async function handler(req, res) {
         throw new Error(`Notion API error: ${JSON.stringify(errorData)}`);
       }
 
-      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Origin', ORIGIN);
       res.status(200).json({ success: true, id });
     } catch (error) {
       console.error('Error deleting proceso:', error);
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.status(500).json({ error: error.message });
+      res.setHeader('Access-Control-Allow-Origin', ORIGIN);
+      res.status(500).json({ error: 'Error al procesar la solicitud' });
     }
   }
   else {

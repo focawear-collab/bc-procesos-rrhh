@@ -13,16 +13,17 @@ export default async function handler(req, res) {
     return;
   }
 
+  const clean = (v, max) => String(v == null ? '' : v).replace(/[\r\n]+/g, ' ').slice(0, max || 500);
   const { message, source, lineno, colno, stack, url, timestamp } = req.body || {};
 
   console.error('[CLIENT ERROR]', JSON.stringify({
-    message: message || 'unknown',
-    source: source || '',
-    lineno: lineno || 0,
-    colno: colno || 0,
-    stack: stack || '',
-    url: url || '',
-    timestamp: timestamp || new Date().toISOString()
+    message: clean(message || 'unknown', 500),
+    source: clean(source, 300),
+    lineno: Number(lineno) || 0,
+    colno: Number(colno) || 0,
+    stack: clean(stack, 2000),
+    url: clean(url, 500),
+    timestamp: clean(timestamp || new Date().toISOString(), 40)
   }));
 
   res.status(200).json({ ok: true });
