@@ -111,7 +111,7 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 <h1>Biblioteca de Templates</h1>
 <p class="sub">Documentos estándar para gestión de personas · Black Chicken HR</p>
 
-<div class="note"><strong>Cómo funciona:</strong> Haz clic en cualquier template, completa los datos del caso y presiona <strong>Generar</strong>. El documento se arma con el membrete de la empresa. Puedes <strong>editar el texto directamente</strong> sobre el documento antes de <strong>Imprimir / Guardar PDF</strong> o copiar el texto. ¿Necesitas otro tipo de documento? Usa <strong>Documento en blanco</strong> y escríbelo desde cero.</div>
+<div class="note"><strong>Cómo funciona:</strong> Haz clic en cualquier template, completa los datos del caso y presiona <strong>Generar</strong>. El documento se arma con el membrete de la empresa. Puedes <strong>editar el texto directamente</strong> sobre el documento antes de <strong>Imprimir / Guardar PDF</strong>. Con <strong>Guardar plantilla</strong> guardas cualquier documento (con tus ediciones) para reutilizarlo — aparecerá en <strong>Mis plantillas guardadas</strong>. ¿Necesitas algo distinto? Usa <strong>Documento en blanco</strong> y escríbelo desde cero.</div>
 
 <!-- Crear desde cero -->
 <div class="cat">
@@ -543,11 +543,9 @@ function openForm(id, prefill, savedId){
       f+='<div class="fg"><label>'+fl.l+(fl.req?' *':'')+'</label><input type="'+fl.t+'" id="f_'+fl.k+'" value="'+val+'"></div>';
     }
   });
-  const saveBtn = (id==='documento_blanco')
-    ? '<button class="btn btn-ghost" onclick="saveTemplate()">💾 '+(editingSavedId?'Actualizar plantilla':'Guardar plantilla')+'</button>' : '';
   modal.innerHTML='<div class="modal-head"><h2><span class="mh-ico">'+t.ico+'</span>'+t.title+'</h2><button class="modal-close" onclick="closeM()">×</button></div>'
     +'<div class="modal-body">'+f+'</div>'
-    +'<div class="modal-foot"><button class="btn btn-ghost" onclick="closeM()">Cancelar</button>'+saveBtn+'<button class="btn btn-primary" onclick="generate()">Generar documento →</button></div>';
+    +'<div class="modal-foot"><button class="btn btn-ghost" onclick="closeM()">Cancelar</button><button class="btn btn-primary" onclick="generate()">Generar documento →</button></div>';
   ov.classList.add('open'); ov.scrollTop=0;
 }
 
@@ -563,7 +561,8 @@ function renderSaved(){
   if(!SAVED.length){ cat.style.display='none'; box.innerHTML=''; return; }
   cat.style.display='';
   box.innerHTML=SAVED.map(t=>{
-    const desc=(t.cuerpo||'').replace(/\s+/g,' ').slice(0,90)||'Documento guardado.';
+    const tmp=document.createElement('div'); tmp.innerHTML=t.html||'';
+    const desc=(tmp.innerText||'').replace(/\s+/g,' ').trim().slice(0,90)||'Documento guardado.';
     return '<div class="tmpl" data-saved="'+esc(t.id)+'"><div class="tmpl-status saved">Guardada</div>'
       +'<button class="tmpl-del" data-del="'+esc(t.id)+'" title="Eliminar">×</button>'
       +'<div class="tmpl-icon">'+esc(t.icono||'📄')+'</div><div class="tmpl-name">'+esc(t.nombre)+'</div>'
@@ -571,7 +570,7 @@ function renderSaved(){
   }).join('');
   box.querySelectorAll('.tmpl').forEach(c=>c.addEventListener('click',e=>{
     if(e.target.classList.contains('tmpl-del')) return;
-    const t=SAVED.find(x=>x.id===c.dataset.saved); if(t) openForm('documento_blanco', {tipo:t.nombre, dirigido:t.dirigido, cuerpo:t.cuerpo, firmante1:t.firmante1, cargo1:t.cargo1, firmante2:t.firmante2, cargo2:t.cargo2}, t.id);
+    const t=SAVED.find(x=>x.id===c.dataset.saved); if(t) openSavedDoc(t);
   }));
   box.querySelectorAll('.tmpl-del').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); delTemplate(b.dataset.del); }));
 }
@@ -591,15 +590,21 @@ async function persist(){
   }catch(e){ alert('Error de conexión al guardar.'); return false; }
 }
 async function saveTemplate(){
-  const d=collect();
-  if(!d.tipo||!d.tipo.trim()){ const el=document.getElementById('f_tipo'); el.focus(); el.style.borderColor='#e05050'; return; }
-  const obj={ id: editingSavedId || ('t'+Date.now().toString(36)), nombre:d.tipo, icono:'📄', categoria:'Mis plantillas',
-    dirigido:d.dirigido||'', cuerpo:d.cuerpo||'', firmante1:d.firmante1||'', cargo1:d.cargo1||'', firmante2:d.firmante2||'', cargo2:d.cargo2||'' };
+  const el=document.getElementById('docPreview'); if(!el) return;
+  const html=el.innerHTML;
+  let sug=''; const h3=el.querySelector('h3'); if(h3) sug=h3.textContent.trim();
+  if(!sug){ const dt=el.querySelector('.doc-tipo'); if(dt) sug=dt.textContent.trim(); }
+  const cur = editingSavedId ? SAVED.find(x=>x.id===editingSavedId) : null;
+  let nombre=prompt('Nombre de la plantilla:', (cur&&cur.nombre)||sug||'Plantilla');
+  if(nombre===null) return; nombre=nombre.trim(); if(!nombre){ alert('Ponle un nombre a la plantilla.'); return; }
+  const obj={ id: editingSavedId || ('t'+Date.now().toString(36)), nombre, icono:'📄', html };
   const i=SAVED.findIndex(x=>x.id===obj.id);
   if(i>=0) SAVED[i]=obj; else SAVED.push(obj);
   const ok=await persist();
-  if(ok){ editingSavedId=obj.id; renderSaved(); const btns=document.querySelectorAll('.modal-foot .btn-ghost'); btns.forEach(b=>{ if(b.textContent.indexOf('plantilla')>=0){ const o=b.textContent; b.textContent='✓ Guardada'; setTimeout(()=>b.textContent='💾 Actualizar plantilla',1600);} }); }
-  else { SAVED=SAVED.filter(x=>x!==obj); }
+  if(ok){
+    editingSavedId=obj.id; renderSaved();
+    const b=document.getElementById('saveTplBtn'); if(b){ b.textContent='✓ Guardada'; setTimeout(()=>b.textContent='💾 Actualizar plantilla',1600); }
+  } else { if(i<0) SAVED=SAVED.filter(x=>x!==obj); }
 }
 async function delTemplate(id){
   const t=SAVED.find(x=>x.id===id); if(!t) return;
@@ -617,19 +622,33 @@ function collect(){
   return d;
 }
 
+function previewBar(){
+  const saveLabel = editingSavedId ? '💾 Actualizar plantilla' : '💾 Guardar plantilla';
+  const back = current
+    ? '<button class="btn btn-ghost" onclick="openForm(current)">← Volver al formulario</button>'
+    : '<button class="btn btn-ghost" onclick="closeM()">← Volver</button>';
+  return '<div class="preview-actions">'+back
+    +'<div class="pa-right"><button class="btn btn-ghost" id="saveTplBtn" onclick="saveTemplate()">'+saveLabel+'</button>'
+    +'<button class="btn btn-ghost" onclick="copyDoc()">📋 Copiar</button>'
+    +'<button class="btn btn-primary" onclick="window.print()">🖨️ Imprimir / PDF</button>'
+    +'<button class="btn btn-ghost" onclick="closeM()">Cerrar</button></div></div>';
+}
+function showPreview(docHTML){
+  modal.innerHTML=previewBar()
+    +'<div class="edit-hint">✏️ Puedes hacer clic sobre el documento y editar cualquier texto directamente. Con «Guardar plantilla» lo guardas para reutilizarlo (con tus ediciones).</div>'
+    +'<div class="preview-scroll"><div class="doc" id="docPreview" contenteditable="true" spellcheck="false">'+docHTML+'</div></div>';
+  ov.classList.add('open'); ov.scrollTop=0;
+}
 function generate(){
   const t=T[current];
   const req=t.fields.filter(f=>f.req);
   for(const fl of req){ const el=document.getElementById('f_'+fl.k); if(!el.value||!String(el.value).trim()){ el.focus(); el.style.borderColor='#e05050'; return; } }
-  const d=collect();
-  const docHTML=t.render(d);
-  modal.innerHTML='<div class="preview-actions"><button class="btn btn-ghost" onclick="openForm(current)">← Volver al formulario</button>'
-    +'<div class="pa-right"><button class="btn btn-ghost" onclick="copyDoc()">📋 Copiar texto</button>'
-    +'<button class="btn btn-primary" onclick="window.print()">🖨️ Imprimir / PDF</button>'
-    +'<button class="btn btn-ghost" onclick="closeM()">Cerrar</button></div></div>'
-    +'<div class="edit-hint">✏️ Puedes hacer clic sobre el documento y editar cualquier texto directamente antes de imprimir o copiar.</div>'
-    +'<div class="preview-scroll"><div class="doc" id="docPreview" contenteditable="true" spellcheck="false">'+docHTML+'</div></div>';
-  ov.scrollTop=0;
+  editingSavedId=null;
+  showPreview(t.render(collect()));
+}
+function openSavedDoc(t){
+  current=null; editingSavedId=t.id;
+  showPreview(t.html||'');
 }
 
 function copyDoc(){
@@ -640,7 +659,7 @@ function copyDoc(){
   });
 }
 
-function closeM(){ ov.classList.remove('open'); current=null; }
+function closeM(){ ov.classList.remove('open'); current=null; editingSavedId=null; }
 
 document.querySelectorAll('.tmpl[data-id]').forEach(c=>c.addEventListener('click',()=>openForm(c.dataset.id)));
 ov.addEventListener('click',e=>{ if(e.target===ov) closeM(); });

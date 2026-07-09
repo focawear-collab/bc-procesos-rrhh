@@ -26,14 +26,8 @@ function clean(list) {
     id: s(t && t.id, 40) || ('t' + Date.now().toString(36)),
     nombre: s(t && t.nombre, 120),
     icono: s(t && t.icono, 8) || '📄',
-    categoria: s(t && t.categoria, 60) || 'Mis plantillas',
-    dirigido: s(t && t.dirigido, 300),
-    cuerpo: s(t && t.cuerpo, 8000),
-    firmante1: s(t && t.firmante1, 200),
-    cargo1: s(t && t.cargo1, 200),
-    firmante2: s(t && t.firmante2, 200),
-    cargo2: s(t && t.cargo2, 200)
-  })).filter(t => t.nombre.trim());
+    html: s(t && t.html, 40000)
+  })).filter(t => t.nombre.trim() && t.html.trim());
 }
 
 export default async function handler(req, res) {
