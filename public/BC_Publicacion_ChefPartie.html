@@ -48,68 +48,87 @@
     .benefit-card.deferred{opacity:0.65}
     .benefit-card.deferred .benefit-name{color:#aaa}
     .deferred-note{font-size:11px;color:#d4af37;margin-top:4px;font-weight:600}
-    .comp-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
-    .comp-card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:20px;text-align:center}
+    .comp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .comp-card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:24px 16px;text-align:center}
     .comp-card.main{border-color:#d4af37;background:linear-gradient(135deg,#1a1505,#1a1a1a)}
-    .comp-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#666;margin-bottom:8px}
-    .comp-value{font-size:24px;font-weight:800;color:#d4af37;line-height:1.2}
+    .comp-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#666;margin-bottom:10px}
+    .comp-value{font-size:26px;font-weight:900;color:#fff}
+    .comp-card.main .comp-value{color:#d4af37}
     .comp-note{font-size:12px;color:#777;margin-top:6px}
-    .cta-block{background:linear-gradient(135deg,#1a1505,#1a1a1a);border:2px solid #d4af37;border-radius:16px;padding:40px;text-align:center;margin-top:48px}
-    .cta-title{font-size:20px;font-weight:800;color:#fff;margin-bottom:8px}
-    .cta-sub{font-size:14px;color:#888;margin-bottom:24px}
-    .cta-email{display:inline-block;background:linear-gradient(90deg,#d4af37,#f0c940);color:#0f0f0f;font-weight:800;font-size:16px;padding:14px 32px;border-radius:12px;text-decoration:none;transition:transform 0.2s}
-    .cta-email:hover{transform:scale(1.03)}
-    .cta-note{font-size:12px;color:#555;margin-top:16px}
-    .footer{text-align:center;padding:32px 40px;border-top:1px solid #1a1a1a}
+    .cta-block{background:linear-gradient(135deg,#1a1505 0%,#1a1a0a 100%);border:1px solid #d4af37;border-radius:16px;padding:36px;text-align:center;margin-top:48px}
+    .cta-title{font-size:24px;font-weight:800;color:#fff;margin-bottom:8px}
+    .cta-sub{font-size:15px;color:#888;margin-bottom:24px}
+    .cta-email{display:inline-block;background:linear-gradient(90deg,#d4af37,#f0c940);color:#0f0f0f;font-size:16px;font-weight:800;padding:14px 32px;border-radius:30px;text-decoration:none;letter-spacing:0.5px}
+    .cta-note{font-size:13px;color:#555;margin-top:16px}
+    .footer{background:#111;border-top:1px solid #2a2a2a;padding:20px 40px;text-align:center}
     .footer-text{font-size:12px;color:#444}
-    .footer-text span{color:#d4af37;font-weight:600}
-    .back-btn{position:fixed;top:20px;left:20px;background:#1a1a1a;border:1px solid #2a2a2a;color:#ccc;font-size:13px;padding:8px 16px;border-radius:8px;text-decoration:none;display:flex;align-items:center;gap:6px;transition:border-color 0.2s;z-index:100}
-    .back-btn:hover{border-color:#d4af37;color:#d4af37}
-    @media(max-width:768px){.hero h1{font-size:28px}.container{padding:32px 20px}.schedule-grid,.comp-grid{grid-template-columns:1fr}.benefits-grid{grid-template-columns:1fr 1fr}.hero{padding:40px 20px 32px}}
+    .footer-text span{color:#d4af37}
+    @media(max-width:600px){.hero h1{font-size:28px}.schedule-grid{grid-template-columns:1fr}.benefits-grid{grid-template-columns:repeat(2,1fr)}.comp-grid{grid-template-columns:1fr}.container{padding:32px 20px}}
+    .back-hub{position:fixed;top:16px;left:16px;z-index:9999;display:inline-flex;align-items:center;gap:6px;background:rgba(26,26,26,0.92);border:1px solid #2a2a2a;border-radius:8px;padding:8px 14px;color:#999;font-size:12px;font-weight:600;text-decoration:none;font-family:'Inter',sans-serif;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:all 0.2s}
+    .back-hub:hover{color:#d4af37;border-color:#d4af37;background:rgba(26,26,26,0.97)}
+    .back-hub-arrow{font-size:14px}
   </style>
 </head>
 <body>
-<a href="hub-index.html" class="back-btn">← Volver al Hub</a>
+<a href="hub-index.html" class="back-hub"><span class="back-hub-arrow">←</span> Hub HR</a>
 <div class="hero">
-  <div class="logo-wrap"><img src="https://raw.githubusercontent.com/focawear-collab/bc-procesos-rrhh/main/public/blackchicken_logo.png" alt="Black Chicken"></div>
-  <div class="badge-hiring">Estamos Contratando</div>
+  <div class="logo-wrap"><img src="./blackchicken_logo.png" alt="Black Chicken"></div>
+  <div class="badge-hiring">✦ Buscamos Talento</div>
   <h1>Chef de <span>Partie</span></h1>
-  <p class="hero-sub">Lidera una estación de cocina con excelencia y forma al equipo del futuro.</p>
+  <p class="hero-sub">Cerro El Plomo, Las Condes · Santiago</p>
   <div class="hero-tags">
-    <div class="tag">📍 Local asignado</div>
-    <div class="tag">⏰ 45 hrs semanales</div>
-    <div class="tag">📅 Rotativo 5×2</div>
-    <div class="tag gold">🔥 Contrato Plazo Fijo → Indefinido</div>
+    <span class="tag gold">👨‍🍳 Tercer al Mando de Cocina</span>
+    <span class="tag">📍 Las Condes</span>
+    <span class="tag">🕛 Jornada Completa</span>
+    <span class="tag">📅 Turnos Rotativos 5×2</span>
   </div>
 </div>
 <div class="container">
   <div class="section">
-    <div class="section-header"><div class="section-icon">📋</div><h2 class="section-title">Detalles del Cargo</h2></div>
+    <div class="section-header"><div class="section-icon">🎯</div><h2 class="section-title">El Rol</h2></div>
+    <div class="func-item" style="background:linear-gradient(135deg,#1a1505,#1a1a1a);border-color:#d4af37;">
+      <div class="func-dot" style="background:#d4af37;width:10px;height:10px;"></div>
+      <p class="func-text" style="color:#e8d080;line-height:1.7;">El Chef de Partida es la tercera persona al mando de la cocina en Black Chicken. Su misión es conocer, dominar y gestionar la totalidad del funcionamiento del restaurante con la misma rigurosidad y responsabilidad que el Jefe de Local y el Sub Jefe de Cocina.<br><br>Debe ser capaz de responder ante cualquier imprevisto operacional o de personal, asegurando la continuidad del servicio, los estándares de calidad del producto, el cumplimiento sanitario y la satisfacción del cliente. En ausencia del Jefe de Local o Sub Jefe, asume el liderazgo completo de la operación de cocina.<br><br>Es un cargo de confianza que exige dominio técnico total, capacidad de reacción inmediata y liderazgo operativo constante.</p>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-header"><div class="section-icon">🍗</div><h2 class="section-title">Sobre Black Chicken</h2></div>
+    <div class="func-item">
+      <div class="func-dot"></div>
+      <p class="func-text">Somos una propuesta gastronómica que reinterpreta la clásica rotisería con un enfoque moderno y gourmet. Nos especializamos en preparaciones en torno al pollo, inspiradas en sabores intensos y en la búsqueda del umami, combinando técnicas de alta cocina con procesos eficientes y estandarizados.</p>
+    </div>
+    <div class="func-item" style="margin-top: 10px;">
+      <div class="func-dot"></div>
+      <p class="func-text">Nacimos en Chile en 2020 como un emprendimiento familiar durante la pandemia, creciendo desde una cocina casera hasta consolidarnos con locales físicos en Las Condes, Santiago. Nuestra esencia está en la excelencia del producto, la atención cercana y el compromiso por entregar experiencias memorables.</p>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-header"><div class="section-icon">🕐</div><h2 class="section-title">Jornada y Horario</h2></div>
     <div class="schedule-grid">
       <div class="schedule-card highlight">
         <p class="sc-label">Jornada</p>
-        <p class="sc-value gold">45 hrs/semana</p>
-        <p class="sc-sub">Turno rotativo 5×2</p>
+        <p class="sc-value gold">Completa</p>
+        <p class="sc-sub">Turnos rotativos 5×2</p>
+      </div>
+      <div class="schedule-card highlight">
+        <p class="sc-label">Horario</p>
+        <p class="sc-value gold">AM 8:30–17:12 / PM 12:45–22:00</p>
+        <p class="sc-sub">5×2 rotativo · turnos AM y PM</p>
       </div>
       <div class="schedule-card">
-        <p class="sc-label">Reporta a</p>
-        <p class="sc-value">Jefe de Local</p>
-        <p class="sc-sub">Supervisa cocineros y ayudantes</p>
-      </div>
-      <div class="schedule-card">
-        <p class="sc-label">Ubicación</p>
-        <p class="sc-value">Local Asignado</p>
-        <p class="sc-sub">Cerro El Plomo, Las Condes</p>
-      </div>
-      <div class="schedule-card">
-        <p class="sc-label">Contrato</p>
+        <p class="sc-label">Tipo de contrato</p>
         <p class="sc-value">Plazo Fijo</p>
-        <p class="sc-sub">Renovable → indefinido</p>
+        <p class="sc-sub">Con proyección a contrato indefinido según desempeño</p>
+      </div>
+      <div class="schedule-card">
+        <p class="sc-label">Inicio</p>
+        <p class="sc-value">Inmediato</p>
+        <p class="sc-sub">Onboarding estructurado para asegurar tu adaptación</p>
       </div>
     </div>
   </div>
   <div class="section">
-    <div class="section-header"><div class="section-icon">🔥</div><h2 class="section-title">¿Qué Harás?</h2></div>
+    <div class="section-header"><div class="section-icon">📋</div><h2 class="section-title">Tus Responsabilidades</h2></div>
     <div class="func-list">
       <div class="func-item">
         <div class="func-dot"></div>
@@ -175,35 +194,88 @@
         <p class="comp-note">Sueldo mensual bruto</p>
       </div>
       <div class="comp-card main">
-        <p class="comp-label">Propina</p>
-        <p class="comp-value">~$80.000</p>
-        <p class="comp-note">Promedio mensual variable</p>
-      </div>
-      <div class="comp-card main">
         <p class="comp-label">Bono KPI</p>
         <p class="comp-value">Variable</p>
         <p class="comp-note">Según cumplimiento de indicadores</p>
+      </div>
+      <div class="comp-card">
+        <p class="comp-label">Propina</p>
+        <p class="comp-value">~$80.000</p>
+        <p class="comp-note">Promedio mensual variable</p>
       </div>
     </div>
   </div>
   <div class="section">
     <div class="section-header"><div class="section-icon">🎁</div><h2 class="section-title">¿Qué te Ofrecemos?</h2></div>
     <div class="benefits-grid">
-      <div class="benefit-card"><span class="benefit-icon">🍗</span><p class="benefit-name">Colación incluida</p><p class="benefit-desc">Almuerzo del local en cada turno sin costo.</p></div>
-      <div class="benefit-card"><span class="benefit-icon">👕</span><p class="benefit-name">Uniforme</p><p class="benefit-desc">Equipamiento completo desde el primer día.</p></div>
+      <div class="benefit-card">
+        <span class="benefit-icon">🍗</span>
+        <p class="benefit-name">Colación incluida</p>
+        <p class="benefit-desc">Almuerzo del local en cada turno sin costo.</p>
+      </div>
+      <div class="benefit-card">
+        <span class="benefit-icon">👕</span>
+        <p class="benefit-name">Uniforme</p>
+        <p class="benefit-desc">Equipamiento completo desde el primer día.</p>
+      </div>
     </div>
     <div style="margin-top:16px;padding-top:16px;border-top:1px dashed #2a2a2a;">
       <p style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;text-align:center;">Beneficios con segundo contrato y contrato indefinido</p>
       <div class="benefits-grid">
-        <div class="benefit-card deferred"><span class="benefit-icon">🥡</span><p class="benefit-name">Comida para llevar</p><p class="benefit-desc">$22.000 en comida para tu casa.</p><p class="deferred-note">Desde 2° contrato a plazo fijo</p></div>
-        <div class="benefit-card deferred"><span class="benefit-icon">🏋️</span><p class="benefit-name">Aporte Gimnasio</p><p class="benefit-desc">$30.000 mensuales para actividad física.</p><p class="deferred-note">Con contrato indefinido</p></div>
-        <div class="benefit-card deferred"><span class="benefit-icon">🎂</span><p class="benefit-name">Bono Cumpleaños</p><p class="benefit-desc">$25.000 en tu cumpleaños.</p><p class="deferred-note">Con contrato indefinido</p></div>
-        <div class="benefit-card deferred"><span class="benefit-icon">📦</span><p class="benefit-name">Caja Los Andes</p><p class="benefit-desc">Afiliación a Caja de Compensación.</p><p class="deferred-note">Con contrato indefinido</p></div>
-        <div class="benefit-card deferred"><span class="benefit-icon">🇨🇱</span><p class="benefit-name">Aguinaldo Fiestas Patrias</p><p class="benefit-desc">Bono especial en septiembre.</p><p class="deferred-note">Con contrato indefinido</p></div>
-        <div class="benefit-card deferred"><span class="benefit-icon">🎄</span><p class="benefit-name">Aguinaldo Navidad</p><p class="benefit-desc">Bono especial en diciembre.</p><p class="deferred-note">Con contrato indefinido</p></div>
-        <div class="benefit-card deferred"><span class="benefit-icon">🏥</span><p class="benefit-name">Seguro Complementario</p><p class="benefit-desc">Seguro complementario Vida Cámara.</p><p class="deferred-note">Desde 1 año de antigüedad</p></div>
-        <div class="benefit-card deferred"><span class="benefit-icon">🎁</span><p class="benefit-name">Bono Anual</p><p class="benefit-desc">$200.000 pagado en dos cuotas.</p><p class="deferred-note">Desde 1 año de antigüedad</p></div>
-        <div class="benefit-card deferred"><span class="benefit-icon">🏆</span><p class="benefit-name">Bono Antigüedad</p><p class="benefit-desc">1 sueldo completo cada 5 años.</p><p class="deferred-note">Con contrato indefinido</p></div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">🥡</span>
+          <p class="benefit-name">Comida para llevar</p>
+          <p class="benefit-desc">$25.000 en comida para tu casa.</p>
+          <p class="deferred-note">Desde 2° contrato a plazo fijo</p>
+        </div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">🏋️</span>
+          <p class="benefit-name">Aporte Gimnasio</p>
+          <p class="benefit-desc">$30.000 mensuales para actividad física.</p>
+          <p class="deferred-note">Con contrato indefinido</p>
+        </div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">🎂</span>
+          <p class="benefit-name">Bono Cumpleaños</p>
+          <p class="benefit-desc">$25.000 en tu cumpleaños.</p>
+          <p class="deferred-note">Con contrato indefinido</p>
+        </div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">📦</span>
+          <p class="benefit-name">Caja Los Andes</p>
+          <p class="benefit-desc">Afiliación a Caja de Compensación.</p>
+          <p class="deferred-note">Con contrato indefinido</p>
+        </div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">🇨🇱</span>
+          <p class="benefit-name">Aguinaldo Fiestas Patrias</p>
+          <p class="benefit-desc">Bono especial en septiembre.</p>
+          <p class="deferred-note">Con contrato indefinido</p>
+        </div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">🎄</span>
+          <p class="benefit-name">Aguinaldo Navidad</p>
+          <p class="benefit-desc">Bono especial en diciembre.</p>
+          <p class="deferred-note">Con contrato indefinido</p>
+        </div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">🏥</span>
+          <p class="benefit-name">Seguro Complementario</p>
+          <p class="benefit-desc">Seguro complementario Vida Cámara.</p>
+          <p class="deferred-note">Desde 1 año de antigüedad</p>
+        </div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">🎁</span>
+          <p class="benefit-name">Bono Anual</p>
+          <p class="benefit-desc">$200.000 pagado en dos cuotas: marzo y diciembre.</p>
+          <p class="deferred-note">Desde 1 año de antigüedad</p>
+        </div>
+        <div class="benefit-card deferred">
+          <span class="benefit-icon">🏆</span>
+          <p class="benefit-name">Bono Antigüedad</p>
+          <p class="benefit-desc">1 sueldo completo cada 5 años.</p>
+          <p class="deferred-note">Con contrato indefinido</p>
+        </div>
       </div>
     </div>
   </div>
@@ -221,7 +293,9 @@
     <p class="cta-note">Incluye una breve presentación y tu experiencia más relevante. Todas las postulaciones son tratadas con total confidencialidad.</p>
   </div>
 </div>
-<div class="footer"><p class="footer-text"><span>Black Chicken</span> · Cerro El Plomo 5931 / 5630, Las Condes · Santiago · talentos@blackchicken.cl</p></div>
+<div class="footer">
+  <p class="footer-text"><span>Black Chicken</span> · Cerro El Plomo 5931 / 5630, Las Condes · Santiago · talentos@blackchicken.cl</p>
+</div>
 <style>
 @media print {
   .download-btn { display: none !important; }
