@@ -24,6 +24,10 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 .tmpl-desc{font-size:12px;color:#666;line-height:1.4}
 .tmpl-status{position:absolute;top:12px;right:12px;font-size:9px;font-weight:800;padding:2px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.5px}
 .tmpl-status.ready{background:rgba(80,176,80,.2);color:#50b050}
+.tmpl-status.saved{background:rgba(212,175,55,.18);color:#d4af37}
+.tmpl-del{position:absolute;bottom:10px;right:10px;background:#242424;border:1px solid #2a2a2a;color:#888;width:22px;height:22px;border-radius:6px;font-size:14px;line-height:1;cursor:pointer;display:none}
+.tmpl:hover .tmpl-del{display:block}
+.tmpl-del:hover{color:#e05050;border-color:#e05050}
 .note{background:#1a1a1a;border:1px solid #d4af37;border-radius:10px;padding:16px;font-size:13px;color:#ccc;margin-bottom:24px;line-height:1.6}
 .note strong{color:#d4af37}
 @media(max-width:640px){.templates{grid-template-columns:1fr}.container{padding:24px 16px}}
@@ -115,6 +119,12 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
   <div class="templates">
     <div class="tmpl" data-id="documento_blanco"><div class="tmpl-status ready">Listo</div><div class="tmpl-icon">📄</div><div class="tmpl-name">Documento en blanco</div><div class="tmpl-desc">Plantilla base con membrete BC: título, cuerpo libre y firmas. Escribe y edita cualquier documento desde cero.</div></div>
   </div>
+</div>
+
+<!-- Mis plantillas guardadas (dinámico) -->
+<div class="cat" id="savedCat" style="display:none">
+  <div class="cat-title">📁 Mis plantillas guardadas</div>
+  <div class="templates" id="savedTemplates"></div>
 </div>
 
 <!-- Gestión disciplinaria -->
@@ -512,27 +522,90 @@ const T = {
 
 // ===== Motor: form + preview =====
 const ov=document.getElementById('overlay'), modal=document.getElementById('modal');
-let current=null;
+let current=null, editingSavedId=null;
 
-function openForm(id){
-  current=id; const t=T[id];
+function openForm(id, prefill, savedId){
+  current=id; editingSavedId=savedId||null; const t=T[id]; const pf=prefill||{};
+  const has=k=>Object.prototype.hasOwnProperty.call(pf,k);
   let f='';
   t.fields.forEach(fl=>{
     if(fl.t==='check'){
-      f+='<div class="fg fg-check"><input type="checkbox" id="f_'+fl.k+'"><label for="f_'+fl.k+'">'+fl.l+'</label></div>';
+      const ck=has(fl.k)? (pf[fl.k]?' checked':'') : '';
+      f+='<div class="fg fg-check"><input type="checkbox" id="f_'+fl.k+'"'+ck+'><label for="f_'+fl.k+'">'+fl.l+'</label></div>';
     } else if(fl.t==='textarea'){
-      f+='<div class="fg"><label>'+fl.l+(fl.req?' *':'')+'</label><textarea id="f_'+fl.k+'">'+(fl.def?esc(fl.def):'')+'</textarea></div>';
+      const val = has(fl.k)? esc(pf[fl.k]) : (fl.def?esc(fl.def):'');
+      f+='<div class="fg"><label>'+fl.l+(fl.req?' *':'')+'</label><textarea id="f_'+fl.k+'">'+val+'</textarea></div>';
     } else if(fl.t==='select'){
-      f+='<div class="fg"><label>'+fl.l+'</label><select id="f_'+fl.k+'">'+fl.opts.map(o=>'<option>'+esc(o)+'</option>').join('')+'</select></div>';
+      const sel = has(fl.k)? String(pf[fl.k]) : null;
+      f+='<div class="fg"><label>'+fl.l+'</label><select id="f_'+fl.k+'">'+fl.opts.map(o=>'<option'+(sel===o?' selected':'')+'>'+esc(o)+'</option>').join('')+'</select></div>';
     } else {
-      const val = fl.t==='date' ? (fl.k==='fecha'?hoyISO():'') : (fl.def?esc(fl.def):'');
+      let val = has(fl.k)? esc(pf[fl.k]) : (fl.t==='date' ? (fl.k==='fecha'?hoyISO():'') : (fl.def?esc(fl.def):''));
       f+='<div class="fg"><label>'+fl.l+(fl.req?' *':'')+'</label><input type="'+fl.t+'" id="f_'+fl.k+'" value="'+val+'"></div>';
     }
   });
+  const saveBtn = (id==='documento_blanco')
+    ? '<button class="btn btn-ghost" onclick="saveTemplate()">💾 '+(editingSavedId?'Actualizar plantilla':'Guardar plantilla')+'</button>' : '';
   modal.innerHTML='<div class="modal-head"><h2><span class="mh-ico">'+t.ico+'</span>'+t.title+'</h2><button class="modal-close" onclick="closeM()">×</button></div>'
     +'<div class="modal-body">'+f+'</div>'
-    +'<div class="modal-foot"><button class="btn btn-ghost" onclick="closeM()">Cancelar</button><button class="btn btn-primary" onclick="generate()">Generar documento →</button></div>';
+    +'<div class="modal-foot"><button class="btn btn-ghost" onclick="closeM()">Cancelar</button>'+saveBtn+'<button class="btn btn-primary" onclick="generate()">Generar documento →</button></div>';
   ov.classList.add('open'); ov.scrollTop=0;
+}
+
+// ===== Plantillas guardadas (storage compartido) =====
+let SAVED=[];
+function loadSaved(){
+  fetch('/api/hr-templates').then(r=>r.json()).then(j=>{
+    if(j&&j.ok&&Array.isArray(j.templates)){ SAVED=j.templates; renderSaved(); }
+  }).catch(()=>{});
+}
+function renderSaved(){
+  const cat=document.getElementById('savedCat'), box=document.getElementById('savedTemplates');
+  if(!SAVED.length){ cat.style.display='none'; box.innerHTML=''; return; }
+  cat.style.display='';
+  box.innerHTML=SAVED.map(t=>{
+    const desc=(t.cuerpo||'').replace(/\s+/g,' ').slice(0,90)||'Documento guardado.';
+    return '<div class="tmpl" data-saved="'+esc(t.id)+'"><div class="tmpl-status saved">Guardada</div>'
+      +'<button class="tmpl-del" data-del="'+esc(t.id)+'" title="Eliminar">×</button>'
+      +'<div class="tmpl-icon">'+esc(t.icono||'📄')+'</div><div class="tmpl-name">'+esc(t.nombre)+'</div>'
+      +'<div class="tmpl-desc">'+esc(desc)+'</div></div>';
+  }).join('');
+  box.querySelectorAll('.tmpl').forEach(c=>c.addEventListener('click',e=>{
+    if(e.target.classList.contains('tmpl-del')) return;
+    const t=SAVED.find(x=>x.id===c.dataset.saved); if(t) openForm('documento_blanco', {tipo:t.nombre, dirigido:t.dirigido, cuerpo:t.cuerpo, firmante1:t.firmante1, cargo1:t.cargo1, firmante2:t.firmante2, cargo2:t.cargo2}, t.id);
+  }));
+  box.querySelectorAll('.tmpl-del').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); delTemplate(b.dataset.del); }));
+}
+function getPw(){
+  let p=localStorage.getItem('bc_hr_tpl_pw');
+  if(!p){ p=prompt('Clave de edición HR para guardar la plantilla:'); if(p) localStorage.setItem('bc_hr_tpl_pw',p); }
+  return p;
+}
+async function persist(){
+  const pw=getPw(); if(!pw) return false;
+  try{
+    const r=await fetch('/api/hr-templates',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw,templates:SAVED})});
+    if(r.status===401){ localStorage.removeItem('bc_hr_tpl_pw'); alert('Clave incorrecta. Intenta de nuevo.'); return false; }
+    if(!r.ok){ alert('No se pudo guardar (storage). Inténtalo más tarde.'); return false; }
+    const j=await r.json(); if(j&&j.ok&&Array.isArray(j.templates)) SAVED=j.templates;
+    return true;
+  }catch(e){ alert('Error de conexión al guardar.'); return false; }
+}
+async function saveTemplate(){
+  const d=collect();
+  if(!d.tipo||!d.tipo.trim()){ const el=document.getElementById('f_tipo'); el.focus(); el.style.borderColor='#e05050'; return; }
+  const obj={ id: editingSavedId || ('t'+Date.now().toString(36)), nombre:d.tipo, icono:'📄', categoria:'Mis plantillas',
+    dirigido:d.dirigido||'', cuerpo:d.cuerpo||'', firmante1:d.firmante1||'', cargo1:d.cargo1||'', firmante2:d.firmante2||'', cargo2:d.cargo2||'' };
+  const i=SAVED.findIndex(x=>x.id===obj.id);
+  if(i>=0) SAVED[i]=obj; else SAVED.push(obj);
+  const ok=await persist();
+  if(ok){ editingSavedId=obj.id; renderSaved(); const btns=document.querySelectorAll('.modal-foot .btn-ghost'); btns.forEach(b=>{ if(b.textContent.indexOf('plantilla')>=0){ const o=b.textContent; b.textContent='✓ Guardada'; setTimeout(()=>b.textContent='💾 Actualizar plantilla',1600);} }); }
+  else { SAVED=SAVED.filter(x=>x!==obj); }
+}
+async function delTemplate(id){
+  const t=SAVED.find(x=>x.id===id); if(!t) return;
+  if(!confirm('¿Eliminar la plantilla «'+t.nombre+'»?')) return;
+  const bak=SAVED.slice(); SAVED=SAVED.filter(x=>x.id!==id);
+  const ok=await persist(); if(ok) renderSaved(); else SAVED=bak;
 }
 
 function collect(){
@@ -569,9 +642,10 @@ function copyDoc(){
 
 function closeM(){ ov.classList.remove('open'); current=null; }
 
-document.querySelectorAll('.tmpl').forEach(c=>c.addEventListener('click',()=>openForm(c.dataset.id)));
+document.querySelectorAll('.tmpl[data-id]').forEach(c=>c.addEventListener('click',()=>openForm(c.dataset.id)));
 ov.addEventListener('click',e=>{ if(e.target===ov) closeM(); });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeM(); });
+loadSaved();
 </script>
 </body>
 </html>
