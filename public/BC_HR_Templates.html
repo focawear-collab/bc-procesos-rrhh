@@ -10,6 +10,18 @@
 body{font-family:'Inter',sans-serif;background:#0f0f0f;color:#e8e8e8;min-height:100vh}
 .back-hub{position:fixed;top:16px;left:16px;z-index:9999;display:inline-flex;align-items:center;gap:6px;background:rgba(26,26,26,.92);border:1px solid #2a2a2a;border-radius:8px;padding:8px 14px;color:#999;font-size:12px;font-weight:600;text-decoration:none;backdrop-filter:blur(8px);transition:all .2s}
 .back-hub:hover{color:#d4af37;border-color:#d4af37}
+.edit-toggle{position:fixed;top:16px;right:16px;z-index:9999;display:inline-flex;align-items:center;gap:6px;background:rgba(26,26,26,.92);border:1px solid #2a2a2a;border-radius:8px;padding:8px 14px;color:#999;font-size:12px;font-weight:600;cursor:pointer;backdrop-filter:blur(8px);transition:all .2s;font-family:'Inter',sans-serif}
+.edit-toggle:hover{color:#d4af37;border-color:#d4af37}
+.edit-toggle.on{color:#1a1a1a;background:#d4af37;border-color:#d4af37}
+.edit-reset{position:fixed;top:16px;right:150px;z-index:9999;display:none;align-items:center;gap:6px;background:rgba(26,26,26,.92);border:1px solid #2a2a2a;border-radius:8px;padding:8px 14px;color:#999;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+.edit-reset:hover{color:#e05050;border-color:#e05050}
+.edit-banner{display:none;background:#1a1a1a;border:1px dashed #d4af37;border-radius:10px;padding:12px 16px;font-size:13px;color:#d4af37;margin-bottom:20px}
+body.editmode .edit-banner{display:block}
+body.editmode .edit-reset{display:inline-flex}
+body.editmode .tmpl[data-id]{cursor:grab;outline:1px dashed #d4af37;outline-offset:2px}
+body.editmode .tmpl[data-id]:active{cursor:grabbing}
+body.editmode .tmpl[data-id] *{pointer-events:none}
+.tmpl.dragging{opacity:.35}
 .container{max-width:900px;margin:0 auto;padding:48px 32px}
 h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 .sub{font-size:13px;color:#666;margin-bottom:24px}
@@ -107,6 +119,8 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 </head>
 <body>
 <a href="hub-index.html" class="back-hub"><span>←</span> Hub HR</a>
+<button class="edit-reset" id="editReset">↺ Restablecer orden</button>
+<button class="edit-toggle" id="editToggle">✏️ Editar orden</button>
 <div class="container">
 <h1>Biblioteca de Templates</h1>
 <p class="sub">Documentos estándar para gestión de personas · Black Chicken HR</p>
@@ -114,12 +128,14 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 <div class="note"><strong>Cómo funciona:</strong> Haz clic en cualquier template, completa los datos del caso y presiona <strong>Generar</strong>. El documento se arma con el membrete de la empresa. Puedes <strong>editar el texto directamente</strong> sobre el documento antes de <strong>Imprimir / Guardar PDF</strong>. Con <strong>Guardar plantilla</strong> guardas cualquier documento (con tus ediciones) para reutilizarlo — aparecerá en <strong>Mis plantillas guardadas</strong>. ¿Necesitas algo distinto? Usa <strong>Documento en blanco</strong> y escríbelo desde cero.</div>
 
 <!-- Crear desde cero -->
-<div class="cat">
+<div class="cat" data-cat="crear">
   <div class="cat-title">✏️ Crear desde cero</div>
   <div class="templates">
     <div class="tmpl" data-id="documento_blanco"><div class="tmpl-status ready">Listo</div><div class="tmpl-icon">📄</div><div class="tmpl-name">Documento en blanco</div><div class="tmpl-desc">Plantilla base con membrete BC: título, cuerpo libre y firmas. Escribe y edita cualquier documento desde cero.</div></div>
   </div>
 </div>
+
+<div class="edit-banner">✋ Arrastra las tarjetas para ordenarlas a tu gusto (incluso entre categorías). El orden se guarda en este navegador. Pulsa «Listo» al terminar.</div>
 
 <!-- Mis plantillas guardadas (dinámico) -->
 <div class="cat" id="savedCat" style="display:none">
@@ -128,7 +144,7 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 </div>
 
 <!-- Gestión disciplinaria -->
-<div class="cat">
+<div class="cat" data-cat="disciplina">
   <div class="cat-title">⚠️ Gestión disciplinaria</div>
   <div class="templates">
     <div class="tmpl" data-id="amonestacion_verbal"><div class="tmpl-status ready">Listo</div><div class="tmpl-icon">📝</div><div class="tmpl-name">Amonestación verbal</div><div class="tmpl-desc">Registro de amonestación verbal con fecha, motivo y compromiso del trabajador.</div></div>
@@ -138,7 +154,7 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 </div>
 
 <!-- Reconocimiento -->
-<div class="cat">
+<div class="cat" data-cat="reconocimiento">
   <div class="cat-title">🏆 Reconocimiento</div>
   <div class="templates">
     <div class="tmpl" data-id="felicitacion"><div class="tmpl-status ready">Listo</div><div class="tmpl-icon">⭐</div><div class="tmpl-name">Felicitación formal</div><div class="tmpl-desc">Carta de reconocimiento por desempeño destacado, logro o actitud ejemplar.</div></div>
@@ -147,7 +163,7 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 </div>
 
 <!-- Operaciones HR -->
-<div class="cat">
+<div class="cat" data-cat="operaciones">
   <div class="cat-title">📄 Operaciones HR</div>
   <div class="templates">
     <div class="tmpl" data-id="cambio_turno"><div class="tmpl-status ready">Listo</div><div class="tmpl-icon">🔄</div><div class="tmpl-name">Cambio de turno</div><div class="tmpl-desc">Solicitud formal de cambio de turno entre trabajadores con autorización de jefe.</div></div>
@@ -158,7 +174,7 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 </div>
 
 <!-- Desvinculación -->
-<div class="cat">
+<div class="cat" data-cat="desvinculacion">
   <div class="cat-title">🚪 Desvinculación</div>
   <div class="templates">
     <div class="tmpl" data-id="carta_renuncia"><div class="tmpl-status ready">Listo</div><div class="tmpl-icon">📝</div><div class="tmpl-name">Carta de renuncia</div><div class="tmpl-desc">Template para renuncia voluntaria del trabajador con preaviso.</div></div>
@@ -661,10 +677,72 @@ function copyDoc(){
 
 function closeM(){ ov.classList.remove('open'); current=null; editingSavedId=null; }
 
-document.querySelectorAll('.tmpl[data-id]').forEach(c=>c.addEventListener('click',()=>openForm(c.dataset.id)));
+document.querySelectorAll('.tmpl[data-id]').forEach(c=>c.addEventListener('click',()=>{ if(editMode) return; openForm(c.dataset.id); }));
 ov.addEventListener('click',e=>{ if(e.target===ov) closeM(); });
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeM(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ if(editMode) setEdit(false); else closeM(); } });
 loadSaved();
+
+// ===== Modo edición: ordenar tarjetas (drag & drop, por navegador) =====
+const LKEY='bc_tpl_layout_v1';
+let editMode=false, dragEl=null;
+
+function saveLayout(){
+  const layout={};
+  document.querySelectorAll('.cat[data-cat]').forEach(cat=>{
+    layout[cat.dataset.cat]=[...cat.querySelectorAll('.tmpl[data-id]')].map(c=>c.dataset.id);
+  });
+  try{ localStorage.setItem(LKEY, JSON.stringify(layout)); }catch(e){}
+}
+function applyLayout(){
+  let layout; try{ layout=JSON.parse(localStorage.getItem(LKEY)); }catch(e){}
+  if(!layout) return;
+  const cards={}; document.querySelectorAll('.tmpl[data-id]').forEach(c=>cards[c.dataset.id]=c);
+  Object.keys(layout).forEach(key=>{
+    const box=document.querySelector('.cat[data-cat="'+key+'"] .templates'); if(!box) return;
+    layout[key].forEach(id=>{ if(cards[id]){ box.appendChild(cards[id]); } });
+  });
+  hideEmptyCats();
+}
+function hideEmptyCats(){
+  document.querySelectorAll('.cat[data-cat]').forEach(cat=>{
+    const has=cat.querySelector('.tmpl[data-id]');
+    cat.style.display = (!has && !editMode) ? 'none' : '';
+  });
+}
+function closestCard(box,x,y){
+  let best={dist:Infinity,el:null,before:true};
+  box.querySelectorAll('.tmpl[data-id]:not(.dragging)').forEach(ch=>{
+    const b=ch.getBoundingClientRect(), cx=b.left+b.width/2, cy=b.top+b.height/2;
+    const dist=Math.hypot(x-cx,y-cy);
+    if(dist<best.dist) best={dist,el:ch,before:(y<cy-1)||(Math.abs(y-cy)<=b.height/2 && x<cx)};
+  });
+  return best;
+}
+document.querySelectorAll('.cat[data-cat] .templates').forEach(box=>{
+  box.addEventListener('dragover',e=>{
+    if(!editMode||!dragEl) return; e.preventDefault();
+    const c=closestCard(box,e.clientX,e.clientY);
+    if(!c.el){ box.appendChild(dragEl); }
+    else box.insertBefore(dragEl, c.before? c.el : c.el.nextSibling);
+  });
+});
+document.querySelectorAll('.cat[data-cat] .tmpl[data-id]').forEach(card=>{
+  card.setAttribute('draggable','false');
+  card.addEventListener('dragstart',e=>{ if(!editMode){ e.preventDefault(); return; } dragEl=card; card.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; try{e.dataTransfer.setData('text/plain',card.dataset.id);}catch(_){} });
+  card.addEventListener('dragend',()=>{ card.classList.remove('dragging'); dragEl=null; saveLayout(); });
+});
+function setEdit(on){
+  editMode=on;
+  document.body.classList.toggle('editmode',on);
+  document.querySelectorAll('.cat[data-cat] .tmpl[data-id]').forEach(c=>c.setAttribute('draggable', on?'true':'false'));
+  const tg=document.getElementById('editToggle');
+  tg.textContent = on ? '✓ Listo' : '✏️ Editar orden';
+  tg.classList.toggle('on',on);
+  hideEmptyCats();
+}
+document.getElementById('editToggle').addEventListener('click',()=>setEdit(!editMode));
+document.getElementById('editReset').addEventListener('click',()=>{ if(confirm('¿Restablecer el orden original de las tarjetas?')){ try{localStorage.removeItem(LKEY);}catch(e){} location.reload(); } });
+applyLayout();
 </script>
 </body>
 </html>
