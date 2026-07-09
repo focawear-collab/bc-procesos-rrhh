@@ -16,17 +16,86 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 .cat{margin-bottom:28px}
 .cat-title{font-size:14px;font-weight:700;color:#d4af37;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #2a2a2a}
 .templates{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.tmpl{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:16px;transition:border-color .2s;cursor:pointer;position:relative}
-.tmpl:hover{border-color:#d4af37}
+.tmpl{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:16px;transition:border-color .2s,transform .1s;cursor:pointer;position:relative}
+.tmpl:hover{border-color:#d4af37;transform:translateY(-1px)}
+.tmpl:active{transform:translateY(0)}
 .tmpl-icon{font-size:24px;margin-bottom:8px}
 .tmpl-name{font-size:13px;font-weight:700;color:#fff;margin-bottom:4px}
 .tmpl-desc{font-size:12px;color:#666;line-height:1.4}
 .tmpl-status{position:absolute;top:12px;right:12px;font-size:9px;font-weight:800;padding:2px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.5px}
 .tmpl-status.ready{background:rgba(80,176,80,.2);color:#50b050}
-.tmpl-status.pending{background:rgba(224,192,80,.15);color:#e0c050}
 .note{background:#1a1a1a;border:1px solid #d4af37;border-radius:10px;padding:16px;font-size:13px;color:#ccc;margin-bottom:24px;line-height:1.6}
 .note strong{color:#d4af37}
 @media(max-width:640px){.templates{grid-template-columns:1fr}.container{padding:24px 16px}}
+
+/* ===== Modal ===== */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:10000;display:none;align-items:flex-start;justify-content:center;padding:32px 16px;overflow-y:auto}
+.overlay.open{display:flex}
+.modal{background:#161616;border:1px solid #2a2a2a;border-radius:14px;width:100%;max-width:640px;margin:auto;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid #2a2a2a}
+.modal-head h2{font-size:16px;font-weight:800;color:#fff}
+.modal-head .mh-ico{font-size:20px;margin-right:8px}
+.modal-close{background:none;border:none;color:#888;font-size:22px;cursor:pointer;line-height:1;padding:4px 8px;border-radius:6px}
+.modal-close:hover{color:#fff;background:#242424}
+.modal-body{padding:22px 24px}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:12px;font-weight:600;color:#bbb;margin-bottom:5px}
+.fg input,.fg textarea,.fg select{width:100%;background:#0f0f0f;border:1px solid #2a2a2a;border-radius:8px;padding:10px 12px;color:#eee;font-family:'Inter',sans-serif;font-size:13px}
+.fg textarea{resize:vertical;min-height:64px;line-height:1.5}
+.fg input:focus,.fg textarea:focus,.fg select:focus{outline:none;border-color:#d4af37}
+.fg-check{display:flex;align-items:center;gap:8px}
+.fg-check input{width:auto}
+.fg-check label{margin-bottom:0}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.fg-row{grid-template-columns:1fr}}
+.modal-foot{display:flex;gap:10px;justify-content:flex-end;padding:16px 24px;border-top:1px solid #2a2a2a}
+.btn{border:none;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
+.btn-primary{background:#d4af37;color:#1a1a1a}
+.btn-primary:hover{background:#e6c04a}
+.btn-ghost{background:#242424;color:#ccc;border:1px solid #2a2a2a}
+.btn-ghost:hover{border-color:#d4af37;color:#fff}
+
+/* ===== Preview (documento white paper) ===== */
+.preview-actions{display:flex;gap:10px;justify-content:space-between;align-items:center;padding:14px 24px;border-bottom:1px solid #2a2a2a;flex-wrap:wrap}
+.preview-actions .pa-right{display:flex;gap:8px}
+.preview-scroll{max-height:70vh;overflow-y:auto;padding:20px;background:#0a0a0a}
+.doc{background:#fff;color:#1a1a1a;max-width:760px;margin:0 auto;padding:52px 56px;font-family:Georgia,'Times New Roman',serif;font-size:14px;line-height:1.75;box-shadow:0 6px 24px rgba(0,0,0,.4)}
+.doc-lh{display:flex;align-items:center;gap:16px;border-bottom:2px solid #1a1a1a;padding-bottom:16px;margin-bottom:8px}
+.doc-lh img{width:58px;height:58px;object-fit:contain}
+.lh-razon{font-family:'Inter',sans-serif;font-size:16px;font-weight:800;color:#111;letter-spacing:.3px}
+.lh-sub{font-family:'Inter',sans-serif;font-size:11px;color:#555;margin-top:2px}
+.doc-tipo{font-family:'Inter',sans-serif;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#8a6d1e;text-align:right;margin-bottom:26px}
+.doc-cd{text-align:right;color:#333;margin-bottom:24px;font-size:13px}
+.doc h3{font-family:'Inter',sans-serif;font-size:16px;font-weight:800;text-align:center;text-transform:uppercase;letter-spacing:1px;margin:0 0 24px;color:#111}
+.doc p{margin-bottom:14px;text-align:justify}
+.doc .lbl{font-weight:bold}
+.doc ul{margin:0 0 14px 22px}
+.doc li{margin-bottom:6px}
+.doc .field-block{margin-bottom:16px}
+.doc .field-block .q{font-weight:bold;display:block;margin-bottom:2px}
+.doc .field-block .a{border-bottom:1px solid #999;min-height:22px;display:block}
+.doc table.kv{width:100%;border-collapse:collapse;margin-bottom:16px}
+.doc table.kv td{border:1px solid #ccc;padding:7px 10px;font-size:13px}
+.doc table.kv td.k{background:#f4f0e6;font-weight:bold;width:38%}
+.sigs{display:grid;gap:40px;margin-top:56px}
+.sigs.c1{grid-template-columns:1fr;max-width:320px;margin-left:auto;margin-right:auto}
+.sigs.c2{grid-template-columns:1fr 1fr}
+.sigs.c3{grid-template-columns:1fr 1fr 1fr}
+.sig{text-align:center}
+.sig-line{border-top:1px solid #1a1a1a;margin-bottom:6px}
+.sig-n{font-weight:bold;font-size:13px}
+.sig-r{font-size:11px;color:#555;font-family:'Inter',sans-serif}
+.doc-foot{margin-top:38px;padding-top:12px;border-top:1px solid #ddd;font-family:'Inter',sans-serif;font-size:10px;color:#888;text-align:center;line-height:1.5}
+
+/* ===== Print ===== */
+@media print{
+  body{background:#fff}
+  .back-hub,.container,.modal-head,.modal-foot,.preview-actions{display:none!important}
+  .overlay{position:static;background:none;padding:0;display:block!important}
+  .modal{border:none;box-shadow:none;max-width:none;background:#fff}
+  .preview-scroll{max-height:none;overflow:visible;padding:0;background:#fff}
+  .doc{box-shadow:none;padding:0;max-width:none}
+}
 </style>
 </head>
 <body>
@@ -35,15 +104,15 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 <h1>Biblioteca de Templates</h1>
 <p class="sub">Documentos estándar para gestión de personas · Black Chicken HR</p>
 
-<div class="note"><strong>Uso:</strong> Cada template se genera con los datos del caso. Pídele a Claude que llene el template con el nombre, fecha y detalles específicos antes de imprimir o enviar.</div>
+<div class="note"><strong>Cómo funciona:</strong> Haz clic en cualquier template, completa los datos del caso (nombre, RUT, fecha, motivo, etc.) y presiona <strong>Generar</strong>. El documento se arma con el membrete de la empresa, listo para <strong>Imprimir / Guardar PDF</strong> o copiar el texto.</div>
 
 <!-- Gestión disciplinaria -->
 <div class="cat">
   <div class="cat-title">⚠️ Gestión disciplinaria</div>
   <div class="templates">
-    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">📝</div><div class="tmpl-name">Amonestación verbal</div><div class="tmpl-desc">Registro de amonestación verbal con fecha, motivo y compromiso del trabajador.</div></div>
-    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">📋</div><div class="tmpl-name">Amonestación escrita</div><div class="tmpl-desc">Carta formal de amonestación con antecedentes, falta y consecuencias.</div></div>
-    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">🚫</div><div class="tmpl-name">Suspensión</div><div class="tmpl-desc">Notificación de suspensión temporal con período y condiciones de retorno.</div></div>
+    <div class="tmpl" data-id="amonestacion_verbal"><div class="tmpl-status ready">Listo</div><div class="tmpl-icon">📝</div><div class="tmpl-name">Amonestación verbal</div><div class="tmpl-desc">Registro de amonestación verbal con fecha, motivo y compromiso del trabajador.</div></div>
+    <div class="tmpl" data-id="amonestacion_escrita"><div class="tmpl-status ready">Listo</div><div class="tmpl-icon">📋</div><div class="tmpl-name">Amonestación escrita</div><div class="tmpl-desc">Carta formal de amonestación con antecedentes, falta y consecuencias.</div></div>
+    <div class="tmpl" data-id="suspension"><div class="tmpl-status ready">Listo</div><div class="tmpl-icon">🚫</div><div class="tmpl-name">Suspensión</div><div class="tmpl-desc">Notificación de suspensión temporal con período y condiciones de retorno.</div></div>
   </div>
 </div>
 
@@ -51,8 +120,8 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 <div class="cat">
   <div class="cat-title">🏆 Reconocimiento</div>
   <div class="templates">
-    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">⭐</div><div class="tmpl-name">Felicitación formal</div><div class="tmpl-desc">Carta de reconocimiento por desempeño destacado, logro o actitud ejemplar.</div></div>
-    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">📜</div><div class="tmpl-name">Certificado de capacitación</div><div class="tmpl-desc">Constancia de participación en capacitación interna con horas y contenido.</div></div>
+    <div class="tmpl" data-id="felicitacion"><div class="tmpl-status ready">Listo</div><div class="tmpl-icon">⭐</div><div class="tmpl-name">Felicitación formal</div><div class="tmpl-desc">Carta de reconocimiento por desempeño destacado, logro o actitud ejemplar.</div></div>
+    <div class="tmpl" data-id="certificado_capacitacion"><div class="tmpl-status ready">Listo</div><div class="tmpl-icon">📜</div><div class="tmpl-name">Certificado de capacitación</div><div class="tmpl-desc">Constancia de participación en capacitación interna con horas y contenido.</div></div>
   </div>
 </div>
 
@@ -60,10 +129,10 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 <div class="cat">
   <div class="cat-title">📄 Operaciones HR</div>
   <div class="templates">
-    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">🔄</div><div class="tmpl-name">Cambio de turno</div><div class="tmpl-desc">Solicitud formal de cambio de turno entre trabajadores con autorización de jefe.</div></div>
-    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">✈️</div><div class="tmpl-name">Solicitud de vacaciones</div><div class="tmpl-desc">Formulario de solicitud de feriado legal con fechas y aprobación.</div></div>
-    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">🏥</div><div class="tmpl-name">Constancia de empleo</div><div class="tmpl-desc">Carta dirigida a terceros certificando relación laboral, cargo y antigüedad.</div></div>
-    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">📋</div><div class="tmpl-name">Acta de entrega de uniforme</div><div class="tmpl-desc">Registro de entrega de equipamiento con detalle de prendas y firma.</div></div>
+    <div class="tmpl" data-id="cambio_turno"><div class="tmpl-status ready">Listo</div><div class="tmpl-icon">🔄</div><div class="tmpl-name">Cambio de turno</div><div class="tmpl-desc">Solicitud formal de cambio de turno entre trabajadores con autorización de jefe.</div></div>
+    <div class="tmpl" data-id="solicitud_vacaciones"><div class="tmpl-status ready">Listo</div><div class="tmpl-icon">✈️</div><div class="tmpl-name">Solicitud de vacaciones</div><div class="tmpl-desc">Formulario de solicitud de feriado legal con fechas y aprobación.</div></div>
+    <div class="tmpl" data-id="constancia_empleo"><div class="tmpl-status ready">Listo</div><div class="tmpl-icon">🏥</div><div class="tmpl-name">Constancia de empleo</div><div class="tmpl-desc">Carta dirigida a terceros certificando relación laboral, cargo y antigüedad.</div></div>
+    <div class="tmpl" data-id="acta_uniforme"><div class="tmpl-status ready">Listo</div><div class="tmpl-icon">📋</div><div class="tmpl-name">Acta de entrega de uniforme</div><div class="tmpl-desc">Registro de entrega de equipamiento con detalle de prendas y firma.</div></div>
   </div>
 </div>
 
@@ -71,13 +140,403 @@ h1{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
 <div class="cat">
   <div class="cat-title">🚪 Desvinculación</div>
   <div class="templates">
-    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">📝</div><div class="tmpl-name">Carta de renuncia</div><div class="tmpl-desc">Template para renuncia voluntaria del trabajador con preaviso.</div></div>
-    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">📝</div><div class="tmpl-name">Carta de no renovación</div><div class="tmpl-desc">Notificación de no renovación de contrato a plazo fijo dentro de plazo legal.</div></div>
-    <div class="tmpl"><div class="tmpl-status pending">Por crear</div><div class="tmpl-icon">🤝</div><div class="tmpl-name">Entrevista de salida</div><div class="tmpl-desc">Pauta de entrevista de salida: motivos, feedback, sugerencias, recontratación.</div></div>
+    <div class="tmpl" data-id="carta_renuncia"><div class="tmpl-status ready">Listo</div><div class="tmpl-icon">📝</div><div class="tmpl-name">Carta de renuncia</div><div class="tmpl-desc">Template para renuncia voluntaria del trabajador con preaviso.</div></div>
+    <div class="tmpl" data-id="carta_no_renovacion"><div class="tmpl-status ready">Listo</div><div class="tmpl-icon">📝</div><div class="tmpl-name">Carta de no renovación</div><div class="tmpl-desc">Notificación de no renovación de contrato a plazo fijo dentro de plazo legal.</div></div>
+    <div class="tmpl" data-id="entrevista_salida"><div class="tmpl-status ready">Listo</div><div class="tmpl-icon">🤝</div><div class="tmpl-name">Entrevista de salida</div><div class="tmpl-desc">Pauta de entrevista de salida: motivos, feedback, sugerencias, recontratación.</div></div>
   </div>
 </div>
 
 </div>
 <footer style="text-align:center;padding:20px;color:#444;font-size:11px;border-top:1px solid #2a2a2a">Black Chicken HR · Biblioteca de Templates · Uso exclusivo interno</footer>
+
+<!-- ===== Modal overlay ===== -->
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal">
+    <!-- head/foot/body inyectados por JS -->
+  </div>
+</div>
+
+<script>
+const EMPRESA = {
+  razon: 'SOCIEDAD BLACK CHICKEN SpA',
+  rut: '77.274.986-4',
+  dom: 'Cerro El Plomo 5931, Las Condes, Santiago'
+};
+const LOCALES = ['BC1 — Cerro El Plomo 5931, Las Condes','BC2 — Cerro El Plomo 5630, Las Condes'];
+const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+function fd(iso){ // yyyy-mm-dd -> "9 de julio de 2026"
+  if(!iso) return '________________';
+  const p = iso.split('-'); if(p.length!==3) return iso;
+  return parseInt(p[2],10)+' de '+MESES[parseInt(p[1],10)-1]+' de '+p[0];
+}
+function hoyISO(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function v(x){ return (x&&String(x).trim())? esc(x) : '<u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>'; }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function nl(s){ return esc(s).replace(/\n/g,'<br>'); }
+
+function head(tipo){
+  return '<div class="doc-lh"><img src="./blackchicken_logo.png" alt="Black Chicken">'
+    +'<div><div class="lh-razon">'+EMPRESA.razon+'</div>'
+    +'<div class="lh-sub">RUT '+EMPRESA.rut+' · '+EMPRESA.dom+'</div></div></div>'
+    +'<div class="doc-tipo">'+tipo+'</div>';
+}
+function cd(iso){ return '<p class="doc-cd">Santiago, '+fd(iso)+'</p>'; }
+function sig(n,r){ return '<div class="sig"><div class="sig-line"></div><div class="sig-n">'+(n||'&nbsp;')+'</div><div class="sig-r">'+(r||'')+'</div></div>'; }
+function sigs(arr){ return '<div class="sigs c'+arr.length+'">'+arr.map(a=>sig(a[0],a[1])).join('')+'</div>'; }
+function foot(extra){ return '<div class="doc-foot">'+EMPRESA.razon+' · RUT '+EMPRESA.rut+' · Documento interno de uso exclusivo'+(extra?'<br>'+extra:'')+'</div>'; }
+
+// ===== Definición de los 12 templates =====
+const T = {
+ amonestacion_verbal:{ ico:'📝', title:'Amonestación verbal',
+  fields:[
+   {k:'trabajador',l:'Nombre del trabajador',t:'text',req:1},
+   {k:'rut',l:'RUT trabajador',t:'text'},
+   {k:'cargo',l:'Cargo',t:'text'},
+   {k:'local',l:'Local',t:'select',opts:LOCALES},
+   {k:'fecha',l:'Fecha',t:'date'},
+   {k:'motivo',l:'Motivo / conducta observada',t:'textarea',req:1},
+   {k:'compromiso',l:'Compromiso del trabajador',t:'textarea'},
+   {k:'firmante',l:'Firma por la empresa (nombre y cargo)',t:'text',def:'Jefatura de Local'}
+  ],
+  render:d=>head('Registro · Amonestación verbal')+cd(d.fecha)
+   +'<h3>Registro de Amonestación Verbal</h3>'
+   +'<p>En Santiago, con fecha '+fd(d.fecha)+', se deja constancia de la <b>amonestación verbal</b> efectuada a don/doña <b>'+v(d.trabajador)+'</b>, RUT '+v(d.rut)+', quien se desempeña como '+v(d.cargo)+' en '+v(d.local)+' de '+EMPRESA.razon+'.</p>'
+   +'<p><span class="lbl">Motivo / conducta observada:</span><br>'+nl(d.motivo||'')+'</p>'
+   +(d.compromiso?'<p><span class="lbl">Compromiso del trabajador:</span><br>'+nl(d.compromiso)+'</p>':'')
+   +'<p>El trabajador toma conocimiento de la observación efectuada, dejándose el presente registro para los antecedentes internos de la empresa.</p>'
+   +sigs([[d.firmante||'Jefatura de Local','p. '+EMPRESA.razon],[d.trabajador||'','Toma conocimiento']])
+   +foot()
+ },
+
+ amonestacion_escrita:{ ico:'📋', title:'Amonestación escrita',
+  fields:[
+   {k:'trabajador',l:'Nombre del trabajador',t:'text',req:1},
+   {k:'rut',l:'RUT trabajador',t:'text'},
+   {k:'cargo',l:'Cargo',t:'text'},
+   {k:'local',l:'Local',t:'select',opts:LOCALES},
+   {k:'fecha',l:'Fecha',t:'date'},
+   {k:'antecedentes',l:'Antecedentes / hechos previos',t:'textarea'},
+   {k:'falta',l:'Descripción de la falta',t:'textarea',req:1},
+   {k:'norma',l:'Norma infringida',t:'text',def:'las obligaciones del contrato de trabajo y el Reglamento Interno de Orden, Higiene y Seguridad'},
+   {k:'copia',l:'Enviar copia a la Inspección del Trabajo',t:'check'},
+   {k:'firmante',l:'Firma por la empresa (nombre y cargo)',t:'text',def:'Jefatura de Local'}
+  ],
+  render:d=>head('Carta · Amonestación escrita')+cd(d.fecha)
+   +'<p>Señor(a)<br><b>'+v(d.trabajador)+'</b> — RUT '+v(d.rut)+'<br>'+v(d.cargo)+' · '+v(d.local)+'<br>Presente</p>'
+   +'<h3>Amonestación Escrita</h3>'
+   +'<p>Junto con saludar, por medio de la presente '+EMPRESA.razon+' le comunica formalmente una <b>amonestación escrita</b>, en virtud de los hechos que se detallan a continuación:</p>'
+   +(d.antecedentes?'<p><span class="lbl">Antecedentes:</span><br>'+nl(d.antecedentes)+'</p>':'')
+   +'<p><span class="lbl">Falta cometida:</span><br>'+nl(d.falta||'')+'</p>'
+   +'<p>Lo anterior constituye un incumplimiento a '+v(d.norma||'las obligaciones del contrato de trabajo y el Reglamento Interno de Orden, Higiene y Seguridad')+'.</p>'
+   +'<p>Se le hace presente que la reiteración de esta u otras conductas podrá dar lugar a medidas de mayor gravedad, conforme a la normativa laboral vigente.</p>'
+   +(d.copia?'<p>Copia de la presente se remite a la Inspección del Trabajo respectiva.</p>':'')
+   +'<p>Se solicita firmar en señal de recepción, lo que no implica aceptación de los hechos.</p>'
+   +sigs([[d.firmante||'Jefatura de Local','p. '+EMPRESA.razon],[d.trabajador||'','Recepción conforme']])
+   +foot()
+ },
+
+ suspension:{ ico:'🚫', title:'Suspensión',
+  fields:[
+   {k:'trabajador',l:'Nombre del trabajador',t:'text',req:1},
+   {k:'rut',l:'RUT trabajador',t:'text'},
+   {k:'cargo',l:'Cargo',t:'text'},
+   {k:'local',l:'Local',t:'select',opts:LOCALES},
+   {k:'fecha',l:'Fecha de notificación',t:'date'},
+   {k:'motivo',l:'Motivo',t:'textarea',req:1},
+   {k:'desde',l:'Suspensión desde',t:'date'},
+   {k:'hasta',l:'Suspensión hasta',t:'date'},
+   {k:'reincorporacion',l:'Fecha de reincorporación',t:'date'},
+   {k:'condiciones',l:'Condiciones de reintegro',t:'textarea'},
+   {k:'firmante',l:'Firma por la empresa (nombre y cargo)',t:'text',def:'Jefatura de Local'}
+  ],
+  render:d=>head('Notificación · Suspensión')+cd(d.fecha)
+   +'<p>Señor(a) <b>'+v(d.trabajador)+'</b>, RUT '+v(d.rut)+', '+v(d.cargo)+' · '+v(d.local)+'.</p>'
+   +'<h3>Notificación de Suspensión</h3>'
+   +'<p>Por medio del presente documento se le notifica la <b>suspensión de sus funciones</b> por el período comprendido entre el '+fd(d.desde)+' y el '+fd(d.hasta)+', por el siguiente motivo:</p>'
+   +'<p>'+nl(d.motivo||'')+'</p>'
+   +(d.condiciones?'<p><span class="lbl">Condiciones de reintegro:</span><br>'+nl(d.condiciones)+'</p>':'')
+   +'<p>Su reincorporación queda fijada para el día <b>'+fd(d.reincorporacion)+'</b>.</p>'
+   +sigs([[d.firmante||'Jefatura de Local','p. '+EMPRESA.razon],[d.trabajador||'','Toma conocimiento']])
+   +foot('Aplíquese conforme al Reglamento Interno de Orden, Higiene y Seguridad y a la normativa laboral vigente.')
+ },
+
+ felicitacion:{ ico:'⭐', title:'Felicitación formal',
+  fields:[
+   {k:'trabajador',l:'Nombre del trabajador',t:'text',req:1},
+   {k:'cargo',l:'Cargo',t:'text'},
+   {k:'local',l:'Local',t:'select',opts:LOCALES},
+   {k:'fecha',l:'Fecha',t:'date'},
+   {k:'motivo',l:'Motivo del reconocimiento',t:'text',req:1},
+   {k:'detalle',l:'Detalle del logro / conducta destacada',t:'textarea'},
+   {k:'firmante',l:'Firma (nombre y cargo)',t:'text',def:'Gerencia · Black Chicken'}
+  ],
+  render:d=>head('Carta · Reconocimiento')+cd(d.fecha)
+   +'<p>Señor(a) <b>'+v(d.trabajador)+'</b><br>'+v(d.cargo)+' · '+v(d.local)+'</p>'
+   +'<h3>Carta de Felicitación</h3>'
+   +'<p>Es motivo de especial satisfacción para '+EMPRESA.razon+' reconocer y felicitar <b>'+v(d.motivo)+'</b>.</p>'
+   +(d.detalle?'<p>'+nl(d.detalle)+'</p>':'')
+   +'<p>Reconocimientos como este reflejan los valores y el estándar de nuestro equipo. ¡Felicitaciones y gracias por tu compromiso con Black Chicken!</p>'
+   +sigs([[d.firmante||'Gerencia · Black Chicken','p. '+EMPRESA.razon]])
+   +foot()
+ },
+
+ certificado_capacitacion:{ ico:'📜', title:'Certificado de capacitación',
+  fields:[
+   {k:'trabajador',l:'Nombre del trabajador',t:'text',req:1},
+   {k:'rut',l:'RUT trabajador',t:'text'},
+   {k:'cargo',l:'Cargo',t:'text'},
+   {k:'nombre',l:'Nombre de la capacitación',t:'text',req:1},
+   {k:'contenido',l:'Contenidos / temario',t:'textarea'},
+   {k:'fechas',l:'Fecha(s) de realización',t:'text'},
+   {k:'horas',l:'Duración (horas)',t:'number'},
+   {k:'relator',l:'Relator / facilitador',t:'text'},
+   {k:'lugar',l:'Lugar',t:'text'},
+   {k:'fecha',l:'Fecha de emisión',t:'date'}
+  ],
+  render:d=>head('Certificado · Capacitación')+cd(d.fecha)
+   +'<h3>Certificado de Capacitación</h3>'
+   +'<p>'+EMPRESA.razon+', RUT '+EMPRESA.rut+', certifica que don/doña <b>'+v(d.trabajador)+'</b>, RUT '+v(d.rut)+', '+v(d.cargo)+', participó en la capacitación interna <b>«'+v(d.nombre)+'»</b>, desarrollada '+v(d.fechas)+', con una duración de <b>'+v(d.horas)+'</b> horas.</p>'
+   +(d.contenido?'<p><span class="lbl">Contenidos:</span><br>'+nl(d.contenido)+'</p>':'')
+   +'<p><span class="lbl">Relator / facilitador:</span> '+v(d.relator)+'. <span class="lbl">Lugar:</span> '+v(d.lugar)+'.</p>'
+   +'<p>Se extiende el presente certificado para los fines que el interesado estime conveniente.</p>'
+   +sigs([[d.relator||'','Relator / Facilitador'],['','p. '+EMPRESA.razon]])
+   +foot()
+ },
+
+ cambio_turno:{ ico:'🔄', title:'Cambio de turno',
+  fields:[
+   {k:'local',l:'Local',t:'select',opts:LOCALES},
+   {k:'fecha',l:'Fecha de solicitud',t:'date'},
+   {k:'solicitante',l:'Trabajador solicitante',t:'text',req:1},
+   {k:'cargoSol',l:'Cargo solicitante',t:'text'},
+   {k:'reemplazante',l:'Trabajador que asume el turno',t:'text',req:1},
+   {k:'cargoRe',l:'Cargo reemplazante',t:'text'},
+   {k:'fechaTurno',l:'Día del turno a cambiar',t:'date'},
+   {k:'horario',l:'Horario del turno',t:'text'},
+   {k:'motivo',l:'Motivo',t:'textarea'},
+   {k:'jefe',l:'Jefe que autoriza',t:'text',def:'Jefatura de Local'}
+  ],
+  render:d=>head('Solicitud · Cambio de turno')+cd(d.fecha)
+   +'<h3>Solicitud de Cambio de Turno</h3>'
+   +'<p>En '+v(d.local)+', se solicita autorización para modificar el turno del día <b>'+fd(d.fechaTurno)+'</b> ('+v(d.horario)+'), según el siguiente detalle:</p>'
+   +'<table class="kv"><tr><td class="k">Trabajador solicitante</td><td>'+v(d.solicitante)+' — '+v(d.cargoSol)+'</td></tr>'
+   +'<tr><td class="k">Trabajador que asume el turno</td><td>'+v(d.reemplazante)+' — '+v(d.cargoRe)+'</td></tr>'
+   +'<tr><td class="k">Día / horario</td><td>'+fd(d.fechaTurno)+' · '+v(d.horario)+'</td></tr></table>'
+   +(d.motivo?'<p><span class="lbl">Motivo:</span> '+nl(d.motivo)+'</p>':'')
+   +'<p>Ambas partes manifiestan su acuerdo con el intercambio, el que se hace efectivo previa autorización de la jefatura.</p>'
+   +sigs([[d.solicitante||'','Solicitante'],[d.reemplazante||'','Asume turno'],[d.jefe||'Jefatura de Local','Autoriza']])
+   +foot()
+ },
+
+ solicitud_vacaciones:{ ico:'✈️', title:'Solicitud de vacaciones',
+  fields:[
+   {k:'trabajador',l:'Nombre del trabajador',t:'text',req:1},
+   {k:'rut',l:'RUT trabajador',t:'text'},
+   {k:'cargo',l:'Cargo',t:'text'},
+   {k:'local',l:'Local',t:'select',opts:LOCALES},
+   {k:'ingreso',l:'Fecha de ingreso',t:'date'},
+   {k:'dias',l:'Días solicitados',t:'number',req:1},
+   {k:'desde',l:'Feriado desde',t:'date'},
+   {k:'hasta',l:'Feriado hasta',t:'date'},
+   {k:'reincorporacion',l:'Fecha de reincorporación',t:'date'},
+   {k:'saldo',l:'Saldo de días pendientes',t:'number'},
+   {k:'fecha',l:'Fecha de solicitud',t:'date'},
+   {k:'jefe',l:'Jefe que aprueba',t:'text',def:'Jefatura de Local'}
+  ],
+  render:d=>head('Solicitud · Feriado legal')+cd(d.fecha)
+   +'<h3>Solicitud de Feriado Legal</h3>'
+   +'<table class="kv"><tr><td class="k">Trabajador</td><td>'+v(d.trabajador)+' — RUT '+v(d.rut)+'</td></tr>'
+   +'<tr><td class="k">Cargo / Local</td><td>'+v(d.cargo)+' · '+v(d.local)+'</td></tr>'
+   +'<tr><td class="k">Fecha de ingreso</td><td>'+fd(d.ingreso)+'</td></tr>'
+   +'<tr><td class="k">Días solicitados</td><td>'+v(d.dias)+'</td></tr>'
+   +'<tr><td class="k">Período</td><td>Desde '+fd(d.desde)+' hasta '+fd(d.hasta)+'</td></tr>'
+   +'<tr><td class="k">Reincorporación</td><td>'+fd(d.reincorporacion)+'</td></tr>'
+   +'<tr><td class="k">Saldo pendiente</td><td>'+v(d.saldo)+' días</td></tr></table>'
+   +'<p>El trabajador solicita hacer uso de su feriado legal en el período indicado. La jefatura aprueba la solicitud conforme a las necesidades operativas del local.</p>'
+   +sigs([[d.trabajador||'','Trabajador'],[d.jefe||'Jefatura de Local','Aprueba']])
+   +foot()
+ },
+
+ constancia_empleo:{ ico:'🏥', title:'Constancia de empleo',
+  fields:[
+   {k:'trabajador',l:'Nombre del trabajador',t:'text',req:1},
+   {k:'rut',l:'RUT trabajador',t:'text'},
+   {k:'cargo',l:'Cargo',t:'text'},
+   {k:'local',l:'Local',t:'select',opts:LOCALES},
+   {k:'ingreso',l:'Fecha de ingreso',t:'date'},
+   {k:'contrato',l:'Tipo de contrato',t:'select',opts:['indefinido','a plazo fijo']},
+   {k:'incluirRenta',l:'Incluir renta bruta mensual',t:'check'},
+   {k:'renta',l:'Renta bruta mensual (si aplica)',t:'text'},
+   {k:'dirigido',l:'Dirigido a',t:'text',def:'A quien corresponda'},
+   {k:'fecha',l:'Fecha de emisión',t:'date'},
+   {k:'firmante',l:'Firma (representante legal)',t:'text',def:'Llige Paola Yang Navarrete · Representante Legal'}
+  ],
+  render:d=>head('Constancia · Relación laboral')+cd(d.fecha)
+   +'<p><b>'+v(d.dirigido||'A quien corresponda')+'</b></p>'
+   +'<h3>Constancia de Empleo</h3>'
+   +'<p>'+EMPRESA.razon+', RUT '+EMPRESA.rut+', con domicilio en '+EMPRESA.dom+', certifica que don/doña <b>'+v(d.trabajador)+'</b>, RUT '+v(d.rut)+', mantiene relación laboral vigente con esta empresa desde el <b>'+fd(d.ingreso)+'</b>, desempeñándose actualmente como <b>'+v(d.cargo)+'</b> en '+v(d.local)+', bajo contrato de trabajo '+v(d.contrato||'indefinido')+'.</p>'
+   +(d.incluirRenta&&d.renta?'<p>Su renta bruta mensual asciende a '+v(d.renta)+'.</p>':'')
+   +'<p>Se extiende la presente constancia a solicitud del interesado, para los fines que estime pertinentes.</p>'
+   +sigs([[d.firmante||'Llige Paola Yang Navarrete · Representante Legal','p. '+EMPRESA.razon]])
+   +foot()
+ },
+
+ acta_uniforme:{ ico:'📋', title:'Acta de entrega de uniforme',
+  fields:[
+   {k:'trabajador',l:'Nombre del trabajador',t:'text',req:1},
+   {k:'rut',l:'RUT trabajador',t:'text'},
+   {k:'cargo',l:'Cargo',t:'text'},
+   {k:'local',l:'Local',t:'select',opts:LOCALES},
+   {k:'fecha',l:'Fecha de entrega',t:'date'},
+   {k:'prendas',l:'Prendas entregadas (una por línea: prenda · cantidad · talla)',t:'textarea',req:1},
+   {k:'condiciones',l:'Condiciones',t:'textarea',def:'El trabajador se compromete al cuidado del equipamiento y a restituirlo al término de la relación laboral. En caso de pérdida o deterioro por mal uso, se aplicará lo dispuesto en el Reglamento Interno.'},
+   {k:'firmante',l:'Entrega (nombre y cargo)',t:'text',def:'Jefatura de Local'}
+  ],
+  render:d=>{
+   const items=(d.prendas||'').split('\n').map(x=>x.trim()).filter(Boolean);
+   const list=items.length?'<ul>'+items.map(i=>'<li>'+esc(i)+'</li>').join('')+'</ul>':'<p><u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u></p>';
+   return head('Acta · Entrega de uniforme')+cd(d.fecha)
+   +'<h3>Acta de Entrega de Uniforme y Equipamiento</h3>'
+   +'<p>En Santiago, con fecha '+fd(d.fecha)+', don/doña <b>'+v(d.trabajador)+'</b>, RUT '+v(d.rut)+', '+v(d.cargo)+' de '+v(d.local)+', declara recibir conforme el siguiente equipamiento de trabajo de parte de '+EMPRESA.razon+':</p>'
+   +list
+   +'<p>'+nl(d.condiciones||'')+'</p>'
+   +sigs([[d.firmante||'Jefatura de Local','Entrega · p. '+EMPRESA.razon],[d.trabajador||'','Recibe conforme']])
+   +foot();
+  }
+ },
+
+ carta_renuncia:{ ico:'📝', title:'Carta de renuncia',
+  fields:[
+   {k:'trabajador',l:'Nombre del trabajador',t:'text',req:1},
+   {k:'rut',l:'RUT trabajador',t:'text'},
+   {k:'cargo',l:'Cargo',t:'text'},
+   {k:'local',l:'Local',t:'select',opts:LOCALES},
+   {k:'fecha',l:'Fecha de presentación',t:'date'},
+   {k:'efectiva',l:'Renuncia efectiva a contar del',t:'date'},
+   {k:'dirigido',l:'Dirigido a',t:'text',def:'Representante Legal · SOCIEDAD BLACK CHICKEN SpA'}
+  ],
+  render:d=>head('Carta · Renuncia voluntaria')+cd(d.fecha)
+   +'<p><b>'+v(d.dirigido||'Representante Legal · SOCIEDAD BLACK CHICKEN SpA')+'</b><br>Presente</p>'
+   +'<h3>Carta de Renuncia Voluntaria</h3>'
+   +'<p>Por medio de la presente, yo, <b>'+v(d.trabajador)+'</b>, RUT '+v(d.rut)+', '+v(d.cargo)+' en '+v(d.local)+', comunico mi decisión de <b>renunciar voluntariamente</b> al cargo que desempeño en '+EMPRESA.razon+', haciendo efectiva mi renuncia a contar del <b>'+fd(d.efectiva)+'</b>, dando cumplimiento al aviso de 30 días establecido en la ley.</p>'
+   +'<p>Agradezco la oportunidad y la experiencia adquirida durante mi permanencia en la empresa.</p>'
+   +'<p>Sin otro particular, saluda atentamente,</p>'
+   +sigs([[d.trabajador||'','RUT '+(d.rut||'')]])
+   +foot('La renuncia debe ratificarse ante ministro de fe (Notaría o Inspección del Trabajo), conforme al art. 177 del Código del Trabajo.')
+ },
+
+ carta_no_renovacion:{ ico:'📝', title:'Carta de no renovación',
+  fields:[
+   {k:'trabajador',l:'Nombre del trabajador',t:'text',req:1},
+   {k:'rut',l:'RUT trabajador',t:'text'},
+   {k:'cargo',l:'Cargo',t:'text'},
+   {k:'local',l:'Local',t:'select',opts:LOCALES},
+   {k:'termino',l:'Fecha de término del contrato',t:'date',req:1},
+   {k:'fecha',l:'Fecha de notificación',t:'date'},
+   {k:'firmante',l:'Firma por la empresa (nombre y cargo)',t:'text',def:'Representante Legal · Black Chicken'}
+  ],
+  render:d=>head('Notificación · No renovación')+cd(d.fecha)
+   +'<p>Señor(a)<br><b>'+v(d.trabajador)+'</b> — RUT '+v(d.rut)+'<br>'+v(d.cargo)+' · '+v(d.local)+'<br>Presente</p>'
+   +'<h3>Notificación de No Renovación de Contrato</h3>'
+   +'<p>Por medio de la presente, '+EMPRESA.razon+' comunica que su <b>contrato de trabajo a plazo fijo</b>, vigente hasta el <b>'+fd(d.termino)+'</b>, <b>no será renovado</b>, cesando la relación laboral en dicha fecha por vencimiento del plazo convenido (art. 159 N°4 del Código del Trabajo).</p>'
+   +'<p>Se procederá al pago del finiquito y de los haberes que correspondan conforme a la ley, dentro de los plazos legales.</p>'
+   +'<p>Agradecemos los servicios prestados durante su permanencia en la empresa.</p>'
+   +sigs([[d.firmante||'Representante Legal · Black Chicken','p. '+EMPRESA.razon],[d.trabajador||'','Recepción']])
+   +foot()
+ },
+
+ entrevista_salida:{ ico:'🤝', title:'Entrevista de salida',
+  fields:[
+   {k:'trabajador',l:'Nombre del trabajador',t:'text',req:1},
+   {k:'cargo',l:'Cargo',t:'text'},
+   {k:'local',l:'Local',t:'select',opts:LOCALES},
+   {k:'fecha',l:'Fecha de la entrevista',t:'date'},
+   {k:'motivo',l:'Motivo de salida',t:'text'},
+   {k:'entrevistador',l:'Entrevistador',t:'text',def:'Jefatura de Local'}
+  ],
+  render:d=>{
+   const q=(t)=>'<div class="field-block"><span class="q">'+t+'</span><span class="a">&nbsp;</span></div>';
+   return head('Pauta · Entrevista de salida')+cd(d.fecha)
+   +'<h3>Pauta de Entrevista de Salida</h3>'
+   +'<table class="kv"><tr><td class="k">Trabajador</td><td>'+v(d.trabajador)+'</td></tr>'
+   +'<tr><td class="k">Cargo / Local</td><td>'+v(d.cargo)+' · '+v(d.local)+'</td></tr>'
+   +'<tr><td class="k">Motivo de salida</td><td>'+v(d.motivo)+'</td></tr>'
+   +'<tr><td class="k">Entrevistador</td><td>'+v(d.entrevistador)+'</td></tr></table>'
+   +q('1. ¿Cuál fue el motivo principal de tu salida?')
+   +q('2. ¿Qué es lo que más valoraste de tu paso por Black Chicken?')
+   +q('3. ¿Qué mejorarías del trabajo, del equipo o de la empresa?')
+   +q('4. ¿Cómo fue tu relación con la jefatura y con tus compañeros?')
+   +q('5. ¿Recomendarías a Black Chicken como lugar de trabajo? ¿Por qué?')
+   +'<div class="field-block"><span class="q">6. ¿Sería recontratable?</span><span class="a">Sí ☐&nbsp;&nbsp;&nbsp;No ☐&nbsp;&nbsp;&nbsp;Observaciones: ________________</span></div>'
+   +q('7. Comentarios adicionales')
+   +sigs([[d.trabajador||'','Trabajador'],[d.entrevistador||'Jefatura de Local','Entrevistador']])
+   +foot();
+  }
+ }
+};
+
+// ===== Motor: form + preview =====
+const ov=document.getElementById('overlay'), modal=document.getElementById('modal');
+let current=null;
+
+function openForm(id){
+  current=id; const t=T[id];
+  let f='';
+  t.fields.forEach(fl=>{
+    if(fl.t==='check'){
+      f+='<div class="fg fg-check"><input type="checkbox" id="f_'+fl.k+'"><label for="f_'+fl.k+'">'+fl.l+'</label></div>';
+    } else if(fl.t==='textarea'){
+      f+='<div class="fg"><label>'+fl.l+(fl.req?' *':'')+'</label><textarea id="f_'+fl.k+'">'+(fl.def?esc(fl.def):'')+'</textarea></div>';
+    } else if(fl.t==='select'){
+      f+='<div class="fg"><label>'+fl.l+'</label><select id="f_'+fl.k+'">'+fl.opts.map(o=>'<option>'+esc(o)+'</option>').join('')+'</select></div>';
+    } else {
+      const val = fl.t==='date' ? (fl.k==='fecha'?hoyISO():'') : (fl.def?esc(fl.def):'');
+      f+='<div class="fg"><label>'+fl.l+(fl.req?' *':'')+'</label><input type="'+fl.t+'" id="f_'+fl.k+'" value="'+val+'"></div>';
+    }
+  });
+  modal.innerHTML='<div class="modal-head"><h2><span class="mh-ico">'+t.ico+'</span>'+t.title+'</h2><button class="modal-close" onclick="closeM()">×</button></div>'
+    +'<div class="modal-body">'+f+'</div>'
+    +'<div class="modal-foot"><button class="btn btn-ghost" onclick="closeM()">Cancelar</button><button class="btn btn-primary" onclick="generate()">Generar documento →</button></div>';
+  ov.classList.add('open'); ov.scrollTop=0;
+}
+
+function collect(){
+  const t=T[current], d={};
+  t.fields.forEach(fl=>{
+    const el=document.getElementById('f_'+fl.k);
+    d[fl.k]= fl.t==='check'? el.checked : el.value;
+  });
+  return d;
+}
+
+function generate(){
+  const t=T[current];
+  const req=t.fields.filter(f=>f.req);
+  for(const fl of req){ const el=document.getElementById('f_'+fl.k); if(!el.value||!String(el.value).trim()){ el.focus(); el.style.borderColor='#e05050'; return; } }
+  const d=collect();
+  const docHTML=t.render(d);
+  modal.innerHTML='<div class="preview-actions"><button class="btn btn-ghost" onclick="openForm(current)">← Editar</button>'
+    +'<div class="pa-right"><button class="btn btn-ghost" onclick="copyDoc()">📋 Copiar texto</button>'
+    +'<button class="btn btn-primary" onclick="window.print()">🖨️ Imprimir / PDF</button>'
+    +'<button class="btn btn-ghost" onclick="closeM()">Cerrar</button></div></div>'
+    +'<div class="preview-scroll"><div class="doc" id="docPreview">'+docHTML+'</div></div>';
+  ov.scrollTop=0;
+}
+
+function copyDoc(){
+  const el=document.getElementById('docPreview'); if(!el) return;
+  const txt=el.innerText.replace(/\n{3,}/g,'\n\n').trim();
+  navigator.clipboard.writeText(txt).then(()=>{
+    const b=event.target; const o=b.innerText; b.innerText='✓ Copiado'; setTimeout(()=>b.innerText=o,1500);
+  });
+}
+
+function closeM(){ ov.classList.remove('open'); current=null; }
+
+document.querySelectorAll('.tmpl').forEach(c=>c.addEventListener('click',()=>openForm(c.dataset.id)));
+ov.addEventListener('click',e=>{ if(e.target===ov) closeM(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeM(); });
+</script>
 </body>
 </html>
