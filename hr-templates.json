@@ -1,0 +1,11 @@
+{
+  "templates": [
+    {
+      "id": "tmrdr2u51",
+      "nombre": "Feedback",
+      "icono": "📄",
+      "html": "<div class=\"doc-lh\"><img src=\"./blackchicken_logo.png\" alt=\"Black Chicken\"><div><div class=\"lh-razon\">SOCIEDAD BLACK CHICKEN SpA</div><div class=\"lh-sub\">RUT 77.274.986-4 · Cerro El Plomo 5931, Las Condes, Santiago</div></div></div><div class=\"doc-tipo\">Documento · Feedback</div><p class=\"doc-cd\">Santiago, 9 de julio de 2026</p><h3>Feedback</h3><p>1. Datos personales<br>Colaborador:<br>Cargo:<br>Local:<br>Fecha:<br>Área:<br>Tipo:<br><br>2. ¿Qué observé? (hecho concreto: qué, cuándo, dónde)<br><br>3. Fortalezas<br><br>4. Oportunidades de mejora<br><br>5. Observaciones<br><br>6. Acuerdo de cambios<br>Seguimiento (Sí/No) </p><div class=\"sigs c2\"><div class=\"sig\"><div class=\"sig-line\"></div><div class=\"sig-n\">Saner Guillen</div><div class=\"sig-r\">Jefe de Local</div></div><div class=\"sig\"><div class=\"sig-line\"></div><div class=\"sig-n\">Inge Yang</div><div class=\"sig-r\">Generalista RRHH</div></div></div><div class=\"doc-foot\">SOCIEDAD BLACK CHICKEN SpA · RUT 77.274.986-4 · Documento interno de uso exclusivo</div>"
+    }
+  ],
+  "updatedAt": "2026-07-09T16:58:01.010Z"
+}
