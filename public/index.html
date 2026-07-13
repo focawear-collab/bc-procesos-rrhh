@@ -43,6 +43,37 @@
   .compact .kcard{padding:10px!important}
   .compact .kcard-name{font-size:12px!important}
 </style>
+<!-- BC-AUTOUPDATE:START v1 — pegar dentro de <head>. No editar a mano; versionar con bc_bump_version.sh -->
+<script>
+(function(){
+  var LOCAL="20260713-132810";           // se reemplaza en cada deploy
+  if(LOCAL.indexOf("PLACEHOLDER")>-1)return;      // aún no versionado -> desactivado
+  var shown=false;
+  function banner(){
+    if(shown)return; shown=true;
+    var b=document.createElement('div');
+    b.setAttribute('role','alert');
+    b.style.cssText='position:fixed;left:0;right:0;bottom:0;z-index:2147483647;background:#D4A843;color:#0f0f0f;font-family:Inter,system-ui,-apple-system,sans-serif;font-size:14px;font-weight:600;padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:14px;box-shadow:0 -2px 14px rgba(0,0,0,.45)';
+    var s=document.createElement('span'); s.textContent='Hay una nueva versión disponible';
+    var btn=document.createElement('button'); btn.textContent='Actualizar';
+    btn.style.cssText='background:#0f0f0f;color:#D4A843;border:none;border-radius:8px;padding:8px 18px;font-weight:700;cursor:pointer;font-family:inherit';
+    btn.onclick=function(){ location.reload(); };
+    b.appendChild(s); b.appendChild(btn);
+    (document.body||document.documentElement).appendChild(b);
+  }
+  function check(){
+    fetch('/version.json?_='+Date.now(),{cache:'no-store'})
+      .then(function(r){ return r.ok?r.json():null; })
+      .then(function(d){ if(d&&d.version&&d.version!==LOCAL) banner(); })
+      .catch(function(){});
+  }
+  document.addEventListener('visibilitychange',function(){ if(!document.hidden) check(); });
+  setInterval(check,60000);
+  setTimeout(check,4000);
+})();
+</script>
+<!-- BC-AUTOUPDATE:END -->
+
 </head>
 <body>
 <div id="root"></div>
