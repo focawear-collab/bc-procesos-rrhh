@@ -210,7 +210,7 @@ const CARGO_TRACK = {
   'Copero/a':'garzones','Entrenador/a':'garzones',
   'Jefe/a de Garzones':'jefatura','Supervisor/a':'jefatura',
   'Jefe/a de Local':'jefatura','Sub Jefe/a de Local':'jefatura',
-  'Jefe/a de Cocina':'cocineros','Sous Chef':'cocineros','Cocinero/a':'cocineros',
+  'Jefe/a de Cocina':'cocineros','Sous Chef':'cocineros','Cocinero/a Full Time':'cocineros','Cocinero/a Part Time':'cocineros','Cocinero/a':'cocineros',
   'Garzón/a':'garzones','Jefe de Local':'jefatura','Sub Jefe':'jefatura','Jefe de Cocina':'cocineros'
 };
 
@@ -873,7 +873,7 @@ const EditProcesoModal = ({proc, open, onClose, onSave}) => {
         <form onSubmit={(e)=>{e.preventDefault();onSave(form);onClose();}} style={{display:"grid",gap:14}}>
           {[
             {k:"candidato",label:"Nombre candidato",type:"input",placeholder:"Ej: Juan Pérez"},
-            {k:"cargo",label:"Cargo",type:"select",opts:["Garz\u00f3n/a Full Time", "Garz\u00f3n/a Part Time", "Sub Jefe/a de Local", "Jefe/a de Local", "Jefe/a de Cocina", "Sous Chef", "Cocinero/a", "Copero/a", "Entrenador/a", "Jefe/a de Garzones", "Supervisor/a"]},
+            {k:"cargo",label:"Cargo",type:"select",opts:["Garz\u00f3n/a Full Time", "Garz\u00f3n/a Part Time", "Sub Jefe/a de Local", "Jefe/a de Local", "Jefe/a de Cocina", "Sous Chef", "Cocinero/a Full Time", "Cocinero/a Part Time", "Copero/a", "Entrenador/a", "Jefe/a de Garzones", "Supervisor/a"]},
             {k:"local",label:"Local",type:"select",opts:["BC1","BC2"]},
             {k:"notas",label:"Notas (opcional)",type:"textarea",placeholder:"Referencias, disponibilidad, comentarios…"},
           ].map(f=>(
@@ -905,7 +905,7 @@ const NewProcesoModal = ({open, onClose, onCreate}) => {
         <form onSubmit={(e)=>{ e.preventDefault(); if(!form.candidato.trim()) return; onCreate(form); onClose(); setForm({candidato:'', cargo:'Garzón/a Full Time', local:'BC1', notas:''}); }} style={{display:'grid', gap:14}}>
           {[
             {k:'candidato', label:'Nombre candidato', type:'input', placeholder:'Ej: Juan Pérez'},
-            {k:'cargo', label:'Cargo', type:'select', opts:["Garz\u00f3n/a Full Time", "Garz\u00f3n/a Part Time", "Sub Jefe/a de Local", "Jefe/a de Local", "Jefe/a de Cocina", "Sous Chef", "Cocinero/a", "Copero/a", "Entrenador/a", "Jefe/a de Garzones", "Supervisor/a"]},
+            {k:'cargo', label:'Cargo', type:'select', opts:["Garz\u00f3n/a Full Time", "Garz\u00f3n/a Part Time", "Sub Jefe/a de Local", "Jefe/a de Local", "Jefe/a de Cocina", "Sous Chef", "Cocinero/a Full Time", "Cocinero/a Part Time", "Copero/a", "Entrenador/a", "Jefe/a de Garzones", "Supervisor/a"]},
             {k:'local', label:'Local', type:'select', opts:['BC1','BC2']},
             {k:'notas', label:'Notas (opcional)', type:'textarea', placeholder:'Referencias, disponibilidad, comentarios…'},
           ].map(f => (
@@ -1386,7 +1386,7 @@ function App(){
   const createProc = async (form) => {
     const trackMap = { 'Garzón/a':'garzones','Copero/a':'garzones','Entrenador/a':'garzones',
       'Jefe de Local':'jefatura','Sub Jefe':'jefatura',
-      'Jefe de Cocina':'cocineros','Sous Chef':'cocineros','Cocinero/a':'cocineros' };
+      'Jefe de Cocina':'cocineros','Sous Chef':'cocineros','Cocinero/a Full Time':'cocineros','Cocinero/a Part Time':'cocineros','Cocinero/a':'cocineros' };
     try {
       const notionData = await apiPost({ candidato: form.candidato, cargo: form.cargo, local: form.local, notas: form.notas });
       const newProc = notionToApp(notionData);
@@ -1402,7 +1402,7 @@ function App(){
     }
   };
   const editProc = async (procId, form) => {
-    const trackMap = {"Garzón/a Full Time":"garzones","Garzón/a Part Time":"garzones","Copero/a":"garzones","Entrenador/a":"garzones","Jefe/a de Garzones":"jefatura","Supervisor/a":"jefatura","Jefe/a de Local":"jefatura","Sub Jefe/a de Local":"jefatura","Jefe/a de Cocina":"cocineros","Sous Chef":"cocineros","Cocinero/a":"cocineros","Garzón/a":"garzones","Jefe de Local":"jefatura","Sub Jefe":"jefatura","Jefe de Cocina":"cocineros"};
+    const trackMap = {"Garzón/a Full Time":"garzones","Garzón/a Part Time":"garzones","Copero/a":"garzones","Entrenador/a":"garzones","Jefe/a de Garzones":"jefatura","Supervisor/a":"jefatura","Jefe/a de Local":"jefatura","Sub Jefe/a de Local":"jefatura","Jefe/a de Cocina":"cocineros","Sous Chef":"cocineros","Cocinero/a Full Time":"cocineros","Cocinero/a Part Time":"cocineros","Cocinero/a":"cocineros","Garzón/a":"garzones","Jefe de Local":"jefatura","Sub Jefe":"jefatura","Jefe de Cocina":"cocineros"};
     setProcesos(prev => prev.map(p => {
       if (p.id !== procId) return p;
       if (p.notionId) apiPatch(p.notionId, {candidato:form.candidato, cargo:form.cargo, local:form.local, notas:form.notas});
