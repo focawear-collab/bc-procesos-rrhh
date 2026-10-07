@@ -1,3 +1,4 @@
+import { COOKIE, leerSesion, leerCookie } from '../lib/sesion.js';
 const REPO = 'focawear-collab/bc-procesos-rrhh';
 const FILE = 'pub-status.json';
 const BRANCH = 'data';
@@ -40,13 +41,14 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') { res.status(405).json({ ok: false, error: 'Method not allowed' }); return; }
 
   const { password, statuses } = req.body || {};
-  if (!password || typeof statuses !== 'object' || statuses === null) {
-    res.status(400).json({ ok: false, error: 'Missing password or statuses' });
+  if (typeof statuses !== 'object' || statuses === null) {
+    res.status(400).json({ ok: false, error: 'Missing statuses' });
     return;
   }
+  const sesion = await leerSesion(leerCookie(req.headers.cookie, COOKIE), process.env.RRHH_SESSION_SECRET);
   let passwords = {};
   try { passwords = JSON.parse(process.env.BC_HR_PASSWORDS || '{}'); } catch (e) {}
-  if (!Object.values(passwords).includes(password)) {
+  if (!(sesion && sesion.confidencial) && !(password && Object.values(passwords).includes(password))) {
     res.status(401).json({ ok: false, error: 'Incorrect password' });
     return;
   }

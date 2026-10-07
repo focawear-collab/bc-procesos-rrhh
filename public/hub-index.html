@@ -130,6 +130,8 @@
     .logo-area { display: flex; align-items: center; gap: 10px; }
     .logo-area img { width: 32px; height: 32px; object-fit: contain; filter: drop-shadow(0 1px 4px rgba(212,175,55,.3)); }
     .app-name { font-size: 14px; font-weight: 600; color: var(--text); }
+    .user-chip { font-size: 12px; color: var(--gold); font-weight: 600; margin-right: 4px; white-space: nowrap; }
+    .user-chip small { color: var(--text-3, #8a8a8a); font-weight: 500; margin-left: 4px; }
     .app-version { font-size: 10px; color: var(--gold); opacity: 0.7; margin-left: 6px; letter-spacing: 0.3px; }
 
     .top-actions { display: flex; gap: 4px; }
@@ -765,6 +767,10 @@
         <span class="app-version">v3.7</span>
       </div>
       <div class="top-actions">
+        <span class="user-chip" id="user-chip" hidden></span>
+        <button class="icon-btn" id="logout-btn" aria-label="Salir" title="Salir">
+          <i class="ti ti-logout" aria-hidden="true"></i>
+        </button>
         <button class="icon-btn" id="theme-toggle" aria-label="Cambiar tema claro/oscuro" title="Cambiar tema">
           <i class="ti ti-moon" aria-hidden="true"></i>
         </button>
@@ -1260,6 +1266,51 @@
     'use strict';
 
     var STORAGE = { THEME: 'bc_hub_theme', AUTH: 'bc_rrhh_auth' };
+
+    /* Acceso con PIN personal (bc-usuarios). El servidor (middleware) decide qué se sirve;
+       esto solo ordena la interfaz: muestra el nombre y esconde lo que esa persona no puede abrir. */
+    var YO = (function () {
+      var m = document.cookie.match(/(?:^|;\s*)bc_rrhh_ui=([^;]*)/);
+      if (!m) return { conf: false, nombre: '' };
+      var v = ''; try { v = decodeURIComponent(m[1]); } catch (e) {}
+      return { conf: v.charAt(0) === 'c', nombre: v.slice(2) };
+    })();
+    var CONF_IDS = ['ats', 'cartas', 'dashautoeval', 'dashservicio'];
+    (function acceso() {
+      var chipEl = document.getElementById('user-chip');
+      if (chipEl && YO.nombre) {
+        chipEl.textContent = YO.nombre.split(' ')[0];
+        var sm = document.createElement('small'); sm.textContent = YO.conf ? 'RRHH' : 'Equipo';
+        chipEl.appendChild(sm); chipEl.hidden = false;
+      }
+      var out = document.getElementById('logout-btn');
+      if (out) out.addEventListener('click', function () {
+        fetch('/api/login', { method: 'DELETE' }).catch(function () {}).then(function () { location.reload(); });
+      });
+      if (YO.conf) return;
+      var sel = '[data-gate], [data-gate-brain], a.doc-row[href="index.html"], .copy-tok';
+      Array.prototype.slice.call(document.querySelectorAll(sel)).forEach(function (el) {
+        var row = el.closest('.doc-row') || el;
+        if (row.parentNode) row.parentNode.removeChild(row);
+      });
+      // Pipeline de postulantes: es confidencial
+      ['#stat-row', '#person-grid'].forEach(function (q) { var el = document.querySelector(q); if (el) el.hidden = true; });
+      var pr = document.querySelector('#panel-reclutamiento');
+      if (pr) {
+        var sb = pr.querySelector('.search-box'); if (sb) sb.hidden = true;
+        var t0 = pr.querySelector('.section-title'); if (t0) t0.hidden = true;
+      }
+      // Títulos de sección que quedaron sin tarjetas
+      Array.prototype.slice.call(document.querySelectorAll('.panel .section-title')).forEach(function (t) {
+        var n = t.nextElementSibling;
+        if (n && n.classList.contains('doc-list') && !n.querySelector('.doc-row')) { t.hidden = true; n.hidden = true; }
+      });
+      // Pestañas que quedaron vacías
+      Array.prototype.slice.call(document.querySelectorAll('.intent-tab')).forEach(function (tab) {
+        var p = document.getElementById('panel-' + tab.dataset.tab);
+        if (p && p.querySelector('.doc-list') && !p.querySelector('.doc-row') && !p.querySelector('iframe')) { tab.hidden = true; }
+      });
+    })();
     var VALID_TABS = ['inicio','reclutamiento','onboarding','administracion','desempeno','clima','legal','tracker'];
     var NEW_TAG_DAYS = 14;
 
@@ -1406,6 +1457,9 @@
         { id: 'evalcocineromgr',  title: 'Eval. jefe · Cocinero/a',  sub: 'Mirada del sous chef',    icon: 'chef-hat',        color: 'ac-purple', ext: 'https://bc-autoeval-cocinero.vercel.app' }
       ]}
     ];
+    if (!YO.conf) FAV_CATALOG.forEach(function (g) {
+      g.items = g.items.filter(function (it) { return !(it.gate || CONF_IDS.indexOf(it.id) !== -1); });
+    });
     var FAV_DEFAULT = ['ats', 'tasktracker', 'offboarding', 'publicar', 'cartas', 'dotacion', 'evaldes', 'dasheval'];
     var FAV_KEY = 'bcHubFavs_v1';
 
@@ -1544,6 +1598,7 @@
     window.bcJumpToPersona = jumpToPersona;
 
     function loadProcesos() {
+      if (!YO.conf) { _procesos = []; setTimeout(function () { renderTodayStrip(); buildCmdIndex(); }, 0); return; }
       var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
       var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 15000);
       fetch('/api/procesos?status=active', ctrl ? { signal: ctrl.signal } : undefined)
@@ -1891,7 +1946,7 @@
     var gateSub    = qs('#gate-sub');
     var pending    = null;
 
-    function isAuthed() { try { return sessionStorage.getItem(STORAGE.AUTH) === 'ok'; } catch (e) { return false; } }
+    function isAuthed() { return YO.conf; }
     function markAuthed() { try { sessionStorage.setItem(STORAGE.AUTH, 'ok'); } catch (e) {} unlockAll(); }
     function unlockAll() {
       qsa('.gated-item, .hrbrain-locked, .carta-locked').forEach(function (el) {
