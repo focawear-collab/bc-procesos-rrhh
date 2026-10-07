@@ -1293,22 +1293,23 @@
         var row = el.closest('.doc-row') || el;
         if (row.parentNode) row.parentNode.removeChild(row);
       });
+      var quitar = function (el) { if (el && el.parentNode) el.parentNode.removeChild(el); };
       // Pipeline de postulantes: es confidencial
-      ['#stat-row', '#person-grid'].forEach(function (q) { var el = document.querySelector(q); if (el) el.hidden = true; });
       var pr = document.querySelector('#panel-reclutamiento');
       if (pr) {
-        var sb = pr.querySelector('.search-box'); if (sb) sb.hidden = true;
-        var t0 = pr.querySelector('.section-title'); if (t0) t0.hidden = true;
+        quitar(pr.querySelector('.section-title')); quitar(pr.querySelector('.search-box'));
+        quitar(document.querySelector('#stat-row')); quitar(document.querySelector('#person-grid'));
       }
+      quitar(document.querySelector('#count-personas'));
       // Títulos de sección que quedaron sin tarjetas
       Array.prototype.slice.call(document.querySelectorAll('.panel .section-title')).forEach(function (t) {
         var n = t.nextElementSibling;
-        if (n && n.classList.contains('doc-list') && !n.querySelector('.doc-row')) { t.hidden = true; n.hidden = true; }
+        if (n && n.classList.contains('doc-list') && !n.querySelector('.doc-row')) { quitar(n); quitar(t); }
       });
       // Pestañas que quedaron vacías
       Array.prototype.slice.call(document.querySelectorAll('.intent-tab')).forEach(function (tab) {
         var p = document.getElementById('panel-' + tab.dataset.tab);
-        if (p && p.querySelector('.doc-list') && !p.querySelector('.doc-row') && !p.querySelector('iframe')) { tab.hidden = true; }
+        if (p && !p.querySelector('.doc-row, iframe, .action-grid')) { quitar(tab); quitar(p); }
       });
     })();
     var VALID_TABS = ['inicio','reclutamiento','onboarding','administracion','desempeno','clima','legal','tracker'];
