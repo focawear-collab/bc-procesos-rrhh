@@ -130,6 +130,8 @@
     .logo-area { display: flex; align-items: center; gap: 10px; }
     .logo-area img { width: 32px; height: 32px; object-fit: contain; filter: drop-shadow(0 1px 4px rgba(212,175,55,.3)); }
     .app-name { font-size: 14px; font-weight: 600; color: var(--text); }
+    .user-chip { font-size: 12px; color: var(--gold); font-weight: 600; margin-right: 4px; white-space: nowrap; }
+    .user-chip small { color: var(--text-3, #8a8a8a); font-weight: 500; margin-left: 4px; }
     .app-version { font-size: 10px; color: var(--gold); opacity: 0.7; margin-left: 6px; letter-spacing: 0.3px; }
 
     .top-actions { display: flex; gap: 4px; }
@@ -727,7 +729,7 @@
 <!-- BC-AUTOUPDATE:START v1 — pegar dentro de <head>. No editar a mano; versionar con bc_bump_version.sh -->
 <script>
 (function(){
-  var LOCAL="20260713-132810";           // se reemplaza en cada deploy
+  var LOCAL="20261007-pin";           // se reemplaza en cada deploy
   if(LOCAL.indexOf("PLACEHOLDER")>-1)return;      // aún no versionado -> desactivado
   var shown=false;
   function banner(){
@@ -762,9 +764,13 @@
       <div class="logo-area">
         <img src="./blackchicken_logo.png" alt="Black Chicken">
         <span class="app-name">Hub de HR</span>
-        <span class="app-version">v3.7</span>
+        <span class="app-version">v3.8</span>
       </div>
       <div class="top-actions">
+        <span class="user-chip" id="user-chip" hidden></span>
+        <button class="icon-btn" id="logout-btn" aria-label="Salir" title="Salir">
+          <i class="ti ti-logout" aria-hidden="true"></i>
+        </button>
         <button class="icon-btn" id="theme-toggle" aria-label="Cambiar tema claro/oscuro" title="Cambiar tema">
           <i class="ti ti-moon" aria-hidden="true"></i>
         </button>
@@ -1198,7 +1204,7 @@
 
   </div>
 
-  <footer>Black Chicken · Hub de HR v3.7 · Uso exclusivo interno</footer>
+  <footer>Black Chicken · Hub de HR v3.8 · Uso exclusivo interno</footer>
 
   <div class="fav-modal" id="fav-modal" role="dialog" aria-modal="true" aria-label="Editar acciones rápidas">
     <div class="fav-card">
@@ -1260,6 +1266,52 @@
     'use strict';
 
     var STORAGE = { THEME: 'bc_hub_theme', AUTH: 'bc_rrhh_auth' };
+
+    /* Acceso con PIN personal (bc-usuarios). El servidor (middleware) decide qué se sirve;
+       esto solo ordena la interfaz: muestra el nombre y esconde lo que esa persona no puede abrir. */
+    var YO = (function () {
+      var m = document.cookie.match(/(?:^|;\s*)bc_rrhh_ui=([^;]*)/);
+      if (!m) return { conf: false, nombre: '' };
+      var v = ''; try { v = decodeURIComponent(m[1]); } catch (e) {}
+      return { conf: v.charAt(0) === 'c', nombre: v.slice(2) };
+    })();
+    var CONF_IDS = ['ats', 'cartas', 'dashautoeval', 'dashservicio'];
+    (function acceso() {
+      var chipEl = document.getElementById('user-chip');
+      if (chipEl && YO.nombre) {
+        chipEl.textContent = YO.nombre.split(' ')[0];
+        var sm = document.createElement('small'); sm.textContent = YO.conf ? 'RRHH' : 'Equipo';
+        chipEl.appendChild(sm); chipEl.hidden = false;
+      }
+      var out = document.getElementById('logout-btn');
+      if (out) out.addEventListener('click', function () {
+        fetch('/api/login', { method: 'DELETE' }).catch(function () {}).then(function () { location.reload(); });
+      });
+      if (YO.conf) return;
+      var sel = '[data-gate], [data-gate-brain], a.doc-row[href="index.html"], .copy-tok';
+      Array.prototype.slice.call(document.querySelectorAll(sel)).forEach(function (el) {
+        var row = el.closest('.doc-row') || el;
+        if (row.parentNode) row.parentNode.removeChild(row);
+      });
+      var quitar = function (el) { if (el && el.parentNode) el.parentNode.removeChild(el); };
+      // Pipeline de postulantes: es confidencial
+      var pr = document.querySelector('#panel-reclutamiento');
+      if (pr) {
+        quitar(pr.querySelector('.section-title')); quitar(pr.querySelector('.search-box'));
+        quitar(document.querySelector('#stat-row')); quitar(document.querySelector('#person-grid'));
+      }
+      quitar(document.querySelector('#count-personas'));
+      // Títulos de sección que quedaron sin tarjetas
+      Array.prototype.slice.call(document.querySelectorAll('.panel .section-title')).forEach(function (t) {
+        var n = t.nextElementSibling;
+        if (n && n.classList.contains('doc-list') && !n.querySelector('.doc-row')) { quitar(n); quitar(t); }
+      });
+      // Pestañas que quedaron vacías
+      Array.prototype.slice.call(document.querySelectorAll('.intent-tab')).forEach(function (tab) {
+        var p = document.getElementById('panel-' + tab.dataset.tab);
+        if (p && !p.querySelector('.doc-row, iframe, .action-grid')) { quitar(tab); quitar(p); }
+      });
+    })();
     var VALID_TABS = ['inicio','reclutamiento','onboarding','administracion','desempeno','clima','legal','tracker'];
     var NEW_TAG_DAYS = 14;
 
@@ -1406,6 +1458,9 @@
         { id: 'evalcocineromgr',  title: 'Eval. jefe · Cocinero/a',  sub: 'Mirada del sous chef',    icon: 'chef-hat',        color: 'ac-purple', ext: 'https://bc-autoeval-cocinero.vercel.app' }
       ]}
     ];
+    if (!YO.conf) FAV_CATALOG.forEach(function (g) {
+      g.items = g.items.filter(function (it) { return !(it.gate || CONF_IDS.indexOf(it.id) !== -1); });
+    });
     var FAV_DEFAULT = ['ats', 'tasktracker', 'offboarding', 'publicar', 'cartas', 'dotacion', 'evaldes', 'dasheval'];
     var FAV_KEY = 'bcHubFavs_v1';
 
@@ -1544,6 +1599,7 @@
     window.bcJumpToPersona = jumpToPersona;
 
     function loadProcesos() {
+      if (!YO.conf) { _procesos = []; setTimeout(function () { renderTodayStrip(); buildCmdIndex(); }, 0); return; }
       var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
       var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 15000);
       fetch('/api/procesos?status=active', ctrl ? { signal: ctrl.signal } : undefined)
@@ -1891,7 +1947,7 @@
     var gateSub    = qs('#gate-sub');
     var pending    = null;
 
-    function isAuthed() { try { return sessionStorage.getItem(STORAGE.AUTH) === 'ok'; } catch (e) { return false; } }
+    function isAuthed() { return YO.conf; }
     function markAuthed() { try { sessionStorage.setItem(STORAGE.AUTH, 'ok'); } catch (e) {} unlockAll(); }
     function unlockAll() {
       qsa('.gated-item, .hrbrain-locked, .carta-locked').forEach(function (el) {
@@ -1974,7 +2030,7 @@
         e.preventDefault();
         var url = card.getAttribute('data-gate');
         if (isAuthed()) { window.location.href = url; return; }
-        openGate('cartas', url);
+        toast('Tu acceso no incluye documentos confidenciales', 'error');
         return;
       }
       var brain = e.target.closest('[data-gate-brain]');
@@ -1982,7 +2038,7 @@
         e.preventDefault();
         var url2 = brain.getAttribute('data-gate-brain');
         if (isAuthed()) { window.open(url2, '_blank', 'noopener'); return; }
-        openGate('brain', url2);
+        toast('Tu acceso no incluye documentos confidenciales', 'error');
       }
     });
 

@@ -1,3 +1,4 @@
+import { COOKIE, leerSesion, leerCookie } from '../lib/sesion.js';
 const REPO = 'focawear-collab/bc-procesos-rrhh';
 const FILE = 'pub-status.json';
 const BRANCH = 'data';
@@ -39,15 +40,15 @@ export default async function handler(req, res) {
 
   if (req.method !== 'POST') { res.status(405).json({ ok: false, error: 'Method not allowed' }); return; }
 
-  const { password, statuses } = req.body || {};
-  if (!password || typeof statuses !== 'object' || statuses === null) {
-    res.status(400).json({ ok: false, error: 'Missing password or statuses' });
+  const { statuses } = req.body || {};
+  if (typeof statuses !== 'object' || statuses === null) {
+    res.status(400).json({ ok: false, error: 'Missing statuses' });
     return;
   }
-  let passwords = {};
-  try { passwords = JSON.parse(process.env.BC_HR_PASSWORDS || '{}'); } catch (e) {}
-  if (!Object.values(passwords).includes(password)) {
-    res.status(401).json({ ok: false, error: 'Incorrect password' });
+  const sesion = await leerSesion(leerCookie(req.headers.cookie, COOKIE), process.env.RRHH_SESSION_SECRET);
+  // Solo con PIN personal (sesión del hub, nivel confidencial). Ya no hay claves compartidas.
+  if (!(sesion && sesion.confidencial)) {
+    res.status(401).json({ ok: false, error: 'Entra al hub con tu PIN (acceso RRHH).' });
     return;
   }
 
