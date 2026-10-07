@@ -729,7 +729,7 @@
 <!-- BC-AUTOUPDATE:START v1 — pegar dentro de <head>. No editar a mano; versionar con bc_bump_version.sh -->
 <script>
 (function(){
-  var LOCAL="20261007-pin";           // se reemplaza en cada deploy
+  var LOCAL="20261007-pin2";           // se reemplaza en cada deploy
   if(LOCAL.indexOf("PLACEHOLDER")>-1)return;      // aún no versionado -> desactivado
   var shown=false;
   function banner(){
@@ -764,7 +764,7 @@
       <div class="logo-area">
         <img src="./blackchicken_logo.png" alt="Black Chicken">
         <span class="app-name">Hub de HR</span>
-        <span class="app-version">v3.8</span>
+        <span class="app-version">v3.9</span>
       </div>
       <div class="top-actions">
         <span class="user-chip" id="user-chip" hidden></span>
@@ -1002,7 +1002,7 @@
         <a href="https://bc-autoeval-jefe.vercel.app/dashboard" target="_blank" rel="noopener" class="doc-row">
           <div class="doc-icon" style="background:var(--green-bg);color:var(--green)"><i class="ti ti-chart-line"></i></div>
           <div class="doc-info"><div class="doc-name">Autoevaluaciones por Puesto</div><div class="doc-meta">Tracking onboarding · 11 puestos · NPS interno, gap autoeval vs jefe</div></div>
-          <div class="doc-tags"><span class="tag tag-green copy-tok" role="button" tabindex="0" data-d="autoeval" style="cursor:pointer">Copiar token</span></div>
+          <div class="doc-tags"><span class="tag tag-green">PIN</span></div>
         </a>
       </div>
     </section>
@@ -1136,7 +1136,7 @@
         <a href="https://bc-eval-servicio.vercel.app/dashboard" target="_blank" rel="noopener" class="doc-row">
           <div class="doc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="ti ti-clipboard-check"></i></div>
           <div class="doc-info"><div class="doc-name">Seguimiento de Servicio</div><div class="doc-meta">Evolución de garzones · alertas, tendencias y criterios más fallados</div></div>
-          <div class="doc-tags"><span class="tag tag-gold copy-tok" role="button" tabindex="0" data-d="servicio" style="cursor:pointer">Copiar token</span></div>
+          <div class="doc-tags"><span class="tag tag-gold">PIN</span></div>
         </a>
       </div>
     
@@ -1204,7 +1204,7 @@
 
   </div>
 
-  <footer>Black Chicken · Hub de HR v3.8 · Uso exclusivo interno</footer>
+  <footer>Black Chicken · Hub de HR v3.9 · Uso exclusivo interno</footer>
 
   <div class="fav-modal" id="fav-modal" role="dialog" aria-modal="true" aria-label="Editar acciones rápidas">
     <div class="fav-card">
@@ -1434,9 +1434,9 @@
         { id: 'onboarding',  title: 'Onboarding BlackChicken', sub: 'Portal de bienvenida',    icon: 'rocket',         color: 'ac-green',  ext: 'https://bc-onboarding-bice.vercel.app' }
       ]},
       { group: 'Dashboards', items: [
-        { id: 'dasheval',     title: 'Dashboard Evaluaciones', sub: 'Ranking, heatmap · clave',  icon: 'chart-radar',     color: 'ac-blue',  ext: 'https://bc-evaluaciones-dashboard.vercel.app' },
-        { id: 'dashautoeval', title: 'Dashboard Autoeval.',    sub: '11 puestos · token',        icon: 'chart-line',      color: 'ac-green', ext: 'https://bc-autoeval-jefe.vercel.app/dashboard' },
-        { id: 'dashservicio', title: 'Seguimiento Servicio',   sub: 'Garzones · token',          icon: 'clipboard-check', color: 'ac-gold',  ext: 'https://bc-eval-servicio.vercel.app/dashboard' }
+        { id: 'dasheval',     title: 'Dashboard Evaluaciones', sub: 'Ranking, heatmap · PIN',  icon: 'chart-radar',     color: 'ac-blue',  ext: 'https://bc-evaluaciones-dashboard.vercel.app' },
+        { id: 'dashautoeval', title: 'Dashboard Autoeval.',    sub: '11 puestos · PIN',        icon: 'chart-line',      color: 'ac-green', ext: 'https://bc-autoeval-jefe.vercel.app/dashboard' },
+        { id: 'dashservicio', title: 'Seguimiento Servicio',   sub: 'Garzones · PIN',          icon: 'clipboard-check', color: 'ac-gold',  ext: 'https://bc-eval-servicio.vercel.app/dashboard' }
       ]},
       { group: 'Flujos operativos', items: [
         { id: 'tasktracker', title: 'Task Tracker',           sub: 'Tareas del equipo',       icon: 'list-check',     color: 'ac-gold',   ext: 'https://bc-task-tracker-nine.vercel.app' },
