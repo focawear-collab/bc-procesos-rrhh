@@ -1,7 +1,7 @@
 import { COOKIE, leerSesion, leerCookie } from '../lib/sesion.js';
 // Storage de plantillas HR creadas por el usuario (Inge).
 // Mismo patrón que pub-status.js: GitHub Contents API, rama `data` (sin redeploy),
-// GITHUB_TOKEN server-side y clave compartida BC_HR_PASSWORDS.
+// GITHUB_TOKEN server-side; guardar exige la sesión del hub con PIN personal (nivel confidencial).
 const REPO = 'focawear-collab/bc-procesos-rrhh';
 const FILE = 'hr-templates.json';
 const BRANCH = 'data';
@@ -56,17 +56,16 @@ export default async function handler(req, res) {
 
   if (req.method !== 'POST') { res.status(405).json({ ok: false, error: 'Method not allowed' }); return; }
 
-  const { password, templates } = req.body || {};
+  const { templates } = req.body || {};
   if (!Array.isArray(templates)) {
     res.status(400).json({ ok: false, error: 'Missing templates' });
     return;
   }
   // Con sesión RRHH (PIN personal, nivel confidencial) no se pide clave; la clave compartida queda de respaldo.
   const sesion = await leerSesion(leerCookie(req.headers.cookie, COOKIE), process.env.RRHH_SESSION_SECRET);
-  let passwords = {};
-  try { passwords = JSON.parse(process.env.BC_HR_PASSWORDS || '{}'); } catch (e) {}
-  if (!(sesion && sesion.confidencial) && !(password && Object.values(passwords).includes(password))) {
-    res.status(401).json({ ok: false, error: 'Incorrect password' });
+  // Solo con PIN personal (sesión del hub, nivel confidencial). Ya no hay claves compartidas.
+  if (!(sesion && sesion.confidencial)) {
+    res.status(401).json({ ok: false, error: 'Entra al hub con tu PIN (acceso RRHH).' });
     return;
   }
 

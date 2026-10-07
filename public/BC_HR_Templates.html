@@ -596,19 +596,11 @@ function renderSaved(){
   }));
   box.querySelectorAll('.tmpl-del').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); delTemplate(b.dataset.del); }));
 }
-function getPw(){
-  let p=localStorage.getItem('bc_hr_tpl_pw');
-  if(!p){ p=prompt('Clave de edición HR para guardar la plantilla:'); if(p) localStorage.setItem('bc_hr_tpl_pw',p); }
-  return p;
-}
 async function persist(){
-  // Con la sesión del hub (PIN personal) no hace falta clave; solo se pide si el servidor la exige.
-  let pw=localStorage.getItem('bc_hr_tpl_pw')||'';
+  // Guarda con la sesión del hub (PIN personal). Sin claves compartidas.
   try{
-    let r=await fetch('/api/hr-templates',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw,templates:SAVED})});
-    if(r.status===401&&!pw){ pw=getPw(); if(!pw) return false;
-      r=await fetch('/api/hr-templates',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw,templates:SAVED})}); }
-    if(r.status===401){ localStorage.removeItem('bc_hr_tpl_pw'); alert('Clave incorrecta. Intenta de nuevo.'); return false; }
+    const r=await fetch('/api/hr-templates',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({templates:SAVED})});
+    if(r.status===401||r.status===403){ alert('Tu sesión venció o no tienes acceso RRHH. Vuelve a entrar al hub con tu PIN.'); return false; }
     if(!r.ok){ alert('No se pudo guardar (storage). Inténtalo más tarde.'); return false; }
     const j=await r.json(); if(j&&j.ok&&Array.isArray(j.templates)) SAVED=j.templates;
     return true;

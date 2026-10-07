@@ -2030,7 +2030,7 @@
         e.preventDefault();
         var url = card.getAttribute('data-gate');
         if (isAuthed()) { window.location.href = url; return; }
-        openGate('cartas', url);
+        toast('Tu acceso no incluye documentos confidenciales', 'error');
         return;
       }
       var brain = e.target.closest('[data-gate-brain]');
@@ -2038,7 +2038,7 @@
         e.preventDefault();
         var url2 = brain.getAttribute('data-gate-brain');
         if (isAuthed()) { window.open(url2, '_blank', 'noopener'); return; }
-        openGate('brain', url2);
+        toast('Tu acceso no incluye documentos confidenciales', 'error');
       }
     });
 
