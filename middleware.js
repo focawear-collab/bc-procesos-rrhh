@@ -5,7 +5,10 @@
 //                       calendario, rotación, offboarding, templates, HR Brain, tokens
 // La regla de cada ruta vive en lib/sesion.js (nivelDeRuta).
 // FAIL-CLOSED: si falta el secreto de sesión, nada privado se sirve.
+// Excepción única: /api/portal-dotacion (colector de bc-portal) se autoriza SOLO con su token
+// de servicio, nunca con sesión ni como pública (lib/portal-dotacion.js).
 import { COOKIE, leerSesion, leerCookie, nivelDeRuta } from './lib/sesion.js';
+import { esRutaServicio, autorizarServicio } from './lib/portal-dotacion.js';
 
 export const config = { matcher: ['/((?!_vercel).*)'] };
 
@@ -73,6 +76,7 @@ const responder = (cuerpo, status, html) => new Response(html ? cuerpo : JSON.st
 
 export default async function middleware(request) {
   const url = new URL(request.url);
+  if (esRutaServicio(url.pathname)) return (await autorizarServicio(request)) || undefined;
   const nivel = nivelDeRuta(url.pathname, request.method);
   if (nivel === 'publico') return;
 

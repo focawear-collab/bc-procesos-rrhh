@@ -125,6 +125,16 @@ bc-procesos-rrhh/
 }
 ```
 
+---
+
+### GET /api/portal-dotacion — Dotación agregada para bc-portal (servidor a servidor)
+
+Solo `GET` con `Authorization: Bearer $RRHH_PORTAL_READ_TOKEN` (env de Vercel, ≥ 43 caracteres
+base64url). No acepta sesión PIN, token en la URL ni en cookies, ni otros métodos/rutas. Devuelve
+conteos y sumas por local (`esquema: "portal-dotacion/1"`), sin nombres ni filas. Fuente caída o
+inválida → 502; token o fuente sin configurar → 503. Código: `lib/portal-dotacion.js`,
+`api/portal-dotacion.js`; tests: `node --test tests/portal-dotacion.test.mjs`. Operación: `bc-portal/docs/rrhh-s2s/README.md`.
+
 ## Notion Database Schema
 
 **Database ID:** 37c3e919a705410cae2430e8f33b99fc  
