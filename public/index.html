@@ -42,6 +42,14 @@
   .compact .kcol-items{gap:6px!important}
   .compact .kcard{padding:10px!important}
   .compact .kcard-name{font-size:12px!important}
+
+/* Teléfono: la página no se corre de lado; el kanban se desliza dentro de su caja (auditoría 07-nov) */
+@media (max-width:700px){
+  body{overflow-x:hidden}
+  .ats-header{padding:20px 16px 18px !important}
+  .ats-head{flex-wrap:wrap;gap:14px !important}
+  .ats-kanban{grid-template-columns:repeat(5, 250px) !important;overflow-x:auto;padding:16px !important;-webkit-overflow-scrolling:touch}
+}
 </style>
 <!-- BC-AUTOUPDATE:START v1 — pegar dentro de <head>. No editar a mano; versionar con bc_bump_version.sh -->
 <script>
@@ -363,9 +371,9 @@ const AppHeader = ({procesos, onNew, showMetrics, onToggleMetrics}) => {
   const active = procesos.filter(p=>p.fase!=='F5' || p.avance<100).length;
   const byPhase = phaseOrder.map(p => procesos.filter(pr=>pr.fase===p).length);
   return (
-    <header style={{padding:'28px 40px 24px', borderBottom:'1px solid var(--border)', background:'linear-gradient(180deg, #121006 0%, var(--bg) 100%)', position:'relative', overflow:'hidden'}}>
+    <header className="ats-header" style={{padding:'28px 40px 24px', borderBottom:'1px solid var(--border)', background:'linear-gradient(180deg, #121006 0%, var(--bg) 100%)', position:'relative', overflow:'hidden'}}>
       <div style={{position:'absolute', top:-80, right:-60, width:320, height:320, borderRadius:'50%', background:'radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 65%)', pointerEvents:'none'}} />
-      <div style={{display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:24, position:'relative', zIndex:1}}>
+      <div className="ats-head" style={{display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:24, position:'relative', zIndex:1}}>
         <div>
           <a href="hub-index.html" style={{display:'inline-block',color:'var(--gold)',textDecoration:'none',fontSize:12,marginBottom:8,opacity:0.8,transition:'opacity 0.2s'}} onMouseEnter={e=>e.currentTarget.style.opacity='1'} onMouseLeave={e=>e.currentTarget.style.opacity='0.8'}>← Volver al Hub</a>
           <div style={{display:'flex', alignItems:'center', gap:10, marginBottom:4}}>
@@ -520,7 +528,7 @@ const KanbanCard = ({proc, active, onClick, onDragStart, onEdit, onFinalize}) =>
 const KanbanBoard = ({procesos, onOpen, activeId, onMove, onEdit, onFinalize}) => {
   const [dragOver, setDragOver] = React.useState(null);
   return (
-    <div style={{padding:'20px 40px', display:'grid', gridTemplateColumns:'repeat(5, 1fr)', gap:12, alignItems:'start'}}>
+    <div className="ats-kanban" style={{padding:'20px 40px', display:'grid', gridTemplateColumns:'repeat(5, 1fr)', gap:12, alignItems:'start'}}>
       {PHASES.map(ph => {
         const col = procesos.filter(p => p.fase === ph.id);
         const hoverOn = dragOver === ph.id;
