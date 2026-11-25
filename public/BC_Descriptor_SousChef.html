@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Descriptor de Cargo — Sous Chef (Sub Jefe de Cocina) | Black Chicken</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #0f0f0f; color: #e8e8e8; min-height: 100vh; }
+    .doc-wrap { max-width: 820px; margin: 0 auto; padding: 48px 24px 64px; }
+    .doc-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 24px; border-bottom: 1px solid #2a2a2a; margin-bottom: 36px; }
+    .doc-header img { width: 72px; height: 72px; object-fit: contain; filter: drop-shadow(0 2px 8px rgba(212,175,55,.3)); }
+    .doc-header-right { text-align: right; }
+    .doc-type { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #d4af37; font-weight: 700; margin-bottom: 4px; }
+    .doc-date { font-size: 13px; color: #666; }
+    .welcome-block { background: linear-gradient(135deg, #1a1505, #1a1a0a); border: 1px solid #d4af37; border-radius: 14px; padding: 28px 32px; margin-bottom: 32px; }
+    .welcome-title { font-size: 26px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+    .welcome-title span { background: linear-gradient(90deg,#d4af37,#f0c940); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .welcome-sub { font-size: 15px; color: #aaa; line-height: 1.7; }
+    .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 32px; }
+    .meta-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; padding: 16px; }
+    .meta-card.gold { border-color: #d4af37; background: linear-gradient(135deg,#1a1505,#1a1a1a); }
+    .meta-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: #555; margin-bottom: 6px; }
+    .meta-value { font-size: 15px; font-weight: 700; color: #fff; }
+    .meta-value.gold { color: #d4af37; }
+    .section { margin-bottom: 36px; }
+    .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid #2a2a2a; }
+    .section-icon { width: 32px; height: 32px; background: linear-gradient(135deg,#d4af37,#f0c940); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+    .section-title { font-size: 13px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 1.5px; }
+    .sub-title { font-size: 14px; font-weight: 700; color: #d4af37; margin: 16px 0 10px; padding-left: 4px; }
+    .item-list { display: flex; flex-direction: column; gap: 8px; }
+    .item-row { display: flex; align-items: flex-start; gap: 12px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 9px; padding: 12px 16px; }
+    .item-dot { width: 7px; height: 7px; background: #d4af37; border-radius: 50%; margin-top: 7px; flex-shrink: 0; }
+    .item-text { font-size: 14px; color: #ccc; line-height: 1.6; }
+    .item-text strong { color: #fff; }
+    .competence-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .comp-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; padding: 16px; text-align: center; }
+    .comp-icon { font-size: 24px; margin-bottom: 8px; display: block; }
+    .comp-name { font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+    .comp-desc { font-size: 11px; color: #666; line-height: 1.4; }
+    .profile-table { width: 100%; border-collapse: separate; border-spacing: 0; overflow: hidden; border-radius: 10px; border: 1px solid #2a2a2a; }
+    .profile-table th { background: #1a1a1a; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: #555; padding: 12px 16px; text-align: left; border-bottom: 1px solid #2a2a2a; }
+    .profile-table td { padding: 12px 16px; font-size: 13px; color: #ccc; border-bottom: 1px solid #1e1e1e; }
+    .profile-table tr:last-child td { border-bottom: none; }
+    .profile-table td:first-child { font-weight: 700; color: #fff; font-size: 12px; width: 25%; }
+    .profile-table td:nth-child(2) { color: #d4af37; font-weight: 600; font-size: 11px; text-transform: uppercase; width: 15%; }
+    .footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #1e1e1e; font-size: 12px; color: #444; }
+    .footer span { color: #d4af37; }
+    @media(max-width:600px) { .meta-grid { grid-template-columns: 1fr; } .competence-grid { grid-template-columns: 1fr 1fr; } }
+  
+    /* Back to Hub button */
+    .back-hub {
+      position: fixed; top: 16px; left: 16px; z-index: 9999;
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(26,26,26,0.92); border: 1px solid #2a2a2a;
+      border-radius: 8px; padding: 8px 14px;
+      color: #999; font-size: 12px; font-weight: 600;
+      text-decoration: none; font-family: 'Inter', sans-serif;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      transition: all 0.2s;
+    }
+    .back-hub:hover { color: #d4af37; border-color: #d4af37; background: rgba(26,26,26,0.97); }
+    .back-hub-arrow { font-size: 14px; }
+  </style>
+</head>
+<body>
+<a href="hub-index.html" class="back-hub"><span class="back-hub-arrow">←</span> Hub HR</a>
+
+<div class="doc-wrap">
+
+  <div class="doc-header">
+    <img src="./blackchicken_logo.png" alt="Black Chicken">
+    <div class="doc-header-right">
+      <p class="doc-type">Descriptor de Cargo · GO-PDP-002</p>
+      <p class="doc-date">Documento interno · Noviembre 2026</p>
+    </div>
+  </div>
+
+  <div class="welcome-block">
+    <p class="welcome-title">Descriptor — <span>Sous Chef (Sub Jefe de Cocina)</span></p>
+    <p class="welcome-sub">Responsable de planificar las tareas del personal de cocina y supervisar su trabajo. Realiza los encargos de aprovisionamiento para la cocina y controla su calidad, cantidad y correcto almacenamiento.<br><br>Instruir al personal de cocina en cuanto a las técnicas y los procedimientos necesarios para preparar y conservar los alimentos.<br><br>Encargado de la correcta producción en conjunto con el equipo y entrega de productos al cliente en tiempo y forma.</p>
+  </div>
+
+  <!-- IDENTIFICACIÓN -->
+  <div class="meta-grid">
+    <div class="meta-card gold">
+      <p class="meta-label">Cargo</p>
+      <p class="meta-value gold">Sous Chef (Sub Jefe de Cocina)</p>
+    </div>
+    <div class="meta-card">
+      <p class="meta-label">Reporta a</p>
+      <p class="meta-value">Chef</p>
+    </div>
+    <div class="meta-card">
+      <p class="meta-label">Lugar de desempeño</p>
+      <p class="meta-value">Local Asignado</p>
+    </div>
+    <div class="meta-card">
+      <p class="meta-label">Supervisa a</p>
+      <p class="meta-value">Cocineros y coperos</p>
+    </div>
+  </div>
+
+  <!-- FUNCIONES -->
+  <div class="section">
+    <div class="section-header"><div class="section-icon">📋</div><p class="section-title">Funciones del puesto</p></div>
+    <p class="sub-title">Generales</p>
+    <div class="item-list">
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Coordinar las operaciones diarias del personal de cocina.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Velar por ofrecer un servicio superior y maximizar la satisfacción de los clientes, mediante el producto final.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Responder de forma eficiente y precisa a las quejas de los clientes.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Evaluar la calidad de los productos regularmente y retroalimentar a dueños o Jefe de Local en caso de fallas.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Evaluar el rendimiento del personal y ofrecer información para mejorar su productividad.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Velar por el cumplimiento de las normativas sanitarias (SEREMI) y de seguridad.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Gestionar la buena imagen de la cocina y sugerir formas de mejorarla.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Controlar los costes operativos e identificar medidas para reducir el derroche.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Cumplir con las normas de aseo y ornato.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Cumplir con el reglamento interno.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Cumplir las responsabilidades del Chef cuando no esté.</p></div>
+    </div>
+    <p class="sub-title">Producto</p>
+    <div class="item-list">
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Responsable de mantener y elevar los controles de calidad.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Cumplir con el gramaje y corte de materia prima de las recetas.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Supervisar la correcta producción del menú.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Supervisar y mejorar el flujo de trabajo de todas las estaciones.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Materias primas en correcta condición.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Solución rápida y efectiva de imprevistos.</p></div>
+    </div>
+    <p class="sub-title">Equipo</p>
+    <div class="item-list">
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Capacitar, supervisar y corregir a todo el equipo de producción.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Capacitación a los nuevos colaboradores.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Apoyo en la decisión en el proceso de reclutamiento y contratación de nuevos colaboradores que sean derivados a su área.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Organizar turnos de producción.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Aseo rotativo de loza reutilizable.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Aseo rotativo baño.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Aseo rotativo de instalaciones.</p></div>
+    </div>
+    <p class="sub-title">Administrativo</p>
+    <div class="item-list">
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Cumplir con las exigencias del SEREMI.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Cumplir con los costos.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Uso responsable de los inventarios y apoyo en la actualización de estos; al usar las apps, procurar que uno esté en cocina y otro en inventario.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Informar falta de inventario de materias primas con anticipación al Jefe de Local para gestionar la compra de estos.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Aseo de la cocina.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Funcionamiento eficiente de los equipos de cocina.</p></div>
+    </div>
+  </div>
+
+  <!-- RESPONSABILIDADES -->
+  <div class="section">
+    <div class="section-header"><div class="section-icon">✅</div><p class="section-title">Responsabilidades del puesto</p></div>
+    <div class="item-list">
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Dirigir al personal de cocina y coordinar las comandas de comida.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Supervisar la preparación y cocinado de la comida.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Comprobar el emplatado y la temperatura de la comida.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Metodología de trabajo.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Informe semanal, enfocado a nuevos hallazgos.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text"><strong>Control del inventario, en conjunto con el Chef:</strong> semanal (más liviano) y general mensual (completo). Idealmente lo realiza una sola persona, que debe cubrir el inventario general mensual completo.</p></div>
+        <div class="item-row"><div class="item-dot"></div><p class="item-text">Cumplimiento de los KPI’s asignados.</p></div>
+    </div>
+  </div>
+
+  <!-- PERFIL DEL PUESTO -->
+  <div class="section">
+    <div class="section-header"><div class="section-icon">💼</div><p class="section-title">Perfil del puesto</p></div>
+    <table class="profile-table">
+      <tr><th>Dimensión</th><th>Nivel</th><th>Detalle</th></tr>
+      <tr><td>Nivel Educacional</td><td>Indispensable</td><td>Experiencia laboral demostrable como sous chef.<br>Experiencia práctica en la planificación de menús y la realización de pedidos de ingredientes.<br>Se valorará certificación de una escuela culinaria o grado en Gestión de Restaurantes.</td></tr>
+      <tr><td>Experiencia Laboral</td><td>Indispensable</td><td>2 años como cocinero.</td></tr>
+      <tr><td>Experiencia Laboral</td><td>Deseable</td><td>2 años como sous chef.</td></tr>
+      <tr><td>Conocimientos</td><td>Indispensable</td><td>Manejo de Equipos Humanos.<br>Comunicación efectiva.</td></tr>
+      <tr><td>Conocimientos</td><td>Deseable</td><td>Conocimiento de una amplia gama de recetas.<br>Familiaridad con las normativas sanitarias y de seguridad de una cocina.<br>Excelentes dotes organizativas.<br>Capacidades de resolución de conflictos.<br>Capacidad para gestionar un equipo en un entorno de trabajo de ritmo rápido.<br>Flexibilidad para trabajar por la noche y los fines de semana.</td></tr>
+    </table>
+  </div>
+
+  <div class="footer">
+    <p><span>Black Chicken</span> · Descriptor de Cargo · Documento interno · Uso exclusivo RRHH</p>
+  </div>
+</div>
+
+<button onclick="window.print()" style="position:fixed;bottom:24px;right:24px;z-index:99998;background:linear-gradient(90deg,#d4af37,#f0c940);color:#0f0f0f;border:none;border-radius:30px;padding:12px 24px;font-size:13px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;box-shadow:0 4px 16px rgba(212,175,55,.3);display:flex;align-items:center;gap:6px;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(212,175,55,.4)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(212,175,55,.3)'">📥 Descargar PDF</button>
+<style>@media print { button { display: none !important; } body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }</style>
+<!-- BC-HOME v2: el logo de BlackChicken vuelve al portal (app.blackchicken.tech). No editar a mano. -->
+<script>
+(function(){
+  if (window.__bcHome) return; window.__bcHome = 1;
+  var PORTAL = 'https://app.blackchicken.tech/';
+  var RX_IMG = /(logo|blackchicken|black[-_ ]?chicken)/i;
+  var RX_CLS = /(^|[\s_-])(logo|brand|marca)([\s_-]|$)/i;
+  function volver(e){
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    try { if (window.top !== window.self) { window.parent.postMessage({ bc: 'home' }, '*'); return; } } catch (x) {}
+    location.href = PORTAL;
+  }
+  function marcar(el){
+    if (!el || el.__bcHome) return;
+    el.__bcHome = 1;
+    el.style.cursor = 'pointer';
+    if (!el.getAttribute('title')) el.setAttribute('title', 'Volver a BlackChicken APP');
+    el.addEventListener('click', volver, true);
+  }
+  function esLogo(el){
+    if (el.tagName === 'IMG') {
+      var src = (el.getAttribute('src') || '').split('?')[0].split('/').pop();
+      if (RX_IMG.test(src) || /black\s?chicken/i.test(el.getAttribute('alt') || '')) return true;
+      return false;
+    }
+    var c = (typeof el.className === 'string' ? el.className : (el.getAttribute('class') || '')) + ' ' + (el.id || '');
+    if (!RX_CLS.test(c)) return false;
+    var r = el.getBoundingClientRect();                     // solo marcas chicas (no fondos ni secciones)
+    return r.width > 0 && r.width < 420 && r.height < 160;
+  }
+  function buscar(){
+    var n = document.querySelectorAll('img,svg,[class*="logo"],[class*="Logo"],[class*="brand"],[class*="marca"],[id*="logo"],[id*="brand"]');
+    for (var i = 0; i < n.length; i++) { try { if (esLogo(n[i])) marcar(n[i]); } catch (x) {} }
+    try {
+      var vw = window.innerWidth || 1000, sy = window.scrollY || 0, mejor = null, mr = null;
+      // Logo como imagen incrustada (data:) sin nombre: la imagen chica más arriba a la izquierda del encabezado
+      var im = document.images;
+      for (var j = 0; j < im.length; j++) {
+        var r = im[j].getBoundingClientRect(), top = r.top + sy;
+        if (r.width > 0 && r.width <= 160 && r.height <= 120 && top < 140 && r.left < vw * 0.5 &&
+            (!mr || top < mr.t - 4 || (Math.abs(top - mr.t) <= 4 && r.left < mr.l))) { mejor = im[j]; mr = { t: top, l: r.left }; }
+      }
+      if (mejor) marcar(mejor);
+      // Logo de texto ("BlackChicken", "Black Chicken · RRHH") en el encabezado
+      var tx = document.querySelectorAll('h1,h2,b,strong,span,div,a,p');
+      for (var k = 0; k < tx.length; k++) {
+        var e = tx[k]; if (e.__bcHome) continue;
+        var propio = e.children.length ? (e.firstChild && e.firstChild.nodeType === 3 ? e.firstChild.nodeValue : '') : (e.textContent || '');
+        if (!/^\s*black\s*chicken\b/i.test(propio || '')) continue;
+        var q = e.getBoundingClientRect();
+        if (q.width > 0 && q.width < 420 && q.top + sy < 140) marcar(e);
+      }
+    } catch (x) {}
+  }
+  var t = null;
+  function programar(){ clearTimeout(t); t = setTimeout(buscar, 150); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', buscar); else buscar();
+  try { new MutationObserver(programar).observe(document.documentElement, { childList: true, subtree: true }); } catch (x) {}
+})();
+</script>
+<!-- /BC-HOME -->
+</body>
+</html>
